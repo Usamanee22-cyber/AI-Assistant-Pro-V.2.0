@@ -1,0 +1,1330 @@
+
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Assistant Pro v.2.0</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans Thai', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .main-wrapper {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            margin: 20px auto;
+            width: calc(100% - 40px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ffffff !important;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .app-subtitle {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .chat-container {
+            flex: 1;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: linear-gradient(to bottom, #f8f9fd 0%, #ffffff 100%);
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .message.assistant .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 14px 20px;
+            border-radius: 20px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom-left-radius: 4px;
+        }
+
+        .calculation-result {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-left: 4px solid #667eea;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.05em;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+        }
+
+        .thinking-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .input-area {
+            padding: 15px 20px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-controls {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 20px 5px;
+            background: white;
+        }
+
+        .clear-button {
+            padding: 8px 18px;
+            background: rgba(255, 82, 82, 0.1);
+            color: #ff5252;
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(255, 82, 82, 0.1);
+        }
+
+        .clear-button:hover {
+            background: rgba(255, 82, 82, 0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(255, 82, 82, 0.2);
+        }
+
+        .clear-button:active {
+            transform: translateY(0);
+        }
+
+        .input-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 1em;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .send-button {
+            padding: 12px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .send-button:active {
+            transform: translateY(0);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 18px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .typing-text {
+            margin-left: 10px;
+            color: #667eea;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Tablet and iPad (768px - 1024px) */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .app-container {
+                max-width: 90%;
+                margin: 15px auto;
+            }
+
+            .app-title {
+                font-size: 1.4em;
+            }
+
+            .app-subtitle {
+                font-size: 0.85em;
+            }
+
+            .message-content {
+                max-width: 75%;
+                font-size: 0.95em;
+            }
+
+            .message-input {
+                font-size: 0.95em;
+            }
+
+            .send-button {
+                padding: 12px 28px;
+                font-size: 0.95em;
+            }
+        }
+
+        /* Mobile (up to 768px) */
+        @media (max-width: 768px) {
+            .app-container {
+                margin: 10px auto;
+                width: calc(100% - 20px);
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 15px 15px;
+            }
+
+            .app-title {
+                font-size: 1.1em;
+                gap: 8px;
+            }
+
+            .app-subtitle {
+                font-size: 0.8em;
+            }
+
+            .messages-area {
+                padding: 15px;
+                gap: 12px;
+            }
+
+            .message-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1em;
+            }
+
+            .message-content {
+                max-width: 80%;
+                padding: 12px 16px;
+                font-size: 0.9em;
+                line-height: 1.5;
+            }
+
+            .calculation-result {
+                padding: 12px;
+                font-size: 0.9em;
+            }
+
+            .input-area {
+                padding: 12px 15px 15px;
+            }
+
+            .input-form {
+                gap: 8px;
+            }
+
+            .message-input {
+                padding: 12px 16px;
+                font-size: 0.9em;
+            }
+
+            .send-button {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            .chat-controls {
+                padding: 8px 15px 5px;
+            }
+
+            .clear-button {
+                padding: 6px 14px;
+                font-size: 0.8em;
+            }
+
+            .typing-indicator {
+                padding: 10px 14px;
+            }
+
+            .typing-dots span {
+                width: 6px;
+                height: 6px;
+            }
+
+            .typing-text {
+                font-size: 0.8em;
+            }
+        }
+
+        /* Small Mobile (up to 480px) */
+        @media (max-width: 480px) {
+            .app-container {
+                width: calc(100% - 10px);
+                margin: 5px auto;
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 12px 12px;
+            }
+
+            .app-title {
+                font-size: 1em;
+                gap: 6px;
+            }
+
+            .app-subtitle {
+                font-size: 0.75em;
+            }
+
+            .messages-area {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .message {
+                gap: 8px;
+            }
+
+            .message-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 1em;
+            }
+
+            .message-content {
+                max-width: 75%;
+                padding: 10px 14px;
+                font-size: 0.85em;
+                border-radius: 16px;
+            }
+
+            .calculation-result {
+                padding: 10px;
+                font-size: 0.85em;
+                margin: 8px 0;
+            }
+
+            .thinking-badge {
+                font-size: 0.75em;
+                padding: 3px 8px;
+            }
+
+            .input-area {
+                padding: 10px 12px 12px;
+            }
+
+            .input-form {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .message-input {
+                padding: 12px 16px;
+                font-size: 0.9em;
+                width: 100%;
+            }
+
+            .send-button {
+                padding: 12px 20px;
+                font-size: 0.9em;
+                width: 100%;
+            }
+
+            .chat-controls {
+                padding: 8px 12px 5px;
+            }
+
+            .clear-button {
+                padding: 6px 12px;
+                font-size: 0.75em;
+            }
+        }
+
+        /* Large Desktop (1440px+) */
+        @media (min-width: 1440px) {
+            .app-container {
+                max-width: 900px;
+            }
+
+            .app-title {
+                font-size: 1.6em;
+            }
+
+            .app-subtitle {
+                font-size: 0.95em;
+            }
+
+            .message-content {
+                font-size: 1.05em;
+            }
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeOut 0.8s ease 2.2s forwards;
+            overflow: hidden;
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 2em;
+            opacity: 0.2;
+            animation: floatRandom 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatRandom {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-60px) translateX(-15px) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-30px) translateX(25px) rotate(3deg);
+            }
+        }
+
+        .loading-content {
+            text-align: center;
+            animation: pulse 2s ease-in-out;
+        }
+
+        .loading-logo {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: float 2s ease-in-out, shimmer 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.8));
+        }
+
+        .loading-text {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            animation: glow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-20px) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shimmer {
+            0%, 100% {
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.8)) 
+                        drop-shadow(0 0 60px rgba(255, 255, 255, 0.4));
+            }
+            50% {
+                filter: drop-shadow(0 0 50px rgba(255, 255, 255, 1)) 
+                        drop-shadow(0 0 80px rgba(255, 255, 255, 0.6))
+                        drop-shadow(0 0 100px rgba(102, 126, 234, 0.5));
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+                             0 0 40px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
+                             0 0 60px rgba(255, 255, 255, 0.5),
+                             0 0 80px rgba(102, 126, 234, 0.4);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+   <div class="loading-content">
+    <div class="loading-logo">
+     💬
+    </div>
+    <div class="loading-text">
+     Gan AI
+    </div>
+   </div>
+  </div>
+  <script>
+        // Create floating emojis on loading screen
+        const loadingScreen = document.getElementById('loadingScreen');
+        const emojis = ['🤖', '💡', '✨', '🎯', '🔢', '💭', '⚡', '🌟', '🎨', '🚀', '💫', '🎪', '🎭', '🎬', '🎤', '🎧'];
+        const emojiCount = 125;
+
+        for (let i = 0; i < emojiCount; i++) {
+            const emoji = document.createElement('div');
+            emoji.className = 'floating-emoji';
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.left = Math.random() * 100 + '%';
+            emoji.style.top = Math.random() * 100 + '%';
+            emoji.style.animationDelay = Math.random() * 2 + 's';
+            emoji.style.animationDuration = (3 + Math.random() * 2) + 's';
+            loadingScreen.appendChild(emoji);
+        }
+    </script>
+  <div class="main-wrapper">
+   <div class="app-container">
+    <div class="header">
+     <h1 class="app-title" id="appTitle"><span style="font-size: 1.3em;">💬</span> AI Assistant Pro v.2.0</h1>
+     <p class="app-subtitle" id="appSubtitle">AI ที่มีการวิเคราะห์อารมณ์ คิดวิเคราะห์ และคำนวณเลขได้</p>
+    </div>
+    <div class="chat-container">
+     <div class="chat-controls"><button class="clear-button" id="clearButton">🗑 ล้างการแชท</button>
+     </div>
+     <div class="messages-area" id="messagesArea"></div>
+     <div class="input-area">
+      <form class="input-form" id="messageForm"><input type="text" class="message-input" id="messageInput" placeholder="พิมพ์ข้อความหรือโจทย์คณิตศาสตร์..." autocomplete="off" required> <button type="submit" class="send-button" id="sendButton">ส่ง</button>
+      </form>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            app_title: "💬 AI Assistant Pro v.2.0",
+            app_subtitle: "AI ที่มีการวิเคราะห์อารมณ์ คิดวิเคราะห์ และคำนวณเลขได้",
+            primary_color: "#667eea",
+            background_color: "#f5f7fa"
+        };
+
+        async function onConfigChange(config) {
+            const appTitle = document.getElementById('appTitle');
+            const appSubtitle = document.getElementById('appSubtitle');
+            
+            if (appTitle) {
+                appTitle.innerHTML = (config.app_title || defaultConfig.app_title).replace('💬', '<span style="font-size: 1.3em;">💬</span>');
+            }
+            
+            if (appSubtitle) {
+                appSubtitle.textContent = config.app_subtitle || defaultConfig.app_subtitle;
+            }
+
+            const primaryColor = config.primary_color || defaultConfig.primary_color;
+            const backgroundColor = config.background_color || defaultConfig.background_color;
+            
+            document.body.style.background = backgroundColor;
+            
+            document.querySelectorAll('.dynamic-style').forEach(el => el.remove());
+            const style = document.createElement('style');
+            style.className = 'dynamic-style';
+            style.textContent = `
+                .app-title { color: ${primaryColor} !important; }
+                .send-button { background: ${primaryColor} !important; }
+                .message.user .message-avatar { background: ${primaryColor} !important; }
+                .message.user .message-content { background: ${primaryColor} !important; }
+                .message-input:focus { border-color: ${primaryColor} !important; }
+            `;
+            document.head.appendChild(style);
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [
+                    {
+                        get: () => config.background_color || defaultConfig.background_color,
+                        set: (value) => {
+                            config.background_color = value;
+                            window.elementSdk.setConfig({ background_color: value });
+                        }
+                    },
+                    {
+                        get: () => config.primary_color || defaultConfig.primary_color,
+                        set: (value) => {
+                            config.primary_color = value;
+                            window.elementSdk.setConfig({ primary_color: value });
+                        }
+                    }
+                ],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["app_title", config.app_title || defaultConfig.app_title],
+                ["app_subtitle", config.app_subtitle || defaultConfig.app_subtitle]
+            ]);
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+
+        // Advanced Math Calculator Engine with PEMDAS/BODMAS
+        class MathCalculator {
+            calculate(expression) {
+                try {
+                    // Clean and normalize expression
+                    let expr = expression
+                        .replace(/×/g, '*')
+                        .replace(/÷/g, '/')
+                        .replace(/\s+/g, '');
+                    
+                    // Check if expression contains math operators
+                    if (!/[\+\-\*\/\(\)]/.test(expr)) return null;
+                    
+                    // Validate expression format
+                    if (!this.isValidExpression(expr)) {
+                        return { error: 'รูปแบบสมการไม่ถูกต้อง กรุณาตรวจสอบครับ' };
+                    }
+                    
+                    // Store original for display
+                    const originalExpr = this.formatDisplayExpression(expr);
+                    
+                    // Check number limits before evaluation
+                    const numbers = expr.match(/\d+(?:\.\d+)?/g);
+                    if (numbers) {
+                        for (const num of numbers) {
+                            if (parseFloat(num) > 9999999) {
+                                return { error: 'ตัวเลขต้องไม่เกิน 9,999,999 ครับ' };
+                            }
+                        }
+                    }
+                    
+                    // Calculate result using safe evaluation
+                    const result = this.evaluateExpression(expr);
+                    
+                    if (result === null) {
+                        return { error: 'ไม่สามารถคำนวณได้ กรุณาตรวจสอบสมการครับ' };
+                    }
+                    
+                    // Check for division by zero
+                    if (!isFinite(result)) {
+                        return { error: 'ไม่สามารถหารด้วย 0 ได้ครับ' };
+                    }
+                    
+                    return {
+                        expression: originalExpr,
+                        result: result,
+                        steps: this.getCalculationSteps(expr, result)
+                    };
+                    
+                } catch (error) {
+                    return { error: 'ไม่สามารถคำนวณได้ กรุณาตรวจสอบรูปแบบครับ' };
+                }
+            }
+            
+            isValidExpression(expr) {
+                // Check for invalid patterns
+                if (/[\+\-\*\/]{2,}/.test(expr)) return false;
+                if (/^[\*\/]/.test(expr)) return false;
+                if (/[\+\-\*\/]$/.test(expr)) return false;
+                
+                // Check balanced parentheses
+                let depth = 0;
+                for (const char of expr) {
+                    if (char === '(') depth++;
+                    if (char === ')') depth--;
+                    if (depth < 0) return false;
+                }
+                return depth === 0;
+            }
+            
+            evaluateExpression(expr) {
+                try {
+                    const tokens = this.tokenize(expr);
+                    const postfix = this.infixToPostfix(tokens);
+                    return this.evaluatePostfix(postfix);
+                } catch (error) {
+                    return null;
+                }
+            }
+            
+            tokenize(expr) {
+                const tokens = [];
+                let currentNumber = '';
+                
+                for (let i = 0; i < expr.length; i++) {
+                    const char = expr[i];
+                    
+                    if (/\d|\./.test(char)) {
+                        currentNumber += char;
+                    } else {
+                        if (currentNumber) {
+                            tokens.push({ type: 'number', value: parseFloat(currentNumber) });
+                            currentNumber = '';
+                        }
+                        
+                        if (char === '(' || char === ')') {
+                            tokens.push({ type: 'paren', value: char });
+                        } else if (/[\+\-\*\/]/.test(char)) {
+                            if (char === '-' && (i === 0 || /[\+\-\*\/\(]/.test(expr[i-1]))) {
+                                currentNumber = '-';
+                            } else {
+                                tokens.push({ type: 'operator', value: char });
+                            }
+                        }
+                    }
+                }
+                
+                if (currentNumber) {
+                    tokens.push({ type: 'number', value: parseFloat(currentNumber) });
+                }
+                
+                return tokens;
+            }
+            
+            infixToPostfix(tokens) {
+                const output = [];
+                const operators = [];
+                const precedence = { '+': 1, '-': 1, '*': 2, '/': 2 };
+                
+                for (const token of tokens) {
+                    if (token.type === 'number') {
+                        output.push(token);
+                    } else if (token.type === 'operator') {
+                        while (
+                            operators.length > 0 &&
+                            operators[operators.length - 1].type === 'operator' &&
+                            precedence[operators[operators.length - 1].value] >= precedence[token.value]
+                        ) {
+                            output.push(operators.pop());
+                        }
+                        operators.push(token);
+                    } else if (token.value === '(') {
+                        operators.push(token);
+                    } else if (token.value === ')') {
+                        while (operators.length > 0 && operators[operators.length - 1].value !== '(') {
+                            output.push(operators.pop());
+                        }
+                        operators.pop();
+                    }
+                }
+                
+                while (operators.length > 0) {
+                    output.push(operators.pop());
+                }
+                
+                return output;
+            }
+            
+            evaluatePostfix(postfix) {
+                const stack = [];
+                
+                for (const token of postfix) {
+                    if (token.type === 'number') {
+                        stack.push(token.value);
+                    } else if (token.type === 'operator') {
+                        const b = stack.pop();
+                        const a = stack.pop();
+                        
+                        let result;
+                        switch (token.value) {
+                            case '+': result = a + b; break;
+                            case '-': result = a - b; break;
+                            case '*': result = a * b; break;
+                            case '/': 
+                                if (b === 0) return Infinity;
+                                result = a / b;
+                                break;
+                        }
+                        stack.push(result);
+                    }
+                }
+                
+                return stack[0];
+            }
+            
+            formatDisplayExpression(expr) {
+                return expr
+                    .replace(/\*/g, ' × ')
+                    .replace(/\//g, ' ÷ ')
+                    .replace(/\+/g, ' + ')
+                    .replace(/\-/g, ' - ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+            
+            getCalculationSteps(expr, result) {
+                const hasParens = expr.includes('(');
+                const hasMultDiv = /[\*\/]/.test(expr);
+                const hasAddSub = /[\+\-]/.test(expr.replace(/^\-/, ''));
+                
+                let steps = '';
+                if (hasParens) steps += '1️�� คำนวณในวงเล็บก่อน<br>';
+                if (hasMultDiv) steps += '2️⃣ คำนวณคูณและหารก่อน (ซ้าย→ขวา)<br>';
+                if (hasAddSub) steps += '3️⃣ คำนวณบวกและลบทีหลัง (ซ้าย→ขวา)<br>';
+                
+                return steps || 'คำนวณโดยตรง';
+            }
+            
+            formatNumber(num) {
+                if (Number.isInteger(num)) {
+                    return num.toLocaleString('th-TH');
+                }
+                const rounded = Math.round(num * 1000000) / 1000000;
+                return rounded.toLocaleString('th-TH', { maximumFractionDigits: 6 });
+            }
+        }
+
+        // Sentiment analysis keywords
+        const sentimentKeywords = {
+            positive: ['ดี', 'เยี่ยม', 'สุดยอด', 'ชอบ', 'รัก', 'ยอด', 'เจ๋ง', 'เก่ง', 'สำเร็จ', 'ชนะ', 'ได้', 'สนุก', 'มีความสุข', 'ดีใจ', 'ตื่นเต้น', 'อยาก', 'สนใจ', 'มุ่งมั่น', 'พยายาม', 'ทำได้', 'เริ่มต้น', 'พัฒนา', 'เจริญเติบโต', 'ก้าวหน้า', 'ขอบคุณ', 'ขอบใจ'],
+            negative: ['แย่', 'ไม่ดี', 'ล้มเหลว', 'ผิดหวัง', 'เสีย', 'เครียด', 'กังวล', 'ห่วง', 'กลัว', 'ยาก', 'ทำไม่ได้', 'ไม่เข้าใจ', 'สับสน', 'ปัญหา', 'อุปสรรค', 'เหนื่อย', 'ท้อ', 'เจ็บ', 'ป่วย', 'บาดเจ็บ', 'ตก', 'พลาด', 'เสียใจ']
+        };
+
+        // Advanced AI Response System
+        class AIEngine {
+            constructor() {
+                this.thinkingTime = 2000;
+                this.mathCalculator = new MathCalculator();
+            }
+
+            analyzeSentiment(text) {
+                const lowerText = text.toLowerCase();
+                let positiveScore = 0;
+                let negativeScore = 0;
+
+                for (const keyword of sentimentKeywords.positive) {
+                    if (lowerText.includes(keyword)) positiveScore++;
+                }
+
+                for (const keyword of sentimentKeywords.negative) {
+                    if (lowerText.includes(keyword)) negativeScore++;
+                }
+
+                if (positiveScore > negativeScore) return 'positive';
+                if (negativeScore > positiveScore) return 'negative';
+                return 'neutral';
+            }
+
+            async generateResponse(userMessage) {
+                const calcResults = this.mathCalculator.calculate(userMessage);
+                let mathResponse = '';
+                
+                if (calcResults && !calcResults.error) {
+                    await this.simulateThinking('กำลังคำนวณ...');
+                    mathResponse = '<div class="calculation-result">';
+                    mathResponse += '🔢 <strong>ผลการคำนวณ:</strong><br><br>';
+                    mathResponse += `<strong>โจทย์:</strong> ${calcResults.expression}<br>`;
+                    mathResponse += `<strong>วิธีการ:</strong><br>${calcResults.steps}<br>`;
+                    mathResponse += `<strong>คำตอบ:</strong> <span style="font-size: 1.3em; color: #667eea;">${this.mathCalculator.formatNumber(calcResults.result)}</span>`;
+                    mathResponse += '</div>';
+                    return mathResponse + '\n\nคำนวณเสร็จแล้วครับ! มีอะไรให้ช่วยอีกไหมครับ? 😊';
+                } else if (calcResults && calcResults.error) {
+                    return '⚠ ' + calcResults.error;
+                }
+
+                await this.simulateThinking('วิเคราะห์คำถาม...');
+                const sentiment = this.analyzeSentiment(userMessage);
+                
+                await this.simulateThinking('สร้างคำตอบ...');
+                
+                // Check for greetings
+                const greetings = ['สวัสดี', 'หวัดดี', 'ว่าไง', 'ไง', 'hello', 'hi', 'hey', 'ดี'];
+                const isGreeting = greetings.some(g => userMessage.toLowerCase().includes(g));
+                
+                if (isGreeting) {
+                    const greetingResponses = [
+                        'สวัสดีครับ! 👋 ยินดีที่ได้พูดคุยกับคุณ วันนี้มีอะไรให้ผมช่วยไหมครับ?',
+                        'หวัดดีครับ! 😊 ผมพร้อมช่วยเหลือคุณแล้ว ไม่ว่าจะเป็นการคำนวณหรือตอบคำถาม ถามมาได้เลยครับ!',
+                        'ว่าไงครับ! 🎉 มีอะไรให้ผมช่วยบ้างไหมครับ? จะคำนวณเลขหรือคุยเรื่องอื่นก็ได้นะครับ',
+                        'สวัสดีครับ! 💫 ดีใจที่ได้เจอกัน ถ้ามีอะไรอยากถามหรืออยากให้ช่วยบอกผมได้เลยนะครับ'
+                    ];
+                    return greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
+                }
+                
+                // Sentiment-based responses (without revealing the analysis)
+                const responses = {
+                    positive: [
+                        'เยี่ยมเลยครับ! 😊 ผมดีใจด้วยนะครับ มีอะไรให้ช่วยเหลือเพิ่มเติมไหมครับ?',
+                        'สุดยอดไปเลยครับ! ✨ ต้องการให้ผมช่วยอะไรอีกบ้างไหมครับ?',
+                        'ดีมากเลยครับ! 🎯 ผมยินดีช่วยเหลือคุณเสมอนะครับ มีอะไรให้ช่วยอีกไหมครับ?',
+                        'เจ๋งจริงๆ ครับ! 🌟 ถ้ามีอะไรอยากคุยหรือต้องการความช่วยเหลือบอกผมได้นะครับ'
+                    ],
+                    negative: [
+                        'ผมเข้าใจความรู้สึกของคุณนะครับ 🤝 อย่าท้อนะครับ ถ้ามีอะไรให้ผมช่วยบอกได้เลยครับ',
+                        'ผมอยู่ที่นี่พร้อมช่วยเหลือคุณเสมอนะครับ 💪 บอกผมได้เลยว่าต้องการอะไรครับ',
+                        'เข้าใจครับ บางครั้งอาจมีเรื่องที่ไม่ราบรื่นนัก แต่ผมพร้อมสนับสนุนคุณเสมอนะครับ 🌈',
+                        'อย่ากังวลไปครับ ผมอยู่ตรงนี้พร้อมช่วยเหลือคุณ 🫂 มีอะไรให้ช่วยบอกผมได้เลยนะครับ'
+                    ],
+                    neutral: [
+                        'เข้าใจแล้วครับ 👍 มีอะไรให้ช่วยเหลือไหมครับ?',
+                        'ครับผม 📝 ต้องการให้ผมช่วยอะไรเพิ่มเติมไหมครับ?',
+                        'รับทราบครับ ✅ ถ้ามีคำถามหรือต้องการความช่วยเหลือบอกผมได้นะครับ',
+                        'โอเคครับ 💬 พร้อมช่วยเหลือคุณเสมอนะครับ มีอะไรให้ช่วยไหมครับ?'
+                    ]
+                };
+
+                const sentimentResponses = responses[sentiment];
+                const response = sentimentResponses[Math.floor(Math.random() * sentimentResponses.length)];
+
+                return response;
+            }
+
+            async simulateThinking(status) {
+                updateTypingStatus(status);
+                const randomDelay = this.thinkingTime + Math.random() * 1000;
+                await new Promise(resolve => setTimeout(resolve, randomDelay / 4));
+            }
+        }
+
+        const aiEngine = new AIEngine();
+
+        let allMessages = [];
+        let isDataSdkReady = false;
+
+        const dataHandler = {
+            onDataChanged(data) {
+                allMessages = data.sort((a, b) => a.timestamp - b.timestamp);
+                renderMessages();
+            }
+        };
+
+        async function initializeDataSdk() {
+            if (window.dataSdk) {
+                const result = await window.dataSdk.init(dataHandler);
+                if (result.isOk) {
+                    isDataSdkReady = true;
+                } else {
+                    console.error('Failed to initialize Data SDK');
+                }
+            }
+        }
+
+        async function saveMessage(message, type) {
+            if (!isDataSdkReady) return;
+
+            const messageData = {
+                message: message,
+                type: type,
+                timestamp: Date.now()
+            };
+
+            const result = await window.dataSdk.create(messageData);
+            if (!result.isOk) {
+                console.error('Failed to save message');
+            }
+        }
+
+        async function clearAllMessages() {
+            if (!isDataSdkReady) return;
+
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            for (const msg of allMessages) {
+                await window.dataSdk.delete(msg);
+            }
+
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+        }
+
+        function renderMessages() {
+            messagesArea.innerHTML = '';
+            
+            if (allMessages.length === 0) {
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'message assistant';
+                welcomeDiv.innerHTML = `
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        สวัสดีครับ! ผมคือ AI Assistant Pro v.2.0 💬<br><br>
+                        <strong>ความสามารถ:</strong><br>
+                        🔢 คำนวณเลขได้ (บวก ลบ คูณ หาร)<br>
+                        💭 วิเคราะห์อารมณ์<br>
+                        🎯 ตอบคำถามหลากหลาย<br><br>
+                        <strong>ตัวอย่าง:</strong><br>
+                        • "123 + 456"<br>
+                        • "(10 + 20) × 5"<br>
+                        • "สวัสดี"<br><br>
+                        ลองถามอะไรผมดูสิครับ! 😊
+                    </div>
+                `;
+                messagesArea.appendChild(welcomeDiv);
+            } else {
+                allMessages.forEach(msg => {
+                    addMessageToDOM(msg.message, msg.type);
+                });
+            }
+            
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        const messagesArea = document.getElementById('messagesArea');
+        const messageForm = document.getElementById('messageForm');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const clearButton = document.getElementById('clearButton');
+
+        function addMessageToDOM(text, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = type === 'user' ? '👤' : '🤖';
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = text;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            messagesArea.appendChild(messageDiv);
+            
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        async function addMessage(text, type) {
+            await saveMessage(text, type);
+        }
+
+        function showTypingIndicator(status = 'กำลังคิด...') {
+            removeTypingIndicator();
+            
+            const typing = document.createElement('div');
+            typing.className = 'message assistant';
+            typing.id = 'typingIndicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = '🤖';
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator active';
+            
+            const dots = document.createElement('div');
+            dots.className = 'typing-dots';
+            dots.innerHTML = '<span></span><span></span><span></span>';
+            
+            const text = document.createElement('div');
+            text.className = 'typing-text';
+            text.id = 'typingText';
+            text.textContent = status;
+            
+            indicator.appendChild(dots);
+            indicator.appendChild(text);
+            typing.appendChild(avatar);
+            typing.appendChild(indicator);
+            messagesArea.appendChild(typing);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        function updateTypingStatus(status) {
+            const typingText = document.getElementById('typingText');
+            if (typingText) {
+                typingText.textContent = status;
+            }
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) {
+                typing.remove();
+            }
+        }
+
+        messageForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userMessage = messageInput.value.trim();
+            if (!userMessage) return;
+
+            if (allMessages.length >= 999) {
+                removeTypingIndicator();
+                const tempDiv = document.createElement('div');
+                tempDiv.className = 'message assistant';
+                tempDiv.innerHTML = `
+                    <div class="message-avatar">⚠</div>
+                    <div class="message-content">
+                        ขออภัยครับ! ถึงขีดจำกัดการบันทึก 999 ข้อความแล้ว 🚫<br>
+                        กรุณากดปุ่ม "🗑 ล้างการแชท" เพื่อเริ่มการสนทนาใหม่ครับ
+                    </div>
+                `;
+                messagesArea.appendChild(tempDiv);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+                return;
+            }
+            
+            await addMessage(userMessage, 'user');
+            messageInput.value = '';
+            
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+            clearButton.disabled = true;
+            
+            showTypingIndicator('เริ่มวิเคราะห์...');
+            
+            const aiResponse = await aiEngine.generateResponse(userMessage);
+            
+            removeTypingIndicator();
+            await addMessage(aiResponse, 'assistant');
+            
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+            clearButton.disabled = false;
+            messageInput.focus();
+        });
+
+        clearButton.addEventListener('click', async () => {
+            if (allMessages.length === 0) return;
+            
+            clearButton.textContent = '⚠ ยืนยันล้าง?';
+            clearButton.style.background = 'rgba(255, 82, 82, 0.2)';
+            
+            const confirmHandler = async () => {
+                clearButton.disabled = true;
+                clearButton.innerHTML = '⏳ กำลังล้าง...';
+                
+                await clearAllMessages();
+                
+                clearButton.innerHTML = '🗑 ล้างการแชท';
+                clearButton.style.background = 'rgba(255, 82, 82, 0.08)';
+                clearButton.disabled = false;
+                clearButton.removeEventListener('click', confirmHandler);
+                clearButton.addEventListener('click', arguments.callee);
+            };
+            
+            const cancelHandler = () => {
+                clearButton.innerHTML = '🗑 ล้างการแชท';
+                clearButton.style.background = 'rgba(255, 82, 82, 0.08)';
+                clearButton.removeEventListener('click', confirmHandler);
+            };
+            
+            clearButton.removeEventListener('click', arguments.callee);
+            clearButton.addEventListener('click', confirmHandler, { once: true });
+            
+            setTimeout(cancelHandler, 3000);
+        });
+
+        initializeDataSdk();
+        messageInput.focus();
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9becf3d817a6d33d',t:'MTc2ODU1OTU4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

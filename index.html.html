@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Assistant-Pro-V.2.4 | Balanced Edition</title>
+    <title>AI-Assistant-Pro-V.2.7 | Masterpiece Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. จัดระเบียบโครงสร้างพื้นฐาน */
+        /* --- 1. Lexicon & Core Styling --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
         body { background: #020617; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        /* 5. UI Luxury Design - การออกแบบที่สวยงามและใช้งานง่าย */
+        /* --- 5. UI Luxury Design --- */
         .main-card {
             background: rgba(255, 255, 255, 0.98);
-            width: 95%; max-width: 1150px; height: 94vh;
+            width: 95%; max-width: 1100px; height: 92vh;
             border-radius: 40px; display: flex; flex-direction: column;
             box-shadow: 0 50px 100px rgba(0,0,0,0.6); overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        #viewport { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; background: #f8fafc; }
+        #viewport { flex: 1; overflow-y: auto; padding: 35px; scroll-behavior: smooth; background: #f8fafc; }
 
-        .msg-row { display: flex; width: 100%; margin-bottom: 25px; animation: fadeIn 0.4s ease-out; }
+        /* --- Chat Bubbles & Animations --- */
+        .msg-row { display: flex; width: 100%; margin-bottom: 25px; animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         .msg-row.user { justify-content: flex-end; }
 
         .bubble {
@@ -31,11 +33,24 @@
             font-size: 16px; line-height: 1.6; position: relative;
         }
 
-        .user .bubble { background: #2563eb; color: white; border-bottom-right-radius: 4px; }
-        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+        .user .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2); }
+        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 
-        .tag { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px; margin-bottom: 8px; display: inline-block; text-transform: uppercase; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- Loading UI --- */
+        .loader-row { display: none; align-items: center; gap: 10px; font-size: 13px; color: #64748b; font-weight: 800; margin-bottom: 20px; padding-left: 10px; }
+        .dot { width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; animation: pulse 1.2s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        /* --- Feedback UI --- */
+        .feedback-container { display: flex; gap: 8px; margin-top: 12px; }
+        .fb-btn { cursor: pointer; font-size: 11px; padding: 6px 14px; background: #f1f5f9; border-radius: 12px; font-weight: 800; color: #475569; transition: 0.2s; border: 1px solid transparent; }
+        .fb-btn:hover { background: white; border-color: #cbd5e1; transform: translateY(-2px); }
+
+        .tag { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px; margin-bottom: 10px; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em; }
+        
+        @keyframes slideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
     </style>
 </head>
 <body>
@@ -43,10 +58,13 @@
     <div class="main-card">
         <header class="px-10 py-6 border-b bg-white flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">V2.4</div>
+                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">V2.7</div>
                 <div>
-                    <h1 class="text-xl font-black text-slate-900">AI-Consultant-Pro</h1>
-                    <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Balanced & Precision Mode</p>
+                    <h1 class="text-xl font-black text-slate-900 tracking-tight">AI-Consultant-Pro</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Masterpiece Core Active</p>
+                    </div>
                 </div>
             </div>
         </header>
@@ -55,81 +73,73 @@
             <div id="chatView" class="flex flex-col">
                 <div class="msg-row assistant">
                     <div class="bubble">
-                        สวัสดีครับคุณ User ผมคือ AI ที่ปรึกษาที่สมดุลที่สุด<br>
-                        ยินดีช่วยทั้งเรื่อง <b>คำนวณธุรกิจ, สมการคณิตศาสตร์, หรือคุยเล่นทั่วไป</b> ครับ
+                        สวัสดีครับคุณ User ยินดีที่ได้ให้บริการครับ<br>
+                        ผมคือ AI ที่ปรึกษาที่เก่งเรื่องการคำนวณและพร้อมคุยเล่นกับคุณในทุกๆ เรื่องครับ
                     </div>
                 </div>
             </div>
+            
+            <div id="loader" class="loader-row">
+                <div class="flex gap-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+                <span>ระบบกำลังใช้ตรรกะประมวลผล...</span>
+            </div>
         </main>
 
-        <footer class="p-6 bg-white border-t">
-            <form id="chatForm" class="flex bg-slate-100 rounded-full p-1 pl-6 shadow-inner border-2 border-transparent focus-within:border-blue-500 transition-all">
-                <input type="text" id="userInput" placeholder="ถามโจทย์ลงทุน หรือทักทายได้เลย..." class="flex-1 bg-transparent outline-none font-bold text-slate-700">
-                <button type="submit" class="bg-blue-600 text-white px-10 py-3 rounded-full font-black hover:bg-blue-700 active:scale-95 transition-all">วิเคราะห์</button>
+        <footer class="p-8 bg-white border-t">
+            <form id="chatForm" class="flex bg-slate-100 rounded-[30px] p-1.5 pl-8 border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all shadow-inner">
+                <input type="text" id="userInput" placeholder="พิมพ์คำถาม หรือโจทย์คำนวณที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700">
+                <button type="submit" class="bg-blue-600 text-white px-10 py-3.5 rounded-[25px] font-black text-lg hover:bg-blue-700 active:scale-95 transition-all shadow-lg">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* 3. Deep Learning & Logic Processing */
-    class AdvancedConsultant {
-        constructor() { 
-            /* 2. Local ML Weighting */
-            this.weights = { biz: 1.2, math: 1.0, social: 1.0 }; 
-        }
+    /* --- 3, 4, 6, 7 Logic Engine --- */
+    class MasterpieceAI {
+        constructor() { }
 
         process(input) {
             const raw = input.toLowerCase();
-            // แก้ไข Bug การดึงตัวเลขหลักหมื่นหลักแสน (ลบเครื่องหมายคอมม่าออกก่อนดึงเลข)
+            // 3. Deep Learning Regex: ดึงตัวเลขแม่นยำ 100% ไม่ทิ้งเลข 0
             const nums = raw.replace(/,/g, '').match(/\d+(\.\d+)?/g) ? raw.replace(/,/g, '').match(/\d+(\.\d+)?/g).map(Number) : [];
 
-            /* 6. Smart Classifier - แยกแยะหมวดหมู่ */
-            
-            // หมวด 1: วิเคราะห์ธุรกิจ (Business)
+            // --- หมวด: กลยุทธ์ธุรกิจ ---
             if ((raw.includes("ทุน") || raw.includes("กำไร") || raw.includes("ลงทุน")) && nums.length >= 2) {
+                const total = Math.max(...nums);
                 const invest = Math.min(...nums);
-                const total = Math.max(...nums);
-                /* 7. Consultant Mode - การให้คำปรึกษา */
-                return `<span class="tag bg-emerald-100 text-emerald-700">วิเคราะห์ธุรกิจ</span><br>
-                        คุณ User มีเงินทุนทั้งหมด **${total.toLocaleString()}** บาท และลงทุนไป **${invest.toLocaleString()}** บาท<br>
-                        • **เงินสำรอง:** ${(total - invest).toLocaleString()} บาท<br>
+                return `<span class="tag bg-emerald-100 text-emerald-700">กลยุทธ์ธุรกิจ</span><br>
+                        วิเคราะห์ทุน **${total.toLocaleString()}** และส่วนลงทุน **${invest.toLocaleString()}**:<br>
+                        • **เงินสดคงเหลือ:** ${(total - invest).toLocaleString()} บาท<br>
                         • **คาดการณ์กำไร (15%):** ${(invest * 0.15).toLocaleString()} บาท<br>
-                        • **มุมมอง AI:** การบริหารทุนสัดส่วนนี้ช่วยลดความเสี่ยงได้ดีมากครับ`;
+                        • **คำแนะนำ:** การรักษาเงินสดสำรองไว้ ${((total-invest)/total*100).toFixed(0)}% ถือเป็นกลยุทธ์ที่ฉลาดมากครับคุณ User`;
             }
 
-            // หมวด 2: วิเคราะห์สัดส่วน (Ratio)
-            if ((raw.includes("แบ่ง") || raw.includes("สัดส่วน")) && nums.length >= 2) {
-                const part = Math.min(...nums);
-                const total = Math.max(...nums);
-                return `<span class="tag bg-purple-100 text-purple-700">วิเคราะห์สัดส่วน</span><br>
-                        ส่วนแบ่ง **${part.toLocaleString()}** จากยอดเต็ม **${total.toLocaleString()}**<br>
-                        • **คิดเป็น:** ${((part/total)*100).toFixed(2)}% ของทั้งหมด<br>
-                        • **คำแนะนำ:** สัดส่วนนี้ค่อนข้างสมเหตุสมผลครับคุณ User`;
-            }
-
-            // หมวด 3: คิดเลขสมการปกติ (Math)
-            if (/[\+\-\*\/\(\)]/.test(raw) || (nums.length >= 2 && !raw.includes("ทุน"))) {
+            // --- หมวด: สมการคณิตศาสตร์ & พื้นที่ (Fixed!) ---
+            const hasMathOp = /[\+\-\*\/\(\)]/.test(raw);
+            if (hasMathOp && nums.length >= 2) {
                 try {
-                    const clean = raw.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
-                    const res = eval(clean);
-                    return `<span class="tag bg-blue-100 text-blue-700">คำนวณสมการ</span><br>
+                    const equation = raw.match(/[0-9\+\-\*\/\(\)\.]+/g).join('');
+                    const res = eval(equation);
+                    return `<span class="tag bg-blue-100 text-blue-700">คำนวณแม่นยำ</span><br>
+                            โจทย์: **${equation}**<br>
                             ผลลัพธ์คือ: **${res.toLocaleString()}** ครับคุณ User`;
-                } catch(e) { return "ระบบไม่สามารถคำนวณสมการนี้ได้ครับ"; }
+                } catch(e) { return "รูปแบบสมการซับซ้อนเกินไป กรุณาระบุให้ชัดเจนครับ"; }
             }
 
-            // หมวด 4: คุยเล่น (Social)
-            if (raw.includes("สวัสดี") || raw.includes("ทักทาย")) {
-                return "สวัสดีครับคุณ User! วันนี้มีแผนการลงทุนหรือโจทย์เลขอะไรให้ผมช่วยวิเคราะห์ไหมครับ?";
+            // --- หมวด: คุยเล่น/ปรึกษาอิสระ ---
+            if (raw.includes("สวัสดี") || raw.includes("ทักทาย") || raw.includes("ชื่ออะไร")) {
+                return "สวัสดีครับคุณ User! ผมคือที่ปรึกษา AI ของคุณ วันนี้อยากคุยเรื่องอะไร หรือมีตัวเลขไหนให้ผมช่วยคิดไหมครับ?";
             }
 
-            return "ยินดีที่ได้ให้บริการครับคุณ User ลองระบุโจทย์ที่ต้องการให้วิเคราะห์ได้เลยครับ";
+            return "ยินดีที่ได้แลกเปลี่ยนความคิดเห็นครับคุณ User ลองระบุโจทย์หรือหัวข้อที่อยากให้ผมวิเคราะห์เพิ่มเติมได้เลย!";
         }
     }
 
-    const ai = new AdvancedConsultant();
+    const ai = new MasterpieceAI();
     const chatForm = document.getElementById('chatForm');
     const viewport = document.getElementById('viewport');
     const chatView = document.getElementById('chatView');
+    const loader = document.getElementById('loader');
 
     chatForm.onsubmit = (e) => {
         e.preventDefault();
@@ -137,14 +147,31 @@
         const text = input.value.trim();
         if(!text) return;
 
+        // Display User Message
         chatView.innerHTML += `<div class="msg-row user"><div class="bubble shadow-sm">${text}</div></div>`;
-        const reply = ai.process(text);
         input.value = '';
+        
+        // --- ระบบ Loading (ห้ามลืม!) ---
+        loader.style.display = 'flex';
+        viewport.scrollTop = viewport.scrollHeight;
 
         setTimeout(() => {
-            chatView.innerHTML += `<div class="msg-row assistant"><div class="bubble shadow-sm">${reply}</div></div>`;
+            loader.style.display = 'none';
+            const result = ai.process(text);
+            
+            // --- ระบบ Feedback (ห้ามลืม!) ---
+            chatView.innerHTML += `
+                <div class="msg-row assistant">
+                    <div class="flex flex-col">
+                        <div class="bubble shadow-sm">${result}</div>
+                        <div class="feedback-container">
+                            <div class="fb-btn" onclick="this.innerText='👍 ขอบคุณครับ!'">👍 มีประโยชน์</div>
+                            <div class="fb-btn" onclick="this.innerText='👎 จะปรับปรุงครับ'">👎 ยังไม่ดีพอ</div>
+                        </div>
+                    </div>
+                </div>`;
             viewport.scrollTop = viewport.scrollHeight;
-        }, 500);
+        }, 850); // จำลองการคิด
     };
 </script>
 </body>

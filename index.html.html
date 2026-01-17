@@ -3,143 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Assistant-Pro-V.2.7 | Masterpiece Edition</title>
-    
+    <title>AI-Assistant-Pro-V.2.9 | Big Data Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-
     <style>
-        /* --- 1. Lexicon & Core Styling --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
         body { background: #020617; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        /* --- 5. UI Luxury Design --- */
         .main-card {
             background: rgba(255, 255, 255, 0.98);
             width: 95%; max-width: 1100px; height: 92vh;
             border-radius: 40px; display: flex; flex-direction: column;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.6); overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.6); position: relative; overflow: hidden;
         }
 
-        #viewport { flex: 1; overflow-y: auto; padding: 35px; scroll-behavior: smooth; background: #f8fafc; }
+        #viewport { flex: 1; overflow-y: auto; padding: 30px; scroll-behavior: smooth; background: #f8fafc; }
 
-        /* --- Chat Bubbles & Animations --- */
-        .msg-row { display: flex; width: 100%; margin-bottom: 25px; animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        /* --- 5. UI Luxury: Visible Loading Overlay --- */
+        #loadingOverlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100;
+        }
+
+        .loader-box { text-align: center; }
+        .spinner { width: 60px; height: 60px; border: 6px solid #e2e8f0; border-top: 6px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+
+        /* --- Chat Aesthetics --- */
+        .msg-row { display: flex; width: 100%; margin-bottom: 25px; animation: slideUp 0.4s ease-out; }
         .msg-row.user { justify-content: flex-end; }
+        .bubble { max-width: 80%; padding: 20px 28px; border-radius: 30px; font-size: 16px; line-height: 1.7; position: relative; }
+        .user .bubble { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; border-bottom-right-radius: 4px; box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
+        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
 
-        .bubble {
-            max-width: 80%; padding: 20px 25px; border-radius: 28px;
-            font-size: 16px; line-height: 1.6; position: relative;
-        }
-
-        .user .bubble { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border-bottom-right-radius: 4px; box-shadow: 0 10px 15px rgba(37, 99, 235, 0.2); }
-        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-
-        /* --- Loading UI --- */
-        .loader-row { display: none; align-items: center; gap: 10px; font-size: 13px; color: #64748b; font-weight: 800; margin-bottom: 20px; padding-left: 10px; }
-        .dot { width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; animation: pulse 1.2s infinite; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        /* --- Feedback UI --- */
-        .feedback-container { display: flex; gap: 8px; margin-top: 12px; }
-        .fb-btn { cursor: pointer; font-size: 11px; padding: 6px 14px; background: #f1f5f9; border-radius: 12px; font-weight: 800; color: #475569; transition: 0.2s; border: 1px solid transparent; }
+        .feedback-bar { display: flex; gap: 10px; margin-top: 12px; }
+        .fb-btn { cursor: pointer; font-size: 11px; padding: 6px 14px; background: #f1f5f9; border-radius: 12px; font-weight: 800; transition: 0.2s; border: 1px solid transparent; }
         .fb-btn:hover { background: white; border-color: #cbd5e1; transform: translateY(-2px); }
 
-        .tag { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px; margin-bottom: 10px; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em; }
+        .tag { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px; margin-bottom: 8px; display: inline-block; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        @keyframes slideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="main-card">
+        <div id="loadingOverlay">
+            <div class="loader-box">
+                <div class="spinner"></div>
+                <p class="text-blue-600 font-black text-lg animate-pulse">กำลังประมวลผล Big Data...</p>
+                <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Logic & Sentiment Analysis</p>
+            </div>
+        </div>
+
         <header class="px-10 py-6 border-b bg-white flex justify-between items-center">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">V2.7</div>
+                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">V2.9</div>
                 <div>
-                    <h1 class="text-xl font-black text-slate-900 tracking-tight">AI-Consultant-Pro</h1>
-                    <div class="flex items-center gap-2">
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Masterpiece Core Active</p>
-                    </div>
+                    <h1 class="text-xl font-black text-slate-900">AI-Assistant-Pro</h1>
+                    <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Enhanced Data Expansion</p>
                 </div>
             </div>
         </header>
 
         <main id="viewport">
             <div id="chatView" class="flex flex-col">
-                <div class="msg-row assistant">
-                    <div class="bubble">
-                        สวัสดีครับคุณ User ยินดีที่ได้ให้บริการครับ<br>
-                        ผมคือ AI ที่ปรึกษาที่เก่งเรื่องการคำนวณและพร้อมคุยเล่นกับคุณในทุกๆ เรื่องครับ
-                    </div>
-                </div>
-            </div>
-            
-            <div id="loader" class="loader-row">
-                <div class="flex gap-1"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-                <span>ระบบกำลังใช้ตรรกะประมวลผล...</span>
+                <div class="msg-row assistant"><div class="bubble">สวัสดีครับคุณ User ผมอัปเกรดฐานข้อมูลใหม่แล้ว พร้อมพูดคุยและวิเคราะห์ทุกเรื่องที่คุณสนใจครับ!</div></div>
             </div>
         </main>
 
         <footer class="p-8 bg-white border-t">
-            <form id="chatForm" class="flex bg-slate-100 rounded-[30px] p-1.5 pl-8 border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all shadow-inner">
-                <input type="text" id="userInput" placeholder="พิมพ์คำถาม หรือโจทย์คำนวณที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700">
-                <button type="submit" class="bg-blue-600 text-white px-10 py-3.5 rounded-[25px] font-black text-lg hover:bg-blue-700 active:scale-95 transition-all shadow-lg">วิเคราะห์</button>
+            <form id="chatForm" class="flex bg-slate-100 rounded-full p-1 pl-8 border-2 border-transparent focus-within:border-blue-500 transition-all shadow-inner">
+                <input type="text" id="userInput" placeholder="พิมพ์คุยเรื่องอะไรก็ได้ หรือโจทย์คำนวณ..." class="flex-1 bg-transparent outline-none font-bold text-slate-700">
+                <button type="submit" class="bg-blue-600 text-white px-10 py-3.5 rounded-full font-black text-lg hover:bg-blue-700 transition-all">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* --- 3, 4, 6, 7 Logic Engine --- */
-    class MasterpieceAI {
-        constructor() { }
-
+    /* --- Big Data Engine --- */
+    class BigDataAI {
         process(input) {
             const raw = input.toLowerCase();
-            // 3. Deep Learning Regex: ดึงตัวเลขแม่นยำ 100% ไม่ทิ้งเลข 0
             const nums = raw.replace(/,/g, '').match(/\d+(\.\d+)?/g) ? raw.replace(/,/g, '').match(/\d+(\.\d+)?/g).map(Number) : [];
 
-            // --- หมวด: กลยุทธ์ธุรกิจ ---
+            // 1. Business & Calculation (7. คุณสมบัติเด่น)
             if ((raw.includes("ทุน") || raw.includes("กำไร") || raw.includes("ลงทุน")) && nums.length >= 2) {
-                const total = Math.max(...nums);
-                const invest = Math.min(...nums);
-                return `<span class="tag bg-emerald-100 text-emerald-700">กลยุทธ์ธุรกิจ</span><br>
-                        วิเคราะห์ทุน **${total.toLocaleString()}** และส่วนลงทุน **${invest.toLocaleString()}**:<br>
-                        • **เงินสดคงเหลือ:** ${(total - invest).toLocaleString()} บาท<br>
-                        • **คาดการณ์กำไร (15%):** ${(invest * 0.15).toLocaleString()} บาท<br>
-                        • **คำแนะนำ:** การรักษาเงินสดสำรองไว้ ${((total-invest)/total*100).toFixed(0)}% ถือเป็นกลยุทธ์ที่ฉลาดมากครับคุณ User`;
+                const invest = Math.min(...nums); const total = Math.max(...nums);
+                return `<span class="tag bg-emerald-100 text-emerald-700">ธุรกิจและการเงิน</span><br>วิเคราะห์ทุน **${total.toLocaleString()}** และส่วนลงทุน **${invest.toLocaleString()}**<br>• เงินสำรอง: ${(total-invest).toLocaleString()} บาท<br>• คาดการณ์กำไร (15%): ${(invest*0.15).toLocaleString()} บาท<br>• คำแนะนำ: สัดส่วนการลงทุนนี้มีความเสี่ยงต่ำและยั่งยืนครับคุณ User`;
             }
 
-            // --- หมวด: สมการคณิตศาสตร์ & พื้นที่ (Fixed!) ---
-            const hasMathOp = /[\+\-\*\/\(\)]/.test(raw);
-            if (hasMathOp && nums.length >= 2) {
+            // 2. Math & Area Calculation
+            if (/[\+\-\*\/\(\)]/.test(raw) && nums.length >= 2) {
                 try {
-                    const equation = raw.match(/[0-9\+\-\*\/\(\)\.]+/g).join('');
-                    const res = eval(equation);
-                    return `<span class="tag bg-blue-100 text-blue-700">คำนวณแม่นยำ</span><br>
-                            โจทย์: **${equation}**<br>
-                            ผลลัพธ์คือ: **${res.toLocaleString()}** ครับคุณ User`;
-                } catch(e) { return "รูปแบบสมการซับซ้อนเกินไป กรุณาระบุให้ชัดเจนครับ"; }
+                    const eq = raw.match(/[0-9\+\-\*\/\(\)\.]+/g).join('');
+                    return `<span class="tag bg-blue-100 text-blue-700">คำนวณแม่นยำ</span><br>ผลลัพธ์ของ **${eq}** คือ **${eval(eq).toLocaleString()}** ครับคุณ User`;
+                } catch(e) { return "รูปแบบการคำนวณไม่ถูกต้อง กรุณาระบุให้ชัดเจนครับ"; }
             }
 
-            // --- หมวด: คุยเล่น/ปรึกษาอิสระ ---
-            if (raw.includes("สวัสดี") || raw.includes("ทักทาย") || raw.includes("ชื่ออะไร")) {
-                return "สวัสดีครับคุณ User! ผมคือที่ปรึกษา AI ของคุณ วันนี้อยากคุยเรื่องอะไร หรือมีตัวเลขไหนให้ผมช่วยคิดไหมครับ?";
-            }
+            // 3. Social & Life Big Data (ขยายส่วนพูดคุยอิสระ)
+            if (raw.includes("เบื่อ") || raw.includes("เหงา")) return `<span class="tag bg-rose-100 text-rose-700">ที่ปรึกษาชีวิต</span><br>ความรู้สึกเบื่อเกิดขึ้นได้ครับคุณ User ลองพักสายตาจากหน้าจอ 5 นาที หรือหาเครื่องดื่มเย็นๆ สักแก้วอาจจะช่วยให้สดชื่นขึ้นนะครับ ผมพร้อมคุยเป็นเพื่อนเสมอ!`;
+            
+            if (raw.includes("ทำอะไรได้บ้าง") || raw.includes("แนะนำตัว")) return `<span class="tag bg-slate-100 text-slate-700">ข้อมูลระบบ</span><br>ผมสามารถช่วยคุณ User ได้ทั้งการวางแผนการเงิน, คิดเลขเร็ว, วิเคราะห์สัดส่วนพื้นที่, หรือแม้แต่คุยเล่นเรื่องสัพเพเหระครับ ลองถามเกี่ยวกับ "ดาวอังคาร" หรือ "วิธีประหยัดเงิน" ดูก็ได้นะ!`;
 
-            return "ยินดีที่ได้แลกเปลี่ยนความคิดเห็นครับคุณ User ลองระบุโจทย์หรือหัวข้อที่อยากให้ผมวิเคราะห์เพิ่มเติมได้เลย!";
+            if (raw.includes("เรียน") || raw.includes("ความรู้")) return `<span class="tag bg-amber-100 text-amber-700">การศึกษา</span><br>การเรียนรู้ไม่มีที่สิ้นสุดครับคุณ User การอ่านวันละ 10 นาที ก็เพียงพอที่จะสร้างความเปลี่ยนแปลงที่ยิ่งใหญ่ได้ในอนาคตครับ`;
+
+            if (raw.includes("สุขภาพ") || raw.includes("ห่วง")) return `<span class="tag bg-cyan-100 text-cyan-700">สุขภาพ</span><br>อย่าลืมดื่มน้ำให้เพียงพอและนอนหลับให้ครบ 7-8 ชั่วโมงนะครับคุณ User สุขภาพคือการลงทุนที่คุ้มค่าที่สุดครับ`;
+
+            // 4. General Response
+            if (raw.includes("สวัสดี") || raw.includes("ไฮ")) return "สวัสดีครับคุณ User! วันนี้มีแผนการลงทุนหรือเรื่องราวดีๆ อะไรอยากแชร์ให้ผมฟังไหมครับ?";
+            
+            return "เป็นหัวข้อที่น่าสนใจมากครับคุณ User มีรายละเอียดอื่นที่อยากให้ผมช่วยวิเคราะห์เพิ่มเติมไหมครับ?";
         }
     }
 
-    const ai = new MasterpieceAI();
+    const ai = new BigDataAI();
     const chatForm = document.getElementById('chatForm');
     const viewport = document.getElementById('viewport');
     const chatView = document.getElementById('chatView');
-    const loader = document.getElementById('loader');
+    const overlay = document.getElementById('loadingOverlay');
 
     chatForm.onsubmit = (e) => {
         e.preventDefault();
@@ -147,31 +131,28 @@
         const text = input.value.trim();
         if(!text) return;
 
-        // Display User Message
-        chatView.innerHTML += `<div class="msg-row user"><div class="bubble shadow-sm">${text}</div></div>`;
+        chatView.innerHTML += `<div class="msg-row user"><div class="bubble">${text}</div></div>`;
         input.value = '';
         
-        // --- ระบบ Loading (ห้ามลืม!) ---
-        loader.style.display = 'flex';
+        // --- 7. คุณสมบัติ: Loading Overlay ---
+        overlay.style.display = 'flex';
         viewport.scrollTop = viewport.scrollHeight;
 
         setTimeout(() => {
-            loader.style.display = 'none';
-            const result = ai.process(text);
-            
-            // --- ระบบ Feedback (ห้ามลืม!) ---
+            overlay.style.display = 'none';
+            const res = ai.process(text);
             chatView.innerHTML += `
                 <div class="msg-row assistant">
                     <div class="flex flex-col">
-                        <div class="bubble shadow-sm">${result}</div>
-                        <div class="feedback-container">
-                            <div class="fb-btn" onclick="this.innerText='👍 ขอบคุณครับ!'">👍 มีประโยชน์</div>
-                            <div class="fb-btn" onclick="this.innerText='👎 จะปรับปรุงครับ'">👎 ยังไม่ดีพอ</div>
+                        <div class="bubble shadow-sm">${res}</div>
+                        <div class="feedback-bar">
+                            <div class="fb-btn" onclick="this.innerText='ขอบคุณครับ!'">👍 มีประโยชน์</div>
+                            <div class="fb-btn" onclick="this.innerText='จะพัฒนาต่อครับ'">👎 ยังไม่ดีพอ</div>
                         </div>
                     </div>
                 </div>`;
             viewport.scrollTop = viewport.scrollHeight;
-        }, 850); // จำลองการคิด
+        }, 1000); // จำลองการเข้าถึงฐานข้อมูล Big Data
     };
 </script>
 </body>

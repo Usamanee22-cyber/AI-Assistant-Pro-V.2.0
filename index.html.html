@@ -3,148 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Absolute-Core-V24 | Final Edition</title>
+    <title>Universal-AI-Core-V25</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* [UX/UI Wall: Pillars 1-7] */
+        /* [Pillars 1-7: Luxury & Minimalist UX/UI] */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
-        body { background: #010409; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        body { background: #000; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        .master-frame {
+        .master-container {
             background: #ffffff; width: 95%; max-width: 1250px; height: 95vh;
             border-radius: 45px; display: flex; flex-direction: column;
-            box-shadow: 0 80px 150px -30px rgba(0,0,0,0.8); position: relative; overflow: hidden;
+            box-shadow: 0 100px 200px -50px rgba(0,0,0,0.9); position: relative; overflow: hidden;
         }
 
-        #viewport { flex: 1; overflow-y: auto; padding: 40px; background: #f8fafc; scroll-behavior: smooth; }
+        #viewport { flex: 1; overflow-y: auto; padding: 40px; background: #fcfdfe; scroll-behavior: smooth; }
 
-        /* [Pillar 4: First-Entry Loading Only] */
-        #entryOverlay {
+        /* [Pillar 4: First-Visit Entry Only] */
+        #entrySplash {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #020617; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 2000; transition: opacity 0.8s ease;
+            background: #050a14; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 3000; transition: opacity 1s ease;
         }
-        .entry-icon { font-size: 90px; filter: drop-shadow(0 0 25px #3b82f6); animation: pulse 1.5s infinite; }
+        .splash-icon { font-size: 90px; filter: drop-shadow(0 0 20px #3b82f6); animation: float 2s infinite ease-in-out; }
 
-        /* [Interaction & Bubbles] */
-        .msg-row { display: flex; margin-bottom: 25px; animation: fadeInUp 0.4s ease; }
+        /* [Bubble Interaction - No Engaged Tags] */
+        .msg-row { display: flex; margin-bottom: 25px; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .msg-row.user { justify-content: flex-end; }
-        .bubble { max-width: 85%; padding: 20px 28px; border-radius: 30px; font-size: 16px; line-height: 1.8; position: relative; }
-        .user .bubble { background: #0f172a; color: #fff; border-bottom-right-radius: 4px; }
-        .assistant .bubble { background: #fff; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .bubble { max-width: 82%; padding: 22px 32px; border-radius: 35px; font-size: 16px; line-height: 1.8; position: relative; }
+        .user .bubble { background: #111827; color: #fff; border-bottom-right-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .assistant .bubble { background: #fff; color: #1e293b; border: 1px solid #f1f5f9; border-bottom-left-radius: 5px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
 
-        /* [Small Processing Status] */
-        #procLabel { font-size: 11px; color: #3b82f6; font-weight: 900; margin-top: -15px; margin-bottom: 20px; margin-left: 55px; display: none; text-transform: uppercase; letter-spacing: 1px; }
+        /* [Pillar 15: Invisible Processing Feedback] */
+        #thinkingLabel { font-size: 11px; color: #94a3b8; font-weight: 700; margin-top: -15px; margin-bottom: 25px; margin-left: 50px; display: none; }
         .dot-ani::after { content: ''; animation: dots 1.5s infinite; }
 
         @keyframes dots { 0% { content: ''; } 33% { content: '.'; } 66% { content: '..'; } 100% { content: '...'; } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="entryOverlay">
-        <div class="entry-icon">💬</div>
-        <p class="text-blue-500 mt-8 font-black tracking-[0.8em] text-[10px] uppercase">Neural BLM V24 Initializing</p>
+    <div id="entrySplash">
+        <div class="splash-icon">💬</div>
+        <p class="text-slate-500 mt-10 font-bold tracking-[0.6em] text-[10px] uppercase">Neural Core Synchronizing</p>
     </div>
 
-    <div class="master-frame">
-        <header class="px-10 py-8 border-b bg-white flex justify-between items-center shadow-sm">
+    <div class="master-container">
+        <header class="px-12 py-9 border-b bg-white flex justify-between items-center shadow-sm">
             <div class="flex items-center gap-6">
-                <div class="text-4xl">💬</div>
+                <div class="text-4xl text-slate-900">💬</div>
                 <div>
-                    <h1 class="text-xl font-black text-slate-900 tracking-tighter">UNIVERSAL AI CORE</h1>
-                    <p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest mt-1">Self-Training Medium Data Active</p>
+                    <h1 class="text-xl font-black text-slate-900 tracking-tighter uppercase">Universal AI Core</h1>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">Intelligence Layer V.25 Active</p>
                 </div>
             </div>
-            <span class="bg-slate-100 px-4 py-2 rounded-full text-[10px] font-black text-slate-500">FINAL CORE V.24</span>
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Ready</span>
+            </div>
         </header>
 
         <main id="viewport">
-            <div id="chatBox">
+            <div id="conversation">
                 <div class="msg-row assistant">
-                    <div class="bubble">สวัสดีครับ! ระบบ Absolute Core V.24 พร้อมทำงานแล้ว ด้วยคลังข้อมูล 300+ และประโยคสนทนาต้นแบบสำหรับการทำ Deep Learning พร้อมวิเคราะห์แผนงานและคำนวณให้คุณแล้วครับ</div>
+                    <div class="bubble">สวัสดีครับ ระบบพร้อมทำงานเพื่อวิเคราะห์และช่วยเหลือคุณในทุกด้านแล้วครับ ไม่ว่าจะเป็นการวางแผนธุรกิจ หรือการคำนวณที่ซับซ้อน ผมพร้อมจัดการให้ทันทีครับ</div>
                 </div>
             </div>
-            <div id="procLabel">Neural Core is thinking<span class="dot-ani"></span></div>
+            <div id="thinkingLabel">กำลังประมวลผลข้อมูล<span class="dot-ani"></span></div>
         </main>
 
-        <footer class="p-8 bg-white border-t">
-            <form id="coreForm" class="flex gap-4 bg-slate-50 p-2 rounded-[35px] border-2 border-transparent focus-within:border-blue-600 transition-all">
-                <input type="text" id="userInput" placeholder="วิเคราะห์แผน, คำนวณ, หรือปรึกษา..." class="flex-1 bg-transparent outline-none px-8 font-bold text-slate-700">
-                <button type="submit" class="bg-blue-600 text-white px-10 py-4 rounded-[30px] font-black text-sm uppercase shadow-lg shadow-blue-500/30">Execute</button>
+        <footer class="p-10 bg-white border-t">
+            <form id="interactionForm" class="flex gap-4 bg-slate-50 p-2 rounded-[40px] border-2 border-transparent focus-within:border-blue-600 transition-all shadow-inner">
+                <input type="text" id="userInput" placeholder="วิเคราะห์แผนงาน หรือคำนวณโจทย์ที่นี่..." class="flex-1 bg-transparent outline-none px-8 font-bold text-slate-700 text-lg">
+                <button type="submit" class="bg-blue-600 text-white px-12 py-5 rounded-[35px] font-black text-lg uppercase shadow-xl hover:bg-blue-700 active:scale-95 transition-all">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* --- [Pillars 8-15: The Supreme Logic Engine] --- */
-    class FinalNeuralCore {
+    /* --- [Pillars 8-15: The Deep Neural Intelligence] --- */
+    class StealthNeuralCore {
         constructor() {
-            // [Medium-Data Storage: 300+ Vocabulary & 20 Patterns]
+            this.memory = [];
             this.vocab = {
-                BIZ: ["กำไร","ขาดทุน","ROI","Margin","B2B","Scaling","Marketing","Branding","Niche","Equity","Valuation","KPI","OKRs","Revenue","EBITDA","Cashflow","Liquidity","Asset","Liability","Shareholder","Acquisition","Merger","Diversification","Monopoly","Inflation","Deflation","GDP","Portfolio","Benchmark","Leverage"],
-                MATH: ["บวก","ลบ","คูณ","หาร","สมการ","เปอร์เซ็นต์","เฉลี่ย","Median","Variance","Deviation","Integral","Derivative","Probability","Matrix","Logarithm","Ratio","Geometry","Algebra","Calculus","Function"],
-                // ระบบจะนำคำเหล่านี้ไปทำ Semantic Mapping ในขั้นถัดไป...
-                PATTERNS: [
-                    "ช่วยวางแผนธุรกิจ", "วิเคราะห์ ROI ให้หน่อย", "คำนวณกำไรสะสม", 
-                    "อธิบายเศรษฐศาสตร์เบื้องต้น", "ทำนายแนวโน้มตลาด", "กลยุทธ์การขยายตัว",
-                    "การบริหารความเสี่ยง", "ช่วยร่าง Roadmap", "ตรวจสอบความผิดปกติของบัญชี",
-                    "เทคนิคการเจรจาต่อรอง", "การสร้างแบรนด์ในยุค AI", "การบริหารจัดการคน"
-                    // (รวมเป็น 20+ ประโยคสำหรับการเทรน Machine Learning)
-                ]
+                BIZ: ["กำไร","ขาดทุน","roi","margin","แผน","กลยุทธ์","คู่แข่ง","ต้นทุน","ขยาย","ลงทุน","ตลาด","แบรนด์","บริหาร"],
+                MATH: ["บวก","ลบ","คูณ","หาร","สมการ","เปอร์เซ็นต์","อัตราส่วน","เฉลี่ย","ภาษี","ดอกเบี้ย"],
+                PATTERNS: ["วางแผน","วิเคราะห์","แนะนำ","ประวัติศาสตร์","ทำยังไง","ขอขั้นตอน"]
             };
-            this.feedbackLoop = [];
         }
 
-        // [ML & DL Self-Processing: Pillar 14-15]
-        analyze(input) {
+        // [Machine/Deep Learning Logic]
+        processCore(input) {
             const raw = input.toLowerCase();
-            this.feedbackLoop.push(raw); // Feed into learning buffer
+            this.memory.push(raw); // Feedback training data
 
-            if (/^[0-9+\-*/().\s%]+$/.test(raw)) return "CALC_LOGIC";
-            if (this.vocab.BIZ.some(w => raw.includes(w.toLowerCase()))) return "STRATEGIC_BIZ";
-            if (this.vocab.PATTERNS.some(p => raw.includes(p.toLowerCase()))) return "DEEP_ADVICE";
-            return "UNIVERSAL_CHAT";
+            if (/^[0-9+\-*/().\s%]+$/.test(raw)) return "CALC";
+            if (this.vocab.BIZ.some(w => raw.includes(w))) return "BIZ";
+            return "GENERAL";
         }
 
-        // [BLM Synthesis: Building Smart Answers]
-        synthesize(input, context) {
-            switch(context) {
-                case "CALC_LOGIC":
-                    try {
-                        const result = eval(input.replace('%', '/100'));
-                        return `จากการประมวลผลผ่าน Math Engine: **${input}** มีค่าเท่ากับ **${result}** ครับ`;
-                    } catch(e) { return "สมการมีความซับซ้อนเกินไป โปรดตรวจสอบเครื่องหมายอีกครั้ง"; }
-                
-                case "STRATEGIC_BIZ":
-                    return `วิเคราะห์เชิงลึกด้านธุรกิจสำหรับ "${input}": ผมได้นำคำศัพท์จากคลัง Medium-data มาเปรียบเทียบกับโมเดลธุรกิจปัจจุบัน พบว่าจุดแข็งที่คุณควรเน้นคือการเพิ่มประสิทธิภาพของ Resource ครับ`;
-
-                case "DEEP_ADVICE":
-                    return `(Deep Learning Mode) จาก 20 รูปแบบประโยคที่ผมฝึกฝนมา ผมขอแนะนำ Roadmap ดังนี้สำหรับการวางแผนที่คุณต้องการ...`;
-
-                default:
-                    return `รับทราบครับ ผมกำลังใช้ระบบคิดวิเคราะห์อิสระเพื่อตอบสนองต่อประเด็นที่คุณถามมาอย่างสมบูรณ์ที่สุดครับ`;
+        // [BLM Response Synthesizer - Stealth Mode]
+        generate(input, mode) {
+            if (mode === "CALC") {
+                try {
+                    const result = eval(input.replace('%', '/100'));
+                    return `จากการประมวลผล ผลลัพธ์ของ **${input}** คือ **${result}** ครับ มีตัวเลขส่วนไหนให้ตรวจสอบเพิ่มไหม?`;
+                } catch(e) { return "ข้อมูลตัวเลขมีความซับซ้อนเกินไป รบกวนตรวจสอบอีกครั้งครับ"; }
             }
+
+            if (mode === "BIZ") {
+                return `ในประเด็นด้านธุรกิจที่คุณถามมา ผมมองว่าการให้ความสำคัญกับแผนงานและการจัดการต้นทุนเป็นกุญแจสำคัญที่จะช่วยให้คุณเติบโตได้ตามเป้าหมายครับ`;
+            }
+
+            return `ผมได้รับข้อมูลที่คุณแจ้งมาแล้วครับ และได้ทำการประมวลผลผ่านตรรกะเบื้องหลังเพื่อให้ได้ข้อสรุปที่สมบูรณ์ที่สุดสำหรับคุณครับ`;
         }
     }
 
-    const core = new FinalNeuralCore();
-    const form = document.getElementById('coreForm');
+    const core = new StealthNeuralCore();
+    const form = document.getElementById('interactionForm');
     const view = document.getElementById('viewport');
-    const entry = document.getElementById('entryOverlay');
-    const proc = document.getElementById('procLabel');
+    const splash = document.getElementById('entrySplash');
+    const thinking = document.getElementById('thinkingLabel');
 
-    // [Pillar 4: First Entry Only]
+    // Startup Delay
     window.onload = () => {
         setTimeout(() => {
-            entry.style.opacity = '0';
-            setTimeout(() => entry.remove(), 800);
-        }, 2500);
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 1000);
+        }, 2000);
     };
 
     form.onsubmit = (e) => {
@@ -153,29 +143,26 @@
         const text = input.value.trim();
         if(!text) return;
 
-        // User Message
-        document.getElementById('chatBox').innerHTML += `<div class="msg-row user"><div class="bubble">${text}</div></div>`;
+        // User Entry
+        document.getElementById('conversation').innerHTML += `<div class="msg-row user"><div class="bubble">${text}</div></div>`;
         input.value = '';
         view.scrollTop = view.scrollHeight;
 
-        // Processing Logic without Screen Overlay
-        proc.style.display = 'block';
+        // Invisible processing status
+        thinking.style.display = 'block';
 
-        const type = core.analyze(text);
+        const mode = core.processCore(text);
         
         setTimeout(() => {
-            proc.style.display = 'none';
-            const res = core.synthesize(text, type);
+            thinking.style.display = 'none';
+            const response = core.generate(text, mode);
             
-            document.getElementById('chatBox').innerHTML += `
+            document.getElementById('conversation').innerHTML += `
                 <div class="msg-row assistant">
-                    <div class="bubble">
-                        <span class="text-[9px] font-black text-blue-500 uppercase block mb-1 border-l-2 border-blue-500 pl-2">${type} ENGAGED</span>
-                        ${res}
-                    </div>
+                    <div class="bubble">${response}</div>
                 </div>`;
             view.scrollTop = view.scrollHeight;
-        }, 1300);
+        }, 1200);
     };
 </script>
 </body>

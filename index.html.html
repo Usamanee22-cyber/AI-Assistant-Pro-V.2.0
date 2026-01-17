@@ -3,148 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Assistant-Pro-V.3.3 | Supreme Logic</title>
+    <title>AI-Assistant-Pro-V.4.0 | Supreme Architecture</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* [1. Base Styles] */
+        /* --- [1] Global Design (เรียบแต่โก้) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
         body { background: #020617; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        /* [2. Layout Structure] */
         .main-card {
-            background: rgba(255, 255, 255, 0.98);
+            background: #ffffff;
             width: 95%; max-width: 1100px; height: 92vh;
             border-radius: 40px; display: flex; flex-direction: column;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.7); position: relative; overflow: hidden;
         }
 
-        #viewport { flex: 1; overflow-y: auto; padding: 35px; scroll-behavior: smooth; background: #f8fafc; }
+        #viewport { flex: 1; overflow-y: auto; padding: 40px; background: #fcfdfe; scroll-behavior: smooth; }
 
-        /* [3. Cinema Loading Overlay - ตรวจสอบที่นี่!] */
+        /* --- [2] Cinema Loading x2 (Blurred Motion) --- */
         #loadingOverlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.92); backdrop-filter: blur(20px);
+            background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(20px);
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 1000;
+            z-index: 1000; transition: all 0.5s ease;
+        }
+        .loader-ring {
+            width: 80px; height: 80px; border: 2px solid rgba(59, 130, 246, 0.1);
+            border-radius: 50%; border-top: 2px solid #3b82f6;
+            animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
         }
 
-        .orbit-spinner {
-            width: 80px; height: 80px; border-radius: 50%;
-            perspective: 800px; margin-bottom: 30px; position: relative;
-        }
-
-        .orbit {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%;
-            border-bottom: 5px solid #3b82f6; animation: rotate 1.2s linear infinite;
-        }
-
-        .orbit:nth-child(2) { border-right: 5px solid #60a5fa; animation: rotate-reverse 1s linear infinite; }
-
-        /* [4. Message Aesthetics] */
-        .msg-row { display: flex; width: 100%; margin-bottom: 28px; animation: slideUp 0.5s ease; }
+        /* --- [3] Modern Chat Bubbles --- */
+        .msg-row { display: flex; margin-bottom: 30px; animation: slideUp 0.5s ease-out; }
         .msg-row.user { justify-content: flex-end; }
         
-        .bubble { max-width: 80%; padding: 22px 30px; border-radius: 32px; font-size: 16px; line-height: 1.8; }
-        .user .bubble { background: linear-gradient(135deg, #2563eb, #1e40af); color: white; border-bottom-right-radius: 4px; }
-        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .bubble { 
+            max-width: 75%; padding: 20px 28px; border-radius: 30px; 
+            font-size: 16px; line-height: 1.7; position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+        .user .bubble { background: #2563eb; color: #ffffff; border-bottom-right-radius: 4px; }
+        .assistant .bubble { background: #ffffff; color: #1e293b; border: 1px solid #f1f5f9; border-bottom-left-radius: 4px; }
 
-        .tag { font-size: 10px; font-weight: 900; padding: 4px 12px; border-radius: 8px; margin-bottom: 12px; display: inline-block; text-transform: uppercase; letter-spacing: 0.1em; }
-        .feedback-bar { display: flex; gap: 12px; margin-top: 18px; }
-        .fb-btn { cursor: pointer; font-size: 11px; padding: 7px 16px; background: #f1f5f9; border-radius: 12px; font-weight: 800; transition: 0.2s; border: 1px solid transparent; }
-        .fb-btn:hover { background: white; border-color: #cbd5e1; transform: translateY(-2px); }
-
-        /* [5. Animations Keyframes] */
-        @keyframes rotate { from { transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg); } to { transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg); } }
-        @keyframes rotate-reverse { from { transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg); } to { transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- Animations --- */
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="main-card">
-        
         <div id="loadingOverlay">
-            <div class="orbit-spinner"><div class="orbit"></div><div class="orbit"></div></div>
-            <div class="text-center text-white">
-                <p class="text-3xl font-black mb-2 tracking-tighter">SUPREME LOGIC</p>
-                <p class="text-blue-400 font-bold animate-pulse tracking-[0.4em] uppercase text-[10px]">Deep Analysis in Progress...</p>
-            </div>
+            <div class="loader-ring"></div>
+            <p id="loadingStatus" class="text-blue-400 mt-6 font-bold tracking-[0.3em] uppercase text-[10px] animate-pulse">Accessing Big Data Core...</p>
         </div>
 
-        <header class="px-10 py-7 border-b bg-white flex justify-between items-center">
+        <header class="px-10 py-8 border-b flex justify-between items-center bg-white">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-600/20">V3.3</div>
+                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-xl shadow-blue-500/20">V4</div>
                 <div>
-                    <h1 class="text-xl font-black text-slate-900">AI-Consultant-Pro</h1>
-                    <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Supreme Big Data Core</p>
+                    <h1 class="text-xl font-black text-slate-900 tracking-tight">AI-Consultant-Pro</h1>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Supreme Intelligence Active</p>
+                    </div>
                 </div>
             </div>
         </header>
 
         <main id="viewport">
-            <div id="chatView" class="flex flex-col">
-                <div class="msg-row assistant">
-                    <div class="bubble">สวัสดีครับคุณ User ผมเข้าสู่โหมด Supreme Logic แล้ว พร้อมวิเคราะห์ทุกโจทย์ยากที่คุณต้องการครับ</div>
-                </div>
+            <div id="chatView">
+                <div class="msg-row assistant"><div class="bubble">ยินดีต้อนรับสู่ระบบ Supreme Intelligence ครับคุณ User วันนี้อยากให้ผมช่วยวิเคราะห์หรือร่วมวางแผนเรื่องไหนเป็นพิเศษไหมครับ?</div></div>
             </div>
         </main>
 
         <footer class="p-8 bg-white border-t">
-            <form id="chatForm" class="flex bg-slate-100 rounded-full p-2 pl-10 border-2 border-transparent focus-within:border-blue-500 transition-all shadow-inner">
-                <input type="text" id="userInput" placeholder="ถามโจทย์ยากๆ หรือแผนการลงทุนที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700">
-                <button type="submit" class="bg-blue-600 text-white px-12 py-4 rounded-full font-black text-lg hover:bg-blue-700 active:scale-95 transition-all">วิเคราะห์</button>
+            <form id="chatForm" class="flex gap-4 bg-slate-50 p-2 rounded-[30px] border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all shadow-inner">
+                <input type="text" id="userInput" placeholder="พิมพ์โจทย์ธุรกิจ หรือหัวข้อที่น่าสนใจ..." class="flex-1 bg-transparent outline-none px-6 font-semibold text-slate-700">
+                <button type="submit" class="bg-blue-600 text-white px-12 py-4 rounded-[25px] font-black text-lg hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-600/20">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* [6. AI Supreme Logic Engine] */
-    class SupremeAI {
+    /* --- [5] Big Data Core x2 (BLM Engine) --- */
+    class BigDataSupreme {
+        constructor() {
+            this.lexicon = {
+                strategy: ["ทุน", "กำไร", "ลงทุน", "หุ้น", "ขาย", "เงิน", "ธุรกิจ"],
+                creative: ["คุย", "เรื่อง", "ทำไม", "อะไรดี", "แนะนำ", "ไอเดีย", "คิด"],
+                knowledge: ["ทำไม", "อย่างไร", "อธิบาย", "ความรู้", "ประวัติศาสตร์", "อนาคต"]
+            };
+        }
+
         process(input) {
             const raw = input.toLowerCase();
             const nums = raw.replace(/,/g, '').match(/\d+(\.\d+)?/g) ? raw.replace(/,/g, '').match(/\d+(\.\d+)?/g).map(Number) : [];
 
-            // วิเคราะห์เรื่องยาก: ธุรกิจ & การลงทุน (Strategy)
-            if ((raw.includes("ทุน") || raw.includes("กำไร") || raw.includes("ลงทุน")) && nums.length >= 2) {
+            // ตรรกะวิเคราะห์ธุรกิจเชิงกลยุทธ์
+            if (this.lexicon.strategy.some(k => raw.includes(k)) && nums.length >= 2) {
                 const invest = Math.min(...nums); const total = Math.max(...nums);
-                const cashRate = (((total-invest)/total)*100).toFixed(1);
-                return `<span class="tag bg-emerald-100 text-emerald-700">Deep Finance Analysis</span><br>
-                        จากการวิเคราะห์พอร์ตการลงทุนของคุณ User:<br>
-                        • **กระแสเงินสดสำรอง:** ${(total-invest).toLocaleString()} บาท (คิดเป็น ${cashRate}% ของเงินทุนทั้งหมด)<br>
-                        • **ประมาณการกำไรสุทธิ (ROI 15%):** ${(invest * 0.15).toLocaleString()} บาท<br>
-                        • **ความเห็นทางตรรกะ:** สภาพคล่องของคุณอยู่ในเกณฑ์ "มั่นคงสูง" สามารถรองรับความผันผวนของตลาดได้ดีเยี่ยมครับ`;
+                const safetyRatio = ((total - invest) / total * 100).toFixed(0);
+                return `จากการพิจารณาสัดส่วนทุน **${total.toLocaleString()} บาท** และการแบ่งไปลงทุน **${invest.toLocaleString()} บาท**... <br><br> ในมุมมองที่ปรึกษา คุณ User กำลังรักษาเกราะป้องกันความเสี่ยงไว้ที่ **${safetyRatio}%** ซึ่งเป็นตัวเลขที่สะท้อนถึงความมั่นคงครับ หากเน้นการเติบโตแบบยั่งยืน สัดส่วนนี้ถือว่ายอดเยี่ยมมากครับ`;
             }
 
-            // วิเคราะห์เรื่องยาก: วิศวกรรม & พื้นที่ (Engineering Math)
-            if (raw.includes("*") || (raw.includes("พื้นที่") && nums.length >= 2)) {
+            // ตรรกะการสนทนาสร้างสรรค์
+            if (this.lexicon.creative.some(k => raw.includes(k))) {
+                const creativeIdeas = [
+                    "ลองมาเจาะลึกเรื่อง 'อนาคตของ AI ในอีก 10 ปีข้างหน้า' ไหมครับ? มันจะเปลี่ยนวิธีที่เราใช้ชีวิตไปอย่างสิ้นเชิงเลย",
+                    "ถ้าคุณ User กำลังหาไอเดียใหม่ๆ ลองคุยเรื่อง 'การสร้าง Passive Income จากทักษะที่คุณมี' ดูไหมครับ?",
+                    "วันนี้ลองเปลี่ยนบรรยากาศมาคุยเรื่อง 'ปรัชญาของการบริหารเวลา' ไหมครับ ว่าเราจะทำน้อยแต่ได้มากได้อย่างไร"
+                ];
+                return creativeIdeas[Math.floor(Math.random() * creativeIdeas.length)];
+            }
+
+            // การประมวลผลทางคณิตศาสตร์แบบลื่นไหล
+            if (/[\+\-\*\/\(\)]/.test(raw) && nums.length >= 2) {
                 try {
                     const eq = raw.match(/[0-9\+\-\*\/\(\)\.]+/g).join('');
-                    const res = eval(eq);
-                    return `<span class="tag bg-blue-100 text-blue-700">Architectural Math</span><br>
-                            การคำนวณเชิงปริมาณสำหรับโจทย์: **${eq}**<br>
-                            • **ผลลัพธ์สุทธิ:** ${res.toLocaleString()}<br>
-                            • **คำแนะนำ:** หากนี่คือการวัดพื้นที่ โปรดตรวจสอบหน่วยวัดอีกครั้งเพื่อให้ค่าคลาดเคลื่อนน้อยที่สุดครับคุณ User`;
-            } catch(e) { return "ระบบ BLM ไม่สามารถประมวลผลสมการที่ซับซ้อนนี้ได้ โปรดตรวจสอบความถูกต้องของสัญลักษณ์ครับ"; }
+                    return `ผลลัพธ์จากการคำนวณโจทย์ **${eq}** คือ **${eval(eq).toLocaleString()}** ครับคุณ User มีจุดไหนที่อยากให้วิเคราะห์เจาะจงลงไปอีกไหมครับ?`;
+                } catch(e) { return "รูปแบบโจทย์ท้าทายเกินไปครับ ลองระบุให้ชัดเจนขึ้นอีกนิดนะครับ"; }
             }
 
-            // วิเคราะห์เรื่องยาก: ปรัชญาชีวิต & การพัฒนาตนเอง (Personal Growth)
-            if (raw.includes("เป้าหมาย") || raw.includes("อนาคต") || raw.includes("ความหมาย")) {
-                return `<span class="tag bg-purple-100 text-purple-700">Philosophical BLM</span><br>
-                        การตั้งคำถามถึงความหมายหรืออนาคต แสดงถึงการพัฒนาของระบบความคิดระดับสูงครับคุณ User ในทางตรรกะ การก้าวหน้าวันละ 1% จะนำไปสู่ผลลัพธ์ที่ยิ่งใหญ่ใน 365 วันข้างหน้าเสมอครับ`;
-            }
-
-            return `วิเคราะห์ผ่าน Supreme Big Data แล้ว: เป็นคำถามที่ลึกซึ้งมากครับคุณ User ผมสามารถขยายความเรื่องนี้ให้ยาวขึ้นได้ หากคุณระบุรายละเอียดเพิ่มเติมครับ`;
+            return "เป็นหัวข้อที่น่าสนใจมากครับคุณ User ผมพร้อมจะขยายความในประเด็นนี้เพื่อให้เห็นภาพกว้างขึ้น คุณอยากเริ่มจากจุดไหนก่อนดีครับ?";
         }
     }
 
-    /* [7. Interaction Controller] */
-    const ai = new SupremeAI();
+    const ai = new BigDataSupreme();
     const chatForm = document.getElementById('chatForm');
     const viewport = document.getElementById('viewport');
-    const chatView = document.getElementById('chatView');
     const overlay = document.getElementById('loadingOverlay');
 
     chatForm.onsubmit = (e) => {
@@ -153,28 +142,28 @@
         const text = input.value.trim();
         if(!text) return;
 
-        chatView.innerHTML += `<div class="msg-row user"><div class="bubble shadow-sm">${text}</div></div>`;
+        document.getElementById('chatView').innerHTML += `<div class="msg-row user"><div class="bubble">${text}</div></div>`;
         input.value = '';
         
+        // Cinema Loading x2
         overlay.style.display = 'flex';
         viewport.scrollTop = viewport.scrollHeight;
 
-        // บังคับหน่วงเวลา 1.8 วินาทีให้เห็น Cinema Loading ที่สวยงาม
         setTimeout(() => {
             overlay.style.display = 'none';
             const res = ai.process(text);
-            chatView.innerHTML += `
+            document.getElementById('chatView').innerHTML += `
                 <div class="msg-row assistant">
                     <div class="flex flex-col">
-                        <div class="bubble shadow-sm">${res}</div>
-                        <div class="feedback-bar">
-                            <div class="fb-btn" onclick="this.innerText='👍 บันทึกเข้า Big Data แล้ว'">👍 มีประโยชน์</div>
-                            <div class="fb-btn" onclick="this.innerText='👎 ระบบจะปรับปรุงครับ'">👎 ยังไม่ดีพอ</div>
+                        <div class="bubble">${res}</div>
+                        <div class="flex gap-3 mt-4 opacity-50 hover:opacity-100 transition-all">
+                            <span class="text-[10px] font-bold cursor-pointer hover:text-blue-600">👍 ข้อมูลเป็นประโยชน์</span>
+                            <span class="text-[10px] font-bold cursor-pointer hover:text-red-600">👎 ปรับปรุงตรรกะ</span>
                         </div>
                     </div>
                 </div>`;
             viewport.scrollTop = viewport.scrollHeight;
-        }, 1800);
+        }, 1800); 
     };
 </script>
 </body>

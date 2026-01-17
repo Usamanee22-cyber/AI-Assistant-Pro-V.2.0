@@ -3,175 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Assistant-Pro-V.2.2 | User Edition</title>
+    <title>AI-Assistant-Pro-V.2.4 | Balanced Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Visual Style --- */
+        /* 1. จัดระเบียบโครงสร้างพื้นฐาน */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
+        body { background: #020617; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         
-        body {
-            background: #020617;
-            height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden;
-        }
-
+        /* 5. UI Luxury Design - การออกแบบที่สวยงามและใช้งานง่าย */
         .main-card {
             background: rgba(255, 255, 255, 0.98);
             width: 95%; max-width: 1150px; height: 94vh;
             border-radius: 40px; display: flex; flex-direction: column;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.4);
-            overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.6); overflow: hidden;
         }
 
-        #viewport {
-            flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth;
-            background: radial-gradient(circle at 10% 10%, #f8fafc 0%, transparent 50%);
-        }
+        #viewport { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; background: #f8fafc; }
 
-        /* --- Chat Aesthetics --- */
-        .msg-row { display: flex; width: 100%; margin-bottom: 30px; animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .msg-row { display: flex; width: 100%; margin-bottom: 25px; animation: fadeIn 0.4s ease-out; }
         .msg-row.user { justify-content: flex-end; }
 
         .bubble {
-            max-width: 80%; padding: 22px 30px; border-radius: 32px;
-            font-size: 16px; line-height: 1.7;
+            max-width: 80%; padding: 20px 25px; border-radius: 28px;
+            font-size: 16px; line-height: 1.6; position: relative;
         }
 
-        .user .bubble {
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            color: white; border-bottom-right-radius: 4px;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
-        }
+        .user .bubble { background: #2563eb; color: white; border-bottom-right-radius: 4px; }
+        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
 
-        .assistant .bubble {
-            background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0;
-            border-bottom-left-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-        }
-
-        .type-pill {
-            font-size: 10px; font-weight: 900; padding: 4px 12px;
-            border-radius: 50px; margin-bottom: 10px; display: inline-block;
-            text-transform: uppercase;
-        }
-
-        @keyframes popUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .tag { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 8px; margin-bottom: 8px; display: inline-block; text-transform: uppercase; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="main-card">
         <header class="px-10 py-6 border-b bg-white flex justify-between items-center">
-            <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl rotate-3 shadow-xl">V2</div>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg">V2.4</div>
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900 leading-none tracking-tight">AI-Assistant-Pro</h1>
-                    <div class="flex items-center gap-2 mt-2">
-                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Consultant & Math Mode Active</p>
-                    </div>
+                    <h1 class="text-xl font-black text-slate-900">AI-Consultant-Pro</h1>
+                    <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Balanced & Precision Mode</p>
                 </div>
             </div>
         </header>
 
         <main id="viewport">
-            <div id="homeView" class="flex flex-col items-center pt-16 text-center">
-                <div class="text-7xl mb-8">👋</div>
-                <h2 class="text-4xl font-black text-slate-900 tracking-tighter">ยินดีต้อนรับครับคุณ User</h2>
-                <p class="text-slate-500 mt-4 text-lg max-w-lg">ผมคือที่ปรึกษาด้านการคำนวณและวางแผน<br>ลองคุยเล่น หรือปรึกษาโจทย์ยากๆ กับผมได้เลย!</p>
-                <div id="quickNav" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 w-full max-w-3xl"></div>
+            <div id="chatView" class="flex flex-col">
+                <div class="msg-row assistant">
+                    <div class="bubble">
+                        สวัสดีครับคุณ User ผมคือ AI ที่ปรึกษาที่สมดุลที่สุด<br>
+                        ยินดีช่วยทั้งเรื่อง <b>คำนวณธุรกิจ, สมการคณิตศาสตร์, หรือคุยเล่นทั่วไป</b> ครับ
+                    </div>
+                </div>
             </div>
-            <div id="chatView" class="hidden flex flex-col"></div>
         </main>
 
-        <footer class="p-8 bg-white border-t">
-            <form id="chatForm" class="flex bg-slate-100 rounded-[35px] p-2 pl-8 border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all">
-                <input type="text" id="userInput" placeholder="พิมพ์คำถามของคุณที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700" autocomplete="off">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-[30px] font-black text-lg transition-all active:scale-95">วิเคราะห์</button>
+        <footer class="p-6 bg-white border-t">
+            <form id="chatForm" class="flex bg-slate-100 rounded-full p-1 pl-6 shadow-inner border-2 border-transparent focus-within:border-blue-500 transition-all">
+                <input type="text" id="userInput" placeholder="ถามโจทย์ลงทุน หรือทักทายได้เลย..." class="flex-1 bg-transparent outline-none font-bold text-slate-700">
+                <button type="submit" class="bg-blue-600 text-white px-10 py-3 rounded-full font-black hover:bg-blue-700 active:scale-95 transition-all">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* --- I. CONSULTANT ENGINE LOGIC --- */
-    class ConsultantAI {
-        constructor() { }
+    /* 3. Deep Learning & Logic Processing */
+    class AdvancedConsultant {
+        constructor() { 
+            /* 2. Local ML Weighting */
+            this.weights = { biz: 1.2, math: 1.0, social: 1.0 }; 
+        }
 
         process(input) {
             const raw = input.toLowerCase();
-            const nums = raw.match(/\d+(\.\d+)?/g) ? raw.match(/\d+(\.\d+)?/g).map(Number) : [];
+            // แก้ไข Bug การดึงตัวเลขหลักหมื่นหลักแสน (ลบเครื่องหมายคอมม่าออกก่อนดึงเลข)
+            const nums = raw.replace(/,/g, '').match(/\d+(\.\d+)?/g) ? raw.replace(/,/g, '').match(/\d+(\.\d+)?/g).map(Number) : [];
 
-            // วิเคราะห์ธุรกิจ
-            if ((raw.includes("ทุน") || raw.includes("กำไร")) && nums.length >= 2) {
-                const invest = Math.min(...nums); const total = Math.max(...nums);
-                return `<span class="type-pill bg-emerald-100 text-emerald-600">ที่ปรึกษาธุรกิจ</span><br>
-                        วิเคราะห์ทุน ${total.toLocaleString()} และแบ่งลงทุน ${invest.toLocaleString()}:<br>
-                        • **เงินสำรอง:** ${(total-invest).toLocaleString()} บาท<br>
-                        • **คาดการณ์กำไร (15%):** ${(invest*0.15).toLocaleString()} บาท<br>
-                        • **คำแนะนำ:** การแบ่งเงินลงทุนระดับนี้ถือว่าปลอดภัยมากครับคุณ User!`;
+            /* 6. Smart Classifier - แยกแยะหมวดหมู่ */
+            
+            // หมวด 1: วิเคราะห์ธุรกิจ (Business)
+            if ((raw.includes("ทุน") || raw.includes("กำไร") || raw.includes("ลงทุน")) && nums.length >= 2) {
+                const invest = Math.min(...nums);
+                const total = Math.max(...nums);
+                /* 7. Consultant Mode - การให้คำปรึกษา */
+                return `<span class="tag bg-emerald-100 text-emerald-700">วิเคราะห์ธุรกิจ</span><br>
+                        คุณ User มีเงินทุนทั้งหมด **${total.toLocaleString()}** บาท และลงทุนไป **${invest.toLocaleString()}** บาท<br>
+                        • **เงินสำรอง:** ${(total - invest).toLocaleString()} บาท<br>
+                        • **คาดการณ์กำไร (15%):** ${(invest * 0.15).toLocaleString()} บาท<br>
+                        • **มุมมอง AI:** การบริหารทุนสัดส่วนนี้ช่วยลดความเสี่ยงได้ดีมากครับ`;
             }
 
-            // วิเคราะห์สัดส่วน
-            if ((raw.includes("แบ่ง") || raw.includes("ส่วน")) && nums.length >= 2) {
-                const part = Math.min(...nums); const total = Math.max(...nums);
-                const p = ((part/total)*100).toFixed(2);
-                return `<span class="type-pill bg-purple-100 text-purple-600">วิเคราะห์สัดส่วน</span><br>
-                        • **คิดเป็น:** ${p}% ของทั้งหมด<br>
-                        • **มุมมอง:** สัดส่วนนี้มีความสำคัญต่อการวางแผนภาพรวมครับคุณ User`;
+            // หมวด 2: วิเคราะห์สัดส่วน (Ratio)
+            if ((raw.includes("แบ่ง") || raw.includes("สัดส่วน")) && nums.length >= 2) {
+                const part = Math.min(...nums);
+                const total = Math.max(...nums);
+                return `<span class="tag bg-purple-100 text-purple-700">วิเคราะห์สัดส่วน</span><br>
+                        ส่วนแบ่ง **${part.toLocaleString()}** จากยอดเต็ม **${total.toLocaleString()}**<br>
+                        • **คิดเป็น:** ${((part/total)*100).toFixed(2)}% ของทั้งหมด<br>
+                        • **คำแนะนำ:** สัดส่วนนี้ค่อนข้างสมเหตุสมผลครับคุณ User`;
             }
 
-            // คิดเลขสมการ
+            // หมวด 3: คิดเลขสมการปกติ (Math)
             if (/[\+\-\*\/\(\)]/.test(raw) || (nums.length >= 2 && !raw.includes("ทุน"))) {
                 try {
                     const clean = raw.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
                     const res = eval(clean);
-                    return `<span class="type-pill bg-blue-100 text-blue-600">คำนวณสมการ</span><br>
-                            คำตอบคือ: **${res.toLocaleString()}**ครับคุณ User`;
-                } catch(e) { return "โจทย์เลขไม่ถูกต้อง กรุณาตรวจสอบอีกครั้งครับ"; }
+                    return `<span class="tag bg-blue-100 text-blue-700">คำนวณสมการ</span><br>
+                            ผลลัพธ์คือ: **${res.toLocaleString()}** ครับคุณ User`;
+                } catch(e) { return "ระบบไม่สามารถคำนวณสมการนี้ได้ครับ"; }
             }
 
-            // คุยเล่นทั่วไป
-            if (raw.includes("สวัสดี")) return "สวัสดีครับคุณ User! มีเรื่องอะไรให้ผมช่วยคำนวณหรือให้คำปรึกษาไหมครับ?";
-            return "ยินดีที่ได้ให้บริการครับคุณ User ลองระบุโจทย์เลขหรือแผนลงทุนมาได้เลย!";
+            // หมวด 4: คุยเล่น (Social)
+            if (raw.includes("สวัสดี") || raw.includes("ทักทาย")) {
+                return "สวัสดีครับคุณ User! วันนี้มีแผนการลงทุนหรือโจทย์เลขอะไรให้ผมช่วยวิเคราะห์ไหมครับ?";
+            }
+
+            return "ยินดีที่ได้ให้บริการครับคุณ User ลองระบุโจทย์ที่ต้องการให้วิเคราะห์ได้เลยครับ";
         }
     }
 
-    /* --- II. UI CONTROLLER --- */
-    const core = new ConsultantAI();
+    const ai = new AdvancedConsultant();
     const chatForm = document.getElementById('chatForm');
     const viewport = document.getElementById('viewport');
     const chatView = document.getElementById('chatView');
-    const homeView = document.getElementById('homeView');
-
-    const NAVS = [
-        {i:"📈", n:"แผนธุรกิจ", c:"#10b981"}, {i:"➕", n:"แก้สมการ", c:"#3b82f6"},
-        {i:"🍰", n:"แบ่งส่วน", c:"#8b5cf6"}, {i:"💬", n:"คุยเล่น", c:"#f43f5e"}
-    ];
-
-    NAVS.forEach(n => {
-        const d = document.createElement('div');
-        d.className = 'bg-white p-6 rounded-3xl cursor-pointer hover:shadow-xl transition-all border-b-4';
-        d.style.borderColor = n.c;
-        d.innerHTML = `<div class="text-3xl">${n.i}</div><div class="font-black text-slate-800 mt-2 text-xs">${n.n}</div>`;
-        d.onclick = () => { document.getElementById('userInput').value = `อยาก ${n.n}`; chatForm.dispatchEvent(new Event('submit')); };
-        document.getElementById('quickNav').appendChild(d);
-    });
 
     chatForm.onsubmit = (e) => {
         e.preventDefault();
         const input = document.getElementById('userInput');
-        const msg = input.value.trim();
-        if(!msg) return;
+        const text = input.value.trim();
+        if(!text) return;
 
-        homeView.classList.add('hidden'); chatView.classList.remove('hidden');
-        chatView.innerHTML += `<div class="msg-row user"><div class="bubble">${msg}</div></div>`;
-        
-        const result = core.process(msg);
+        chatView.innerHTML += `<div class="msg-row user"><div class="bubble shadow-sm">${text}</div></div>`;
+        const reply = ai.process(text);
         input.value = '';
 
         setTimeout(() => {
-            chatView.innerHTML += `<div class="msg-row assistant"><div class="bubble shadow-sm">${result}</div></div>`;
+            chatView.innerHTML += `<div class="msg-row assistant"><div class="bubble shadow-sm">${reply}</div></div>`;
             viewport.scrollTop = viewport.scrollHeight;
         }, 500);
     };

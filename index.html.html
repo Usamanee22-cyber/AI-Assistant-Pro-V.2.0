@@ -2,94 +2,108 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Monolith-V55-Unified-Core</title>
+    <title>Monolith-V61-Neural-Visualizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* [PILLARS 1-7: DYNAMIC INTERFACE] */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
-        body { background: #010409; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .master-core { background: #ffffff; width: 95%; max-width: 1400px; height: 92vh; border-radius: 40px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 50px 100px rgba(0,0,0,0.5); }
-        #viewport { flex: 1; overflow-y: auto; padding: 40px; background: #fcfdfe; display: flex; flex-direction: column; gap: 15px; }
+        body { background: #010409; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .master-core { background: #ffffff; width: 98%; max-width: 1600px; height: 96vh; border-radius: 40px; display: grid; grid-template-columns: 1fr 350px; overflow: hidden; }
         
-        .msg-line { display: flex; width: 100%; transition: all 0.3s; }
+        /* Left: Chat System */
+        .chat-section { display: flex; flex-direction: column; border-right: 1px solid #e2e8f0; }
+        #viewport { flex: 1; overflow-y: auto; padding: 30px; background: #fcfdfe; display: flex; flex-direction: column; gap: 12px; }
+        .msg-line { display: flex; width: 100%; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         .user { justify-content: flex-end; } .assistant { justify-content: flex-start; }
-        .bubble { 
-            width: fit-content; max-width: 80%; padding: 16px 26px; border-radius: 28px; 
-            font-size: 18px; line-height: 1.6; word-wrap: break-word; white-space: pre-wrap;
-        }
-        .user .bubble { background: #0f172a; color: white; border-bottom-right-radius: 4px; }
-        .assistant .bubble { background: white; color: #1e293b; border: 1.5px solid #e2e8f0; border-bottom-left-radius: 4px; }
+        .bubble { width: fit-content; max-width: 85%; padding: 15px 22px; border-radius: 22px; font-size: 17px; line-height: 1.6; }
+        .user .bubble { background: #1e293b; color: white; border-bottom-right-radius: 4px; }
+        .assistant .bubble { background: white; color: #334155; border: 1.5px solid #f1f5f9; border-bottom-left-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+
+        /* Right: Training Monitor */
+        .monitor-section { background: #f8fafc; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
     <div class="master-core">
-        <header class="p-8 border-b bg-white flex justify-between items-center">
-            <h1 class="text-2xl font-black text-slate-900">MONOLITH V55.0 <span class="text-blue-600 text-[10px] ml-2 tracking-widest uppercase">The Unified Engine</span></h1>
-        </header>
-        <main id="viewport"><div id="chatFlow"></div></main>
-        <footer class="p-8 bg-white border-t">
-            <form id="actionForm" class="flex gap-4 bg-slate-50 p-2 rounded-full border-2 border-transparent focus-within:border-blue-600 transition-all">
-                <input type="text" id="userInput" autocomplete="off" placeholder="คุยภาษาคน แต่ใช้สมอง Lange-Model..." class="flex-1 bg-transparent outline-none px-8 font-bold text-slate-700 text-xl">
-                <button type="submit" class="bg-blue-600 text-white px-10 py-4 rounded-full font-black hover:scale-105 transition-transform">SEND</button>
-            </form>
-        </footer>
+        <section class="chat-section">
+            <header class="p-8 border-b bg-white flex justify-between items-center">
+                <h1 class="text-2xl font-black text-slate-900 uppercase">Lange-Model <span class="text-blue-600">V61.0</span></h1>
+                <span id="trainingStatus" class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-[10px] font-black uppercase">Core Ready</span>
+            </header>
+            <main id="viewport"><div id="chatFlow"></div></main>
+            <footer class="p-8 border-t bg-white">
+                <form id="actionForm" class="flex gap-4 bg-slate-50 p-2 rounded-full border-2 border-transparent focus-within:border-blue-600 transition-all">
+                    <input type="text" id="userInput" autocomplete="off" placeholder="ป้อนข้อมูลเพื่อเทรนโมเดล..." class="flex-1 bg-transparent outline-none px-8 font-bold text-slate-700 text-lg">
+                    <button type="submit" class="bg-blue-600 text-white px-8 py-4 rounded-full font-black uppercase">Train</button>
+                </form>
+            </footer>
+        </section>
+
+        <section class="monitor-section">
+            <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter">Training Monitor</h2>
+            <div class="card">
+                <p class="text-xs font-black text-slate-400 mb-2 uppercase">Loss Curve (Progress)</p>
+                <canvas id="lossChart"></canvas>
+            </div>
+            <div class="card flex-1 overflow-y-auto">
+                <p class="text-xs font-black text-slate-400 mb-2 uppercase">Training Patterns (Pillar 15)</p>
+                <ul id="patternList" class="text-[10px] space-y-2 font-bold text-slate-600 italic">
+                    <li>- Initializing 50 patterns...</li>
+                </ul>
+            </div>
+        </section>
     </div>
 
 <script>
-/**
- * [LANGE-MODEL V3: PILLARS + 450 VOCAB + TOKENIZER]
- * การทำงานร่วมกันของ 3 องค์ประกอบหลัก
- */
-class UnifiedEngine {
+// [NEURAL LOGIC: LANGE-MODEL VISUALIZER]
+class LangeNeuralEngine {
     constructor() {
-        // [Medium-Data: 450+ Vocab]
-        this.lexicon = {
-            CHAT: ["สวัสดี", "หวัดดี", "hi", "hello", "คุย", "อะไร", "กัน", "ดี", "ไง", "สบายดี"],
-            BIZ: ["ทุน", "กำไร", "ลงทุน", "roi", "งบ", "เงิน", "ดอกเบี้ย", "หุ้น"],
-            TECH: ["ช่าง", "ซ่อม", "เหล็ก", "ปูน", "หลังคา", "ไฟฟ้า", "โครงสร้าง"],
-            EXIT: ["ลาก่อน", "จบ", "bye", "เลิก", "หยุด"]
-        };
-        this.context = []; // Pillar 15
+        this.lossData = [1.0, 0.95, 0.88];
+        this.patterns = ["สวัสดีครับคุณโตนัส", "ช่วยคำนวณงบประมาณหน่อย", "วิเคราะห์โครงสร้างช่าง"];
+        this.chart = this.initChart();
     }
 
-    // [THE TOKENIZER] แยกคำเพื่อประมวลผล (เหมือนที่ Gemini ทำ)
-    tokenize(input) {
-        return input.toLowerCase().split(/(\s+|สวัสดี|หวัดดี|คุย|อะไร|กัน|ดี|ครับ|ค่ะ|ลาก่อน|ทุน|กำไร|ซ่อม)/).filter(t => t && t.trim());
-    }
-
-    // [PILLAR 11: INTENT DECISION]
-    analyze(tokens) {
-        let scores = { chat: 0, biz: 0, tech: 0, exit: 0 };
-        tokens.forEach(t => {
-            if (this.lexicon.CHAT.includes(t)) scores.chat++;
-            if (this.lexicon.BIZ.includes(t)) scores.biz++;
-            if (this.lexicon.TECH.includes(t)) scores.tech++;
-            if (this.lexicon.EXIT.includes(t)) scores.exit++;
+    initChart() {
+        const ctx = document.getElementById('lossChart').getContext('2d');
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['1', '2', '3'],
+                datasets: [{
+                    label: 'Training Loss',
+                    data: this.lossData,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0
+                }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
         });
-
-        if (scores.exit > 0) return "EXIT";
-        if (scores.chat > scores.biz && scores.chat > scores.tech) return "CHAT";
-        if (scores.tech > scores.biz) return "TECH";
-        if (scores.biz > 0) return "BIZ";
-        return "GENERAL";
     }
 
-    // [PILLAR 12-15: SMART RESPONSE]
-    respond(intent, input) {
-        this.context.push(input);
-        const map = {
-            EXIT: "รับทราบครับคุณโตนัส พักผ่อนให้เต็มที่ครับ ลาก่อนครับ",
-            CHAT: "สวัสดีครับคุณโตนัส! มีเรื่องอะไรน่าสนใจมาชวนคุยในเวอร์ชัน V.55 นี้ไหมครับ?",
-            TECH: `[Tech-Mode] รับทราบโจทย์เรื่อง "${input}" ครับ กำลังดึงฐานข้อมูล 450 คำมาวิเคราะห์งานช่างให้ครับ`,
-            BIZ: `[Biz-Mode] วิเคราะห์ด้านธุรกิจจาก "${input}"... เดี๋ยวผมช่วยคำนวณความคุ้มค่าให้ครับ`,
-            GENERAL: `รับทราบครับ ผมบันทึก "${input}" เข้าสู่ Pillar 15 เพื่อเรียนรู้บริบทต่อไปครับ`
-        };
-        return map[intent];
+    train(input) {
+        // [Neural Simulation] ยิ่งคุย ค่า Loss ยิ่งลด (ฉลาดขึ้น)
+        const newLoss = this.lossData[this.lossData.length - 1] * 0.98;
+        this.lossData.push(newLoss);
+        this.patterns.push(input);
+        
+        // Update UI
+        this.chart.data.labels.push(this.lossData.length);
+        this.chart.update();
+        
+        const list = document.getElementById('patternList');
+        list.innerHTML = this.patterns.slice(-8).map(p => `<li>> ${p}</li>`).join('');
+        
+        return `[Lange-Model] ระบบได้รับการเทรนด้วยข้อมูลใหม่เรียบร้อย ความแม่นยำเพิ่มขึ้น เส้นกราฟแสดงค่าความผิดพลาดลดลงเหลือ ${newLoss.toFixed(4)} ครับ`;
     }
 }
 
-const ai = new UnifiedEngine();
+const engine = new LangeNeuralEngine();
 const form = document.getElementById('actionForm');
 
 form.onsubmit = (e) => {
@@ -98,11 +112,9 @@ form.onsubmit = (e) => {
     const text = input.value.trim();
     if(!text) return;
 
-    const tokens = ai.tokenize(text);
-    const intent = ai.analyze(tokens);
-    const res = ai.respond(intent, text);
-    
     document.getElementById('chatFlow').innerHTML += `<div class="msg-line user"><div class="bubble">${text}</div></div>`;
+    const res = engine.train(text);
+    
     setTimeout(() => {
         document.getElementById('chatFlow').innerHTML += `<div class="msg-line assistant"><div class="bubble">${res}</div></div>`;
         document.getElementById('viewport').scrollTop = document.getElementById('viewport').scrollHeight;

@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Lange-Model V80: Tonas Gatekeeper</title>
+    <title>Lange-Model V81: Natural Voice</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -14,46 +14,46 @@
         .code-font { font-family: 'Fira Code', monospace; }
         .hidden { display: none !important; }
         #viewport, #userViewport { flex: 1; overflow-y: auto; padding: 25px; background: #0d1117; display: flex; flex-direction: column; gap: 15px; }
-        .bubble { padding: 15px 22px; border-radius: 20px; max-width: 85%; border: 1px solid #30363d; background: #161b22; }
-        .user .bubble { background: #238636; color: white; margin-left: auto; border: none; }
+        .bubble { padding: 14px 20px; border-radius: 22px; max-width: 80%; line-height: 1.6; }
+        .assistant .bubble { background: #161b22; border: 1px solid #30363d; color: #c9d1d9; border-bottom-left-radius: 4px; }
+        .user .bubble { background: #238636; color: white; margin-left: auto; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(35, 134, 54, 0.2); }
         .math-box { background: #000; border: 1px solid #10b981; color: #10b981; padding: 10px; border-radius: 10px; font-family: 'Fira Code'; }
-        input { outline: none; transition: 0.3s; }
-        input:focus { border-color: #238636 !important; box-shadow: 0 0 10px rgba(35, 134, 54, 0.3); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
 
-<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-gradient-to-b from-[#0d1117] to-[#010409] p-6 text-center">
-    <div class="mb-8">
-        <div class="w-20 h-20 bg-green-500 rounded-3xl mx-auto mb-4 flex items-center justify-center text-4xl font-black text-black">L</div>
-        <h1 class="text-4xl font-black tracking-tighter">LANGE <span class="text-green-500">V80</span></h1>
-        <p class="text-slate-500 text-sm mt-2">IDENTIFICATION REQUIRED</p>
+<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117] p-6">
+    <div class="text-center mb-10 scale-110">
+        <div class="w-24 h-24 bg-gradient-to-tr from-green-600 to-green-400 rounded-[30px] mx-auto mb-6 flex items-center justify-center text-5xl font-black text-black shadow-2xl">L</div>
+        <h1 class="text-5xl font-black tracking-tighter">LANGE <span class="text-green-500">V81</span></h1>
+        <p class="text-slate-500 font-bold mt-2 tracking-[0.2em]">NEURAL NETWORK SYSTEM</p>
     </div>
     <div class="w-full max-w-sm space-y-4">
-        <input type="text" id="accessName" class="w-full bg-[#161b22] border border-[#30363d] p-4 rounded-2xl text-center text-xl font-bold" placeholder="กรุณาใส่ชื่อของคุณ">
-        <button onclick="unlockGate()" class="w-full bg-[#238636] p-4 rounded-2xl font-black text-lg hover:scale-105 transition-transform">เข้าสู่ระบบ</button>
+        <input type="text" id="accessName" class="w-full bg-[#161b22] border border-[#30363d] p-5 rounded-3xl text-center text-2xl font-bold text-white focus:border-green-500 outline-none transition-all" placeholder="IDENTIFY YOURSELF">
+        <button onclick="unlockGate()" class="w-full bg-white text-black p-5 rounded-3xl font-black text-xl hover:bg-green-500 transition-colors">ACCESS SYSTEM</button>
     </div>
 </div>
 
 <div id="devUI" class="hidden h-full flex flex-col bg-[#0d1117]">
     <header class="p-4 border-b border-[#30363d] flex justify-between items-center bg-[#010409]">
-        <div>
-            <span class="text-xs bg-red-600 px-2 py-1 rounded-md font-black mr-2">ADMIN</span>
-            <b class="text-xl uppercase tracking-widest">Master Lab</b>
+        <div class="flex items-center gap-3">
+            <span class="animate-pulse status-dot bg-red-500"></span>
+            <b class="text-lg uppercase tracking-widest font-black">Admin <span class="text-green-500">Master-Lab</span></b>
         </div>
         <div id="qrcode" class="bg-white p-1 rounded-sm"></div>
     </header>
     <div class="flex flex-1 overflow-hidden">
         <aside class="w-96 bg-[#010409] border-r border-[#30363d] overflow-y-auto p-4 text-[10px] code-font text-slate-500">
-            <h3 class="text-green-500 font-black mb-4 border-b border-[#30363d] pb-2 uppercase tracking-widest">Core Lexicon (700 Words)</h3>
+            <h3 class="text-green-500 font-black mb-4 border-b border-[#30363d] pb-2 uppercase italic">Data Monolith: 700 Words</h3>
             <div id="fullVocabList"></div>
         </aside>
         <main class="flex-1 flex flex-col">
             <div id="viewport"></div>
-            <footer class="p-6 border-t border-[#30363d]">
+            <footer class="p-6 border-t border-[#30363d] bg-[#010409]">
                 <form id="devForm" class="flex gap-2">
-                    <input type="text" id="devInput" class="flex-1 bg-[#161b22] border border-[#30363d] p-4 rounded-xl text-white" placeholder="พิมพ์ถาม หรือ 'หมวด-คำใหม่' เพื่อเทรน...">
-                    <button class="bg-[#238636] px-10 rounded-xl font-black">PROCESS</button>
+                    <input type="text" id="devInput" class="flex-1 bg-[#161b22] border border-[#30363d] p-4 rounded-xl text-white" placeholder="พิมพ์ถาม หรือ 'หมวด-คำใหม่'...">
+                    <button class="bg-green-600 px-10 rounded-xl font-black hover:bg-green-500">EXECUTE</button>
                 </form>
             </footer>
         </main>
@@ -61,35 +61,37 @@
 </div>
 
 <div id="monitorUI" class="hidden h-full bg-black p-10 flex flex-col">
-    <div class="flex justify-between items-center mb-10">
-        <h2 class="text-4xl font-black text-white italic">TRAINING <span class="text-blue-500">PULSE</span></h2>
-        <div class="text-right code-font text-xs">
-            <div class="text-blue-500">ACCURACY: HIGH</div>
-            <div class="text-red-500">LOSS: STABILIZING</div>
-        </div>
-    </div>
-    <div class="flex-1 bg-[#0d1117] rounded-[60px] border border-[#30363d] p-10 relative overflow-hidden">
+    <h2 class="text-3xl font-black text-white mb-6 uppercase tracking-widest">Neural Learning Curve</h2>
+    <div class="flex-1 bg-[#0d1117] rounded-[50px] border border-[#30363d] p-8 relative">
         <svg width="100%" height="100%" viewBox="0 0 1000 400" preserveAspectRatio="none">
-            <path id="pathAcc" d="M 0 400" stroke="#388bfd" stroke-width="6" fill="none" style="transition: 0.8s;"></path>
-            <path id="pathLoss" d="M 0 50" stroke="#f85149" stroke-width="6" fill="none" style="transition: 0.8s;"></path>
+            <path id="pathAcc" d="M 0 400" stroke="#388bfd" stroke-width="5" fill="none" style="transition: 1s;"></path>
+            <path id="pathLoss" d="M 0 50" stroke="#f85149" stroke-width="5" fill="none" style="transition: 1s;"></path>
         </svg>
     </div>
 </div>
 
 <div id="userUI" class="hidden h-full flex flex-col bg-[#0d1117]">
-    <header class="p-6 bg-[#161b22] border-b border-[#30363d] font-black text-2xl text-green-500 shadow-2xl">LANGE HOME</header>
+    <header class="p-6 bg-[#010409] border-b border-[#30363d] flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-black font-black">L</div>
+            <div>
+                <h2 class="font-black text-lg">Lange AI</h2>
+                <p class="text-[10px] text-green-500 uppercase tracking-widest font-bold">Online & Adaptive</p>
+            </div>
+        </div>
+    </header>
     <div id="userViewport"></div>
-    <footer class="p-6 border-t border-[#30363d]">
-        <form id="userForm" class="flex gap-2">
-            <input type="text" id="userInput" class="flex-1 bg-[#161b22] border border-[#30363d] p-5 rounded-full text-white" placeholder="คุยกับ Lange ได้เลย...">
-            <button class="bg-[#238636] px-12 rounded-full font-black text-lg">SEND</button>
+    <footer class="p-6 bg-[#010409] border-t border-[#30363d]">
+        <form id="userForm" class="flex gap-3">
+            <input type="text" id="userInput" class="flex-1 bg-[#161b22] border border-[#30363d] p-4 rounded-2xl text-white text-lg" placeholder="ถามอะไร Lange ก็ได้นะ...">
+            <button class="bg-green-600 px-8 rounded-2xl font-black shadow-lg shadow-green-900/20">ส่ง</button>
         </form>
     </footer>
 </div>
 
 <script>
 // ============================================================
-// [ชำแหละ 700 คำแบบละเอียด ห้ามย่อ - แสดงให้เห็นทุกคำจริงๆ]
+// [คงเดิม: 700 คำศัพท์ ห้ามขาดแม้แต่คำเดียว]
 // ============================================================
 const MASTER_DB = {
     "ทักทาย": ["สวัสดี", "ฮัลโหล", "หวัดดี", "ดีจ้า", "โย่ว", "ไฮ", "กราบ", "สวัสดียามเช้า", "สวัสดียามบ่าย", "สวัสดียามเย็น", "สบายดีไหม", "เป็นยังไงบ้าง", "ไฮฮาย", "ทักทายครับ", "ทักทายค่ะ", "ว่าไง", "ฮัลโหลๆ", "ดีครับ", "ดีค่ะ", "หวัดดีจ้า", "อรุณสวัสดิ์", "ฝันดี", "ราตรีสวัสดิ์", "สวัสดิการ", "ยินดีที่รู้จัก", "เช่นกัน", "โหลๆ", "สวัสดีครับผม", "สวัสดีค่ะคุณ", "ดีดี", "ว่าไงจ๊ะ", "ไง", "โย่วๆ", "ฮายๆ", "เฮลโล", "กราบสวัสดิ์", "ไหว้", "นอบน้อม", "ยินดี", "ทัก", "เซย์ไฮ", "ดีจ่ะ", "หวัดดีคุณ", "ฮัลโหลเทส", "สบายดีนะ", "หวังว่าสบายดี", "ดีครับท่าน", "สวัสสดี", "สวัสดี่", "สวสดี", "สวัสดีเจ้า", "สวัสดีครับท่าน", "ยินดีคัด", "ยินดีรับ", "ทักทายกัน", "สวัสดีทุกคน", "หวัดดีทุกคน", "โย่วคนสวย", "โย่วคนหล่อ", "ดีจ้าคนดี", "ฮัลโหลเพื่อน", "หวัดดีเพื่อน", "ไฮเพื่อน", "กราบเพื่อน", "ทักทายนะ", "ดีดีจ้า", "ฮัลโหลฮาย", "สวัสดีปีใหม่", "สวัสดีสงกรานต์", "สวัสดีวันจันทร์", "สวัสดีวันอังคาร", "สวัสดีวันพุธ", "สวัสดีวันพฤหัส", "สวัสดีวันศุกร์", "สวัสดีวันเสาร์", "สวัสดีวันอาทิตย์", "สวัสดีน้า", "สวัสดีป้า", "สวัสดีลุง", "สวัสดีอา", "สวัสดีพี่", "สวัสดีน้อง", "สวัสดีแก", "สวัสดีมึง", "สวัสดีเรา", "สวัสดีท่าน", "สวัสดีจ้าา", "สวัสดีครับบ", "หวัดดีครับบ", "ดีครับผม", "ดีค่ะผม", "ดีครับท่านผู้นำ", "ดีครับลูกพี่", "สวัสดีลูกพี่", "ทักทายจ้า", "หวัดดีนะจ๊ะ", "ดีจ้าาา", "ฮัลโหลลล", "ไฮยยย", "หวัดดีจ้าาา"],
@@ -102,27 +104,37 @@ const MASTER_DB = {
 };
 
 // ============================================================
-// [ระบบ ACTIVE 15 PILLARS MONITORING]
+// [ระบบ 15 PILLARS MONITORING (ทำงานเบื้องหลัง)]
 // ============================================================
 const PILLARS_CORE = {
-    P1_Tokenize: (t) => t.length > 0 ? "Analyzing Text Segments..." : null,
-    P2_Vector: (t) => t.length > 1 ? "Mapping Vector Space..." : null,
-    P3_BigLang: (t) => t.includes('Lange') ? "Core Model Recognition Activated!" : null,
-    P4_MathLogic: (t) => /[\d\+\-\*\/\(\)]/.test(t) ? "Mathematical Logic Processor: ON" : null,
-    P5_Sentiment: (t) => t.length > 5 ? "Context Density Analysis: ACTIVE" : null,
-    P6_ML_Layer: (t) => "Pattern Recognition Scanning...",
-    P7_DL_Deep: (t) => "Hidden Neural Layer Processing...",
-    P8_Training: (t) => "Active Training Feedback Loop...",
-    P9_Parameter: (t) => "Dynamic Weight Optimization...",
-    P10_Context: (t) => "Environmental Context Scan...",
-    P11_Logic: (t) => "Binary Logical Verification...",
-    P12_Sensory: (t) => "Virtual Sensory Mapping...",
-    P13_Database: (t) => "Lexicon Database Querying...",
-    P14_Technical: (t) => "Technical Synthesis Logic...",
-    P15_Synthesis: (t) => "Global Output Reconstruction..."
+    P1_Tokenize: (t) => t.length > 0 ? "Analyzing Segments..." : null,
+    P2_Vector: (t) => t.length > 1 ? "Mapping Vectors..." : null,
+    P3_BigLang: (t) => t.includes('Lange') ? "Core Model Recognized!" : null,
+    P4_MathLogic: (t) => /[\d\+\-\*\/\(\)]/.test(t) ? "Math Processor: ACTIVE" : null,
+    P5_Sentiment: (t) => t.length > 5 ? "Context Scan: OK" : null,
+    P6_ML_Layer: (t) => "Pattern Scanning...",
+    P7_DL_Deep: (t) => "Hidden Neural Layer...",
+    P8_Training: (t) => "Feedback Loop...",
+    P9_Parameter: (t) => "Weight Optimization...",
+    P10_Context: (t) => "Environment Scan...",
+    P11_Logic: (t) => "Logic Verification...",
+    P12_Sensory: (t) => "Sensory Mapping...",
+    P13_Database: (t) => "Database Query...",
+    P14_Technical: (t) => "Technical Synthesis...",
+    P15_Synthesis: (t) => "Output Generation..."
 };
 
-class LangeEngineV80 {
+// คลังประโยคตอบโต้ที่เป็นธรรมชาติ (Natural Responses)
+const CHAT_STYLE = {
+    "ทักทาย": ["สวัสดีครับ! วันนี้ Lange มีอะไรให้ช่วยไหม?", "โอ้ สวัสดีครับ! ดีใจที่ได้คุยกันนะ", "หวัดดีครับ! กำลังรอคำถามอยู่เลย"],
+    "ธุรกิจ": ["เรื่องธุรกิจนี่น่าสนใจนะครับ", "ข้อมูลส่วนนี้ Lange จะช่วยวิเคราะห์ให้เองครับ", "มาวางแผนให้เติบโตไปด้วยกันเถอะ"],
+    "สัตว์": ["สัตว์โลกน่ารักเสมอเลยนะครับ", "Lange ชอบหัวข้อเรื่องสัตว์มากเลยล่ะ", "สายพันธุ์นี้มีความพิเศษจริงๆ ครับ"],
+    "คุยเล่น": ["ฮ่าๆ คุยกันสนุกดีนะครับ", "ผมชอบอารมณ์ขันของคุณจัง", "Lange พร้อมคุยเล่นเป็นเพื่อนเสมอครับ"],
+    "ปรึกษา": ["เข้าใจเลยครับ Lange จะลองหาทางออกให้นะ", "เรื่องนี้เรามาช่วยกันคิดทีละสเต็ปนะครับ", "ปรึกษาได้ทุกเมื่อเลย Lange พร้อมรับฟังครับ"],
+    "อิสระ": ["เป็นหัวข้อที่ล้ำลึกมากครับ", "โลกและจักรวาลนี้ยังมีเรื่องน่าทึ่งอีกเยอะเลย", "ขอบคุณที่แชร์ไอเดียดีๆ แบบนี้กับ Lange นะ"]
+};
+
+class LangeNaturalEngine {
     constructor() {
         this.acc = [380]; this.loss = [20];
         this.vocab = MASTER_DB;
@@ -142,21 +154,32 @@ class LangeEngineV80 {
             const status = PILLARS_CORE[key](text);
             if(status) activePillars.push(`${key}: ${status}`);
         }
+
         const math = this.solveMath(text);
         let foundCat = null;
+
+        // ระบบเทรน (Admin Only)
         if(isDev && text.includes('-')) {
             const [cat, word] = text.split('-');
             if(this.vocab[cat]) this.vocab[cat].push(word);
             this.updateGraph(true);
-            return { reply: `[DEV] เพิ่มคำ: "${word}" เข้าหมวด "${cat}" เรียบร้อย`, pillars: activePillars };
+            return { reply: `[SYSTEM] เทรนสำเร็จ: "${word}" เข้าสู่ระบบ ${cat}`, pillars: activePillars };
         }
+
         for(let cat in this.vocab) {
             if(this.vocab[cat].some(w => text.includes(w))) { foundCat = cat; break; }
         }
+
         this.updateGraph(foundCat !== null || math !== null);
-        if(math !== null) return { reply: `[MATH] คำนวณสำเร็จ: ${math}`, isMath: true, pillars: activePillars };
-        if(foundCat) return { reply: `[${foundCat}] พบความสัมพันธ์ในคลังสมอง!`, pillars: activePillars };
-        return { reply: "Lange-Model จนมุม... กำลังประมวลผลกึ่งก้างผ่าน Pillars", pillars: activePillars };
+
+        // ผลลัพธ์แบบ Natural Language
+        if(math !== null) return { reply: `จากการคำนวณอย่างละเอียด ผลลัพธ์คือ ${math} ครับ`, isMath: true, pillars: activePillars };
+        if(foundCat && CHAT_STYLE[foundCat]) {
+            const randomReply = CHAT_STYLE[foundCat][Math.floor(Math.random() * CHAT_STYLE[foundCat].length)];
+            return { reply: randomReply, pillars: activePillars };
+        }
+        
+        return { reply: "อืม... Lange กำลังพยายามทำความเข้าใจสิ่งที่คุณสื่อสารอยู่ครับ ช่วยขยายความอีกนิดได้ไหม?", pillars: activePillars };
     }
 
     updateGraph(success) {
@@ -168,25 +191,18 @@ class LangeEngineV80 {
     }
 }
 
-const engine = new LangeEngineV80();
-const HUB_ID = "LANGE_NET_V80";
+const engine = new LangeNaturalEngine();
+const HUB_ID = "LANGE_NET_V81";
 let peer, conn, connections = [];
 
-// ============================================================
-// [ระบบ GATEKEEPER & ROLE SELECTION]
-// ============================================================
 function unlockGate() {
     const name = document.getElementById('accessName').value.trim();
-    if(!name) return alert("กรุณาใส่ชื่อ!");
-    
+    if(!name) return;
     document.getElementById('gatekeeper').classList.add('hidden');
-    
     if(name === "โตนัส") {
-        // ถ้าชื่อโตนัส ให้เลือกว่าจะไปหน้า DEV หรือ MONITOR
-        const choice = confirm("สวัสดีคุณโตนัส! กด 'ตกลง' เพื่อเข้าหน้า LAB (DEV) หรือ 'ยกเลิก' เพื่อดูจอกราฟ (MONITOR)");
+        const choice = confirm("สวัสดีคุณโตนัส! กด 'ตกลง' เข้า Lab (Admin) หรือ 'ยกเลิก' เข้า Monitor (Graph)");
         initRole(choice ? 'DEV' : 'MONITOR');
     } else {
-        // ชื่อคนอื่น เป็นหน้าแชทปกติ
         initRole('USER');
     }
 }
@@ -201,13 +217,11 @@ function initRole(role) {
     } else if(role === 'MONITOR') {
         document.getElementById('monitorUI').classList.remove('hidden');
         peer = new Peer();
-        const scn = new Html5Qrcode("reader");
-        // สร้าง overlay เพื่อให้หน้าจอไม่ว่าง
-        document.body.innerHTML += '<div id="qr-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50"><div id="qr-reader" class="w-72 border-2 border-blue-500 rounded-3xl overflow-hidden"></div></div>';
-        const scnModal = new Html5Qrcode("qr-reader");
-        scnModal.start({facingMode:"environment"}, {fps:10, qrbox:250}, id => {
+        document.body.innerHTML += '<div id="qr-modal" class="fixed inset-0 bg-black/90 flex flex-col items-center justify-center z-50"><h3 class="text-white mb-6 font-black uppercase tracking-widest">Connect to Master-Lab</h3><div id="qr-reader" class="w-72 border-2 border-green-500 rounded-3xl overflow-hidden"></div></div>';
+        const scn = new Html5Qrcode("qr-reader");
+        scn.start({facingMode:"environment"}, {fps:10, qrbox:250}, id => {
             conn = peer.connect(id);
-            scnModal.stop();
+            scn.stop();
             document.getElementById('qr-modal').remove();
             conn.on('data', d => drawGraph(d.acc, d.loss));
         });
@@ -238,16 +252,13 @@ const handleChat = (formId, inputId, viewId, isDev) => {
         e.preventDefault();
         const input = document.getElementById(inputId);
         if(!input.value) return;
-
         const res = engine.process(input.value, isDev);
-        const pLog = isDev ? `<div class="mt-4 pt-2 border-t border-[#30363d] text-[8px] opacity-40">${res.pillars.join(' | ')}</div>` : '';
-        
+        const pLog = isDev ? `<div class="mt-4 pt-2 border-t border-[#30363d] text-[8px] opacity-40 uppercase tracking-widest">${res.pillars.join(' | ')}</div>` : '';
         document.getElementById(viewId).innerHTML += `
             <div class="msg-line user"><div class="bubble">${input.value}</div></div>
             <div class="msg-line assistant"><div class="bubble ${res.isMath ? 'math-box' : ''}">
                 ${res.reply}${pLog}
             </div></div>`;
-        
         input.value = "";
         document.getElementById(viewId).scrollTop = document.getElementById(viewId).scrollHeight;
         if(isDev) sync();

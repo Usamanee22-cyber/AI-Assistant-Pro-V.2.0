@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Assistant-Pro-V.2.2 | Consultant Edition</title>
+    <title>AI-Assistant-Pro-V.2.2 | User Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Core Visual Aesthetics --- */
+        /* --- Visual Style --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
         
         body {
@@ -30,13 +30,13 @@
             background: radial-gradient(circle at 10% 10%, #f8fafc 0%, transparent 50%);
         }
 
-        /* --- Sophisticated Chat UI --- */
+        /* --- Chat Aesthetics --- */
         .msg-row { display: flex; width: 100%; margin-bottom: 30px; animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .msg-row.user { justify-content: flex-end; }
 
         .bubble {
             max-width: 80%; padding: 22px 30px; border-radius: 32px;
-            font-size: 16px; line-height: 1.7; position: relative;
+            font-size: 16px; line-height: 1.7;
         }
 
         .user .bubble {
@@ -53,10 +53,9 @@
         .type-pill {
             font-size: 10px; font-weight: 900; padding: 4px 12px;
             border-radius: 50px; margin-bottom: 10px; display: inline-block;
-            letter-spacing: 0.05em; text-transform: uppercase;
+            text-transform: uppercase;
         }
 
-        /* --- Animation --- */
         @keyframes popUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
@@ -65,24 +64,21 @@
     <div class="main-card">
         <header class="px-10 py-6 border-b bg-white flex justify-between items-center">
             <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl rotate-3 shadow-xl">C7</div>
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl rotate-3 shadow-xl">V2</div>
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900 leading-none tracking-tight">AI-Consultant-Pro</h1>
+                    <h1 class="text-2xl font-black text-slate-900 leading-none tracking-tight">AI-Assistant-Pro</h1>
                     <div class="flex items-center gap-2 mt-2">
                         <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Calculation & Consult Engine Active</p>
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Consultant & Math Mode Active</p>
                     </div>
                 </div>
-            </div>
-            <div class="hidden md:flex gap-3">
-                <div class="px-4 py-2 bg-slate-100 rounded-full text-[10px] font-bold text-slate-500 border">CORE: BLM V2.2</div>
             </div>
         </header>
 
         <main id="viewport">
             <div id="homeView" class="flex flex-col items-center pt-16 text-center">
-                <div class="text-7xl mb-8">💎</div>
-                <h2 class="text-4xl font-black text-slate-900 tracking-tighter">ยินดีต้อนรับครับคุณโตนัส</h2>
+                <div class="text-7xl mb-8">👋</div>
+                <h2 class="text-4xl font-black text-slate-900 tracking-tighter">ยินดีต้อนรับครับคุณ User</h2>
                 <p class="text-slate-500 mt-4 text-lg max-w-lg">ผมคือที่ปรึกษาด้านการคำนวณและวางแผน<br>ลองคุยเล่น หรือปรึกษาโจทย์ยากๆ กับผมได้เลย!</p>
                 <div id="quickNav" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 w-full max-w-3xl"></div>
             </div>
@@ -90,82 +86,58 @@
         </main>
 
         <footer class="p-8 bg-white border-t">
-            <form id="chatForm" class="flex bg-slate-100 rounded-[35px] p-2 pl-8 focus-within:ring-4 ring-blue-500/10 transition-all border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white">
-                <input type="text" id="userInput" placeholder="ปรึกษาการลงทุน, คิดสมการ หรือคุยเล่นได้ที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700 placeholder-slate-400" autocomplete="off">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-[30px] font-black text-lg shadow-lg shadow-blue-600/20 active:scale-95 transition-all">วิเคราะห์</button>
+            <form id="chatForm" class="flex bg-slate-100 rounded-[35px] p-2 pl-8 border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all">
+                <input type="text" id="userInput" placeholder="พิมพ์คำถามของคุณที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700" autocomplete="off">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-[30px] font-black text-lg transition-all active:scale-95">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* --- I. LEXICON & CONSULTANT DATABASE --- */
-    const BLM_CORE = {
-        biz: { t: ["ทุน", "กำไร", "ลงทุน", "ขาดทุน", "เงิน", "รวย", "ธุรกิจ"], c: "#10b981", n: "วิเคราะห์แผนธุรกิจ" },
-        math: { t: ["บวก", "ลบ", "คูณ", "หาร", "เท่ากับ", "สมการ", "โจทย์"], c: "#3b82f6", n: "คำนวณสมการแม่นยำ" },
-        ratio: { t: ["แบ่ง", "สัดส่วน", "ร้อยละ", "เปอร์เซ็นต์", "ส่วนแบ่ง", "อัตรา"], c: "#8b5cf6", n: "คำนวณสัดส่วน/อัตราส่วน" },
-        social: { t: ["สวัสดี", "คุย", "เล่น", "ทำไร", "ชื่อ", "ใคร", "เก่ง"], c: "#f43f5e", n: "โหมดคุยเล่น/ปรึกษา" }
-    };
-
-    /* --- II. INTELLIGENT CLASSIFIER ENGINE --- */
+    /* --- I. CONSULTANT ENGINE LOGIC --- */
     class ConsultantAI {
-        constructor() { this.activeType = "social"; }
+        constructor() { }
 
-        think(input) {
+        process(input) {
             const raw = input.toLowerCase();
             const nums = raw.match(/\d+(\.\d+)?/g) ? raw.match(/\d+(\.\d+)?/g).map(Number) : [];
 
-            // 1. Business Logic
+            // วิเคราะห์ธุรกิจ
             if ((raw.includes("ทุน") || raw.includes("กำไร")) && nums.length >= 2) {
-                return this.handleBiz(nums);
+                const invest = Math.min(...nums); const total = Math.max(...nums);
+                return `<span class="type-pill bg-emerald-100 text-emerald-600">ที่ปรึกษาธุรกิจ</span><br>
+                        วิเคราะห์ทุน ${total.toLocaleString()} และแบ่งลงทุน ${invest.toLocaleString()}:<br>
+                        • **เงินสำรอง:** ${(total-invest).toLocaleString()} บาท<br>
+                        • **คาดการณ์กำไร (15%):** ${(invest*0.15).toLocaleString()} บาท<br>
+                        • **คำแนะนำ:** การแบ่งเงินลงทุนระดับนี้ถือว่าปลอดภัยมากครับคุณ User!`;
             }
-            // 2. Ratio Logic
+
+            // วิเคราะห์สัดส่วน
             if ((raw.includes("แบ่ง") || raw.includes("ส่วน")) && nums.length >= 2) {
-                return this.handleRatio(nums);
+                const part = Math.min(...nums); const total = Math.max(...nums);
+                const p = ((part/total)*100).toFixed(2);
+                return `<span class="type-pill bg-purple-100 text-purple-600">วิเคราะห์สัดส่วน</span><br>
+                        • **คิดเป็น:** ${p}% ของทั้งหมด<br>
+                        • **มุมมอง:** สัดส่วนนี้มีความสำคัญต่อการวางแผนภาพรวมครับคุณ User`;
             }
-            // 3. Pure Math Logic
+
+            // คิดเลขสมการ
             if (/[\+\-\*\/\(\)]/.test(raw) || (nums.length >= 2 && !raw.includes("ทุน"))) {
-                return this.handleMath(raw);
+                try {
+                    const clean = raw.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
+                    const res = eval(clean);
+                    return `<span class="type-pill bg-blue-100 text-blue-600">คำนวณสมการ</span><br>
+                            คำตอบคือ: **${res.toLocaleString()}**ครับคุณ User`;
+                } catch(e) { return "โจทย์เลขไม่ถูกต้อง กรุณาตรวจสอบอีกครั้งครับ"; }
             }
-            // 4. Social & Consultant Logic
-            return this.handleSocial(raw);
-        }
 
-        handleBiz(nums) {
-            const invest = Math.min(...nums); const total = Math.max(...nums);
-            return `<span class="type-pill bg-emerald-100 text-emerald-600">ที่ปรึกษาการลงทุน</span><br>
-                    วิเคราะห์ทุน ${total.toLocaleString()} บาท และการลงมือ ${invest.toLocaleString()} บาท:<br>
-                    • **Safety Margin:** คุณเหลือเงินสดสำรอง ${(total-invest).toLocaleString()} บาท<br>
-                    • **คาดการณ์กำไร (15%):** ${(invest*0.15).toLocaleString()} บาท<br>
-                    • **คำแนะนำ:** การแบ่งเงิน 20-30% มาลงทุนเป็นกลยุทธ์ที่ฉลาดมากครับคุณโตนัส!`;
-        }
-
-        handleRatio(nums) {
-            const part = Math.min(...nums); const total = Math.max(...nums);
-            const p = ((part/total)*100).toFixed(2);
-            return `<span class="type-pill bg-purple-100 text-purple-600">วิเคราะห์สัดส่วน</span><br>
-                    จากการแบ่งส่วนแบ่งที่คุณระบุ:<br>
-                    • **ความหมาย:** ส่วนนี้คิดเป็น **${p}%** ของทั้งหมด<br>
-                    • **เปรียบเทียบ:** หากสัดส่วนนี้เป็นกำไร ถือว่าอยู่ในเกณฑ์ที่น่าพอใจครับ`;
-        }
-
-        handleMath(raw) {
-            try {
-                const clean = raw.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
-                const res = eval(clean);
-                return `<span class="type-pill bg-blue-100 text-blue-600">คำนวณสมการ</span><br>
-                        คำตอบทางคณิตศาสตร์คือ: **${res.toLocaleString()}**<br>
-                        มีโจทย์อื่นที่ซับซ้อนกว่านี้อีกไหมครับ? ผมพร้อมวิเคราะห์เสมอ!`;
-            } catch(e) { return "โจทย์เลขดูไม่ถูกต้องครับ ลองตรวจเครื่องหมายดูอีกทีนะ"; }
-        }
-
-        handleSocial(raw) {
-            if (raw.includes("สวัสดี")) return "สวัสดีครับคุณโตนัส! วันนี้มีโจทย์เลขยากๆ หรือแผนธุรกิจอะไรมาให้ผมช่วยปรึกษาไหมครับ? ผมพร้อมมาก!";
-            if (raw.includes("เก่ง")) return "ขอบคุณครับ! ผมถูกออกแบบมาให้เด่นเรื่องการคำนวณและวิเคราะห์ข้อมูลเพื่อช่วยคุณโตนัสโดยเฉพาะเลยล่ะ!";
-            return "ยินดีที่ได้คุยด้วยครับ! นอกจากเรื่องคำนวณแล้ว ผมยังช่วยให้คำปรึกษาเบื้องต้นในเรื่องอื่นๆ ได้นะ ลองถามดูได้เลย!";
+            // คุยเล่นทั่วไป
+            if (raw.includes("สวัสดี")) return "สวัสดีครับคุณ User! มีเรื่องอะไรให้ผมช่วยคำนวณหรือให้คำปรึกษาไหมครับ?";
+            return "ยินดีที่ได้ให้บริการครับคุณ User ลองระบุโจทย์เลขหรือแผนลงทุนมาได้เลย!";
         }
     }
 
-    /* --- III. UI CONTROLLER --- */
+    /* --- II. UI CONTROLLER --- */
     const core = new ConsultantAI();
     const chatForm = document.getElementById('chatForm');
     const viewport = document.getElementById('viewport');
@@ -179,7 +151,7 @@
 
     NAVS.forEach(n => {
         const d = document.createElement('div');
-        d.className = 'bg-white p-6 rounded-3xl cursor-pointer hover:shadow-2xl transition-all border-b-4';
+        d.className = 'bg-white p-6 rounded-3xl cursor-pointer hover:shadow-xl transition-all border-b-4';
         d.style.borderColor = n.c;
         d.innerHTML = `<div class="text-3xl">${n.i}</div><div class="font-black text-slate-800 mt-2 text-xs">${n.n}</div>`;
         d.onclick = () => { document.getElementById('userInput').value = `อยาก ${n.n}`; chatForm.dispatchEvent(new Event('submit')); };
@@ -195,7 +167,7 @@
         homeView.classList.add('hidden'); chatView.classList.remove('hidden');
         chatView.innerHTML += `<div class="msg-row user"><div class="bubble">${msg}</div></div>`;
         
-        const result = core.think(msg);
+        const result = core.process(msg);
         input.value = '';
 
         setTimeout(() => {

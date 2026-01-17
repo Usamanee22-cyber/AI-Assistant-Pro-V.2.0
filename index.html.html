@@ -3,276 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Assistant-Pro-V.2.0 | Full Edition</title>
+    <title>AI-Assistant-Pro-V.2.2 | Consultant Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* --- Core Theme & UI Aesthetics --- */
+        /* --- Core Visual Aesthetics --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
         
         body {
-            background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
+            background: #020617;
             height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
 
         .main-card {
             background: rgba(255, 255, 255, 0.98);
-            width: 95%; max-width: 1200px; height: 94vh;
+            width: 95%; max-width: 1150px; height: 94vh;
             border-radius: 40px; display: flex; flex-direction: column;
-            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.4);
             overflow: hidden;
         }
 
         #viewport {
             flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth;
-            background: linear-gradient(to bottom, transparent, rgba(241, 245, 249, 0.5));
+            background: radial-gradient(circle at 10% 10%, #f8fafc 0%, transparent 50%);
         }
 
-        /* --- Message Bubbles & Animation --- */
-        .msg-row { display: flex; width: 100%; margin-bottom: 28px; animation: fadeInUp 0.5s ease-out forwards; }
+        /* --- Sophisticated Chat UI --- */
+        .msg-row { display: flex; width: 100%; margin-bottom: 30px; animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .msg-row.user { justify-content: flex-end; }
 
         .bubble {
-            max-width: 75%; padding: 20px 28px; border-radius: 30px;
-            font-size: 16px; line-height: 1.6; transition: 0.3s;
+            max-width: 80%; padding: 22px 30px; border-radius: 32px;
+            font-size: 16px; line-height: 1.7; position: relative;
         }
 
         .user .bubble {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             color: white; border-bottom-right-radius: 4px;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
         }
 
         .assistant .bubble {
-            background: #ffffff; color: #0f172a; border-bottom-left-radius: 4px;
-            border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            background: #ffffff; color: #1e293b; border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
 
-        /* --- Feedback & Self-Learning UI --- */
-        .feedback-wrap { display: flex; gap: 12px; margin-top: 12px; opacity: 0.8; }
-        .fb-action {
-            cursor: pointer; font-size: 13px; font-weight: 800; padding: 6px 14px;
-            border-radius: 14px; background: #f1f5f9; transition: all 0.2s;
+        .type-pill {
+            font-size: 10px; font-weight: 900; padding: 4px 12px;
+            border-radius: 50px; margin-bottom: 10px; display: inline-block;
+            letter-spacing: 0.05em; text-transform: uppercase;
         }
-        .fb-action:hover { background: #e2e8f0; transform: scale(1.1); }
-        .fb-action.liked { background: #dcfce7; color: #16a34a; }
-        .fb-action.disliked { background: #fee2e2; color: #dc2626; }
 
-        /* --- Dashboard Grid --- */
-        .expert-btn {
-            background: white; border: 1px solid #f1f5f9; border-radius: 28px;
-            padding: 24px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-        }
-        .expert-btn:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- Animation --- */
+        @keyframes popUp { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="loader" class="fixed inset-0 z-[9999] bg-[#020617] flex flex-col items-center justify-center transition-opacity duration-700">
-        <div class="relative w-24 h-24">
-            <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-t-blue-500 rounded-full animate-spin"></div>
-        </div>
-        <h2 class="text-white text-4xl font-black mt-8 italic tracking-tighter">GEN AI V2.0</h2>
-        <p id="bootInfo" class="text-blue-400 font-mono text-[10px] mt-4 uppercase tracking-[0.4em]">Optimizing BLM Neural Weights...</p>
-    </div>
-
     <div class="main-card">
-        <header class="px-10 py-7 border-b bg-white/50 backdrop-blur-md flex justify-between items-center">
+        <header class="px-10 py-6 border-b bg-white flex justify-between items-center">
             <div class="flex items-center gap-5">
-                <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-blue-500/20">V2</div>
+                <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-black text-2xl rotate-3 shadow-xl">C7</div>
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900 leading-none">AI-Assistant-Pro</h1>
+                    <h1 class="text-2xl font-black text-slate-900 leading-none tracking-tight">AI-Consultant-Pro</h1>
                     <div class="flex items-center gap-2 mt-2">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                        </span>
-                        <span id="learnTag" class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Self-Learning Core Active</span>
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Calculation & Consult Engine Active</p>
                     </div>
                 </div>
             </div>
-            <div class="hidden md:block bg-slate-100 px-5 py-2 rounded-full border border-slate-200">
-                <span class="text-[11px] font-bold text-slate-500">ENGINE: BIG-LANGUAGE-MODEL</span>
+            <div class="hidden md:flex gap-3">
+                <div class="px-4 py-2 bg-slate-100 rounded-full text-[10px] font-bold text-slate-500 border">CORE: BLM V2.2</div>
             </div>
         </header>
 
         <main id="viewport">
-            <div id="homeView" class="flex flex-col items-center pt-10">
-                <div class="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center text-5xl mb-8 shadow-inner">🧠</div>
-                <h2 class="text-4xl font-black text-slate-900 tracking-tight">ระบบประมวลผลอิสระ</h2>
-                <p class="text-slate-500 mt-4 text-lg max-w-xl text-center">คลังคำศัพท์ขนาดใหญ่ที่เรียนรู้วิธีการตอบผ่าน Local Machine Learning และการประมวลผลระดับ Deep Processing</p>
-                
-                <div id="expertGrid" class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-14 w-full max-w-5xl"></div>
+            <div id="homeView" class="flex flex-col items-center pt-16 text-center">
+                <div class="text-7xl mb-8">💎</div>
+                <h2 class="text-4xl font-black text-slate-900 tracking-tighter">ยินดีต้อนรับครับคุณโตนัส</h2>
+                <p class="text-slate-500 mt-4 text-lg max-w-lg">ผมคือที่ปรึกษาด้านการคำนวณและวางแผน<br>ลองคุยเล่น หรือปรึกษาโจทย์ยากๆ กับผมได้เลย!</p>
+                <div id="quickNav" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 w-full max-w-3xl"></div>
             </div>
             <div id="chatView" class="hidden flex flex-col"></div>
         </main>
 
-        <footer class="p-8 bg-white border-t border-slate-100">
-            <form id="chatForm" class="flex bg-slate-50 border-2 border-slate-100 rounded-[30px] p-2 pl-8 focus-within:border-blue-500 focus-within:bg-white transition-all shadow-sm">
-                <input type="text" id="userInput" placeholder="ถามเกี่ยวกับธุรกิจ, คำนวณเลข หรืออื่นๆ..." class="flex-1 bg-transparent outline-none font-bold text-slate-700" autocomplete="off">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-[24px] font-black text-lg transition-all active:scale-95 shadow-lg shadow-blue-200">ประมวลผล</button>
+        <footer class="p-8 bg-white border-t">
+            <form id="chatForm" class="flex bg-slate-100 rounded-[35px] p-2 pl-8 focus-within:ring-4 ring-blue-500/10 transition-all border-2 border-transparent focus-within:border-blue-500 focus-within:bg-white">
+                <input type="text" id="userInput" placeholder="ปรึกษาการลงทุน, คิดสมการ หรือคุยเล่นได้ที่นี่..." class="flex-1 bg-transparent outline-none font-bold text-slate-700 placeholder-slate-400" autocomplete="off">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-12 py-4 rounded-[30px] font-black text-lg shadow-lg shadow-blue-600/20 active:scale-95 transition-all">วิเคราะห์</button>
             </form>
         </footer>
     </div>
 
 <script>
-    /* --- 1. BLM KNOWLEDGE ENGINE --- */
-    const BLM_DB = {
-        math: {
-            t: ["เลข", "บวก", "ลบ", "คูณ", "หาร", "สมการ", "คำนวณ", "อนุกรม", "ถอดราก"],
-            p: ["จากการประมวลผลเชิงลึก ผลลัพธ์สมการของคุณคือ", "ระบบวิเคราะห์ตรรกะคณิตศาสตร์เสร็จสิ้น คำตอบคือ"],
-            w: 1.0
-        },
-        biz: {
-            t: ["ธุรกิจ", "ลงทุน", "กำไร", "ขาย", "ตลาด", "ทุน", "เศรษฐกิจ", "วางแผน"],
-            p: ["ในมุมมองของนักวิเคราะห์ ข้อมูลนี้นำไปสู่แนวทางดังนี้", "ระบบจัดการข้อมูลธุรกิจพบความเป็นไปได้ที่น่าสนใจ"],
-            w: 1.0
-        },
-        tech: {
-            t: ["ai", "คอม", "โปรแกรม", "โค้ด", "ระบบ", "ดาต้า", "อินเทอร์เน็ต"],
-            p: ["โครงสร้างทางเทคโนโลยีที่คุณระบุมีความสอดคล้องกับระบบ BLM", "ข้อมูลทางเทคนิคถูกประมวลผลผ่านหน่วยความจำหลักแล้ว"],
-            w: 1.0
-        },
-        general: {
-            t: ["สวัสดี", "ใคร", "ช่วย", "ขอบคุณ", "ดีจ้า"],
-            p: ["สวัสดีครับคุณโตนัส ผมพร้อมเริ่มต้นการประมวลผลให้คุณ", "ยินดีที่ได้ให้บริการครับ ข้อมูลของคุณถูกจัดระเบียบเรียบร้อย"],
-            w: 1.0
-        }
+    /* --- I. LEXICON & CONSULTANT DATABASE --- */
+    const BLM_CORE = {
+        biz: { t: ["ทุน", "กำไร", "ลงทุน", "ขาดทุน", "เงิน", "รวย", "ธุรกิจ"], c: "#10b981", n: "วิเคราะห์แผนธุรกิจ" },
+        math: { t: ["บวก", "ลบ", "คูณ", "หาร", "เท่ากับ", "สมการ", "โจทย์"], c: "#3b82f6", n: "คำนวณสมการแม่นยำ" },
+        ratio: { t: ["แบ่ง", "สัดส่วน", "ร้อยละ", "เปอร์เซ็นต์", "ส่วนแบ่ง", "อัตรา"], c: "#8b5cf6", n: "คำนวณสัดส่วน/อัตราส่วน" },
+        social: { t: ["สวัสดี", "คุย", "เล่น", "ทำไร", "ชื่อ", "ใคร", "เก่ง"], c: "#f43f5e", n: "โหมดคุยเล่น/ปรึกษา" }
     };
 
-    /* --- 2. CORE INTELLIGENCE (AUTONOMOUS AI) --- */
-    class AutonomousAI {
-        constructor() { this.activeCat = "general"; }
+    /* --- II. INTELLIGENT CLASSIFIER ENGINE --- */
+    class ConsultantAI {
+        constructor() { this.activeType = "social"; }
 
-        // Deep Analysis Loop
-        process(input) {
+        think(input) {
             const raw = input.toLowerCase();
-            if(!raw) return "...";
+            const nums = raw.match(/\d+(\.\d+)?/g) ? raw.match(/\d+(\.\d+)?/g).map(Number) : [];
 
-            // Loop Layer 1: Mathematical Calculation
-            if (/[\d\+\-\*\/\(\)]/.test(raw) && raw.length >= 1) {
-                try {
-                    const res = eval(raw.replace(/[^0-9\+\-\*\/\(\)\.]/g, ''));
-                    return `🔢 **${res.toLocaleString()}** (Single-Output Processed)`;
-                } catch(e) {}
+            // 1. Business Logic
+            if ((raw.includes("ทุน") || raw.includes("กำไร")) && nums.length >= 2) {
+                return this.handleBiz(nums);
             }
-
-            // Loop Layer 2: Semantic Weight Scoring
-            let scores = [];
-            for (let c in BLM_DB) {
-                let score = 0;
-                BLM_DB[c].t.forEach(tag => { if(raw.includes(tag)) score += (1 * BLM_DB[c].w); });
-                scores.push({ cat: c, val: score });
+            // 2. Ratio Logic
+            if ((raw.includes("แบ่ง") || raw.includes("ส่วน")) && nums.length >= 2) {
+                return this.handleRatio(nums);
             }
-
-            // Sorting for Best-Fit Category
-            scores.sort((a, b) => b.val - a.val);
-            this.activeCat = scores[0].val > 0 ? scores[0].cat : "general";
-
-            const responses = BLM_DB[this.activeCat].p;
-            return responses[Math.floor(Math.random() * responses.length)];
+            // 3. Pure Math Logic
+            if (/[\+\-\*\/\(\)]/.test(raw) || (nums.length >= 2 && !raw.includes("ทุน"))) {
+                return this.handleMath(raw);
+            }
+            // 4. Social & Consultant Logic
+            return this.handleSocial(raw);
         }
 
-        // Local Machine Learning (Adjustment via Feedback)
-        updateLearning(isUp) {
-            const tag = document.getElementById('learnTag');
-            if(isUp) {
-                BLM_DB[this.activeCat].w += 0.25;
-                tag.innerText = `Learning: Optimized ${this.activeCat} (+)`;
-            } else {
-                BLM_DB[this.activeCat].w -= 0.15;
-                tag.innerText = `Learning: Re-Adjusting ${this.activeCat} (-)`;
-            }
+        handleBiz(nums) {
+            const invest = Math.min(...nums); const total = Math.max(...nums);
+            return `<span class="type-pill bg-emerald-100 text-emerald-600">ที่ปรึกษาการลงทุน</span><br>
+                    วิเคราะห์ทุน ${total.toLocaleString()} บาท และการลงมือ ${invest.toLocaleString()} บาท:<br>
+                    • **Safety Margin:** คุณเหลือเงินสดสำรอง ${(total-invest).toLocaleString()} บาท<br>
+                    • **คาดการณ์กำไร (15%):** ${(invest*0.15).toLocaleString()} บาท<br>
+                    • **คำแนะนำ:** การแบ่งเงิน 20-30% มาลงทุนเป็นกลยุทธ์ที่ฉลาดมากครับคุณโตนัส!`;
+        }
+
+        handleRatio(nums) {
+            const part = Math.min(...nums); const total = Math.max(...nums);
+            const p = ((part/total)*100).toFixed(2);
+            return `<span class="type-pill bg-purple-100 text-purple-600">วิเคราะห์สัดส่วน</span><br>
+                    จากการแบ่งส่วนแบ่งที่คุณระบุ:<br>
+                    • **ความหมาย:** ส่วนนี้คิดเป็น **${p}%** ของทั้งหมด<br>
+                    • **เปรียบเทียบ:** หากสัดส่วนนี้เป็นกำไร ถือว่าอยู่ในเกณฑ์ที่น่าพอใจครับ`;
+        }
+
+        handleMath(raw) {
+            try {
+                const clean = raw.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
+                const res = eval(clean);
+                return `<span class="type-pill bg-blue-100 text-blue-600">คำนวณสมการ</span><br>
+                        คำตอบทางคณิตศาสตร์คือ: **${res.toLocaleString()}**<br>
+                        มีโจทย์อื่นที่ซับซ้อนกว่านี้อีกไหมครับ? ผมพร้อมวิเคราะห์เสมอ!`;
+            } catch(e) { return "โจทย์เลขดูไม่ถูกต้องครับ ลองตรวจเครื่องหมายดูอีกทีนะ"; }
+        }
+
+        handleSocial(raw) {
+            if (raw.includes("สวัสดี")) return "สวัสดีครับคุณโตนัส! วันนี้มีโจทย์เลขยากๆ หรือแผนธุรกิจอะไรมาให้ผมช่วยปรึกษาไหมครับ? ผมพร้อมมาก!";
+            if (raw.includes("เก่ง")) return "ขอบคุณครับ! ผมถูกออกแบบมาให้เด่นเรื่องการคำนวณและวิเคราะห์ข้อมูลเพื่อช่วยคุณโตนัสโดยเฉพาะเลยล่ะ!";
+            return "ยินดีที่ได้คุยด้วยครับ! นอกจากเรื่องคำนวณแล้ว ผมยังช่วยให้คำปรึกษาเบื้องต้นในเรื่องอื่นๆ ได้นะ ลองถามดูได้เลย!";
         }
     }
 
-    /* --- 3. UI & SYSTEM CONTROLLER --- */
-    const core = new AutonomousAI();
+    /* --- III. UI CONTROLLER --- */
+    const core = new ConsultantAI();
     const chatForm = document.getElementById('chatForm');
-    const userInput = document.getElementById('userInput');
     const viewport = document.getElementById('viewport');
     const chatView = document.getElementById('chatView');
     const homeView = document.getElementById('homeView');
 
-    // Rendering Expert Dashboard
-    const CATEGORIES = [
-        {n: "Math Unit", i: "📊", c: "#3b82f6"}, {n: "Business", i: "💼", c: "#10b981"},
-        {n: "AI Tech", i: "🤖", c: "#6366f1"}, {n: "General", i: "🌐", c: "#f59e0b"},
-        {n: "History", i: "📜", c: "#f43f5e"}, {n: "Medicine", i: "🏥", c: "#06b6d4"},
-        {n: "Law Core", i: "⚖️", c: "#8b5cf6"}, {n: "Coding", i: "💻", c: "#334155"}
+    const NAVS = [
+        {i:"📈", n:"แผนธุรกิจ", c:"#10b981"}, {i:"➕", n:"แก้สมการ", c:"#3b82f6"},
+        {i:"🍰", n:"แบ่งส่วน", c:"#8b5cf6"}, {i:"💬", n:"คุยเล่น", c:"#f43f5e"}
     ];
 
-    CATEGORIES.forEach(cat => {
-        const btn = document.createElement('div');
-        btn.className = 'expert-btn cursor-pointer';
-        btn.innerHTML = `
-            <div class="text-4xl mb-3">${cat.i}</div>
-            <div class="font-black text-slate-800 text-xs uppercase tracking-wider">${cat.n}</div>
-        `;
-        btn.onclick = () => { 
-            userInput.value = `วิเคราะห์ ${cat.n}`; 
-            chatForm.dispatchEvent(new Event('submit')); 
-        };
-        document.getElementById('expertGrid').appendChild(btn);
+    NAVS.forEach(n => {
+        const d = document.createElement('div');
+        d.className = 'bg-white p-6 rounded-3xl cursor-pointer hover:shadow-2xl transition-all border-b-4';
+        d.style.borderColor = n.c;
+        d.innerHTML = `<div class="text-3xl">${n.i}</div><div class="font-black text-slate-800 mt-2 text-xs">${n.n}</div>`;
+        d.onclick = () => { document.getElementById('userInput').value = `อยาก ${n.n}`; chatForm.dispatchEvent(new Event('submit')); };
+        document.getElementById('quickNav').appendChild(d);
     });
 
-    // Handle Submission
     chatForm.onsubmit = (e) => {
         e.preventDefault();
-        const msg = userInput.value.trim();
+        const input = document.getElementById('userInput');
+        const msg = input.value.trim();
         if(!msg) return;
 
-        homeView.classList.add('hidden');
-        chatView.classList.remove('hidden');
+        homeView.classList.add('hidden'); chatView.classList.remove('hidden');
+        chatView.innerHTML += `<div class="msg-row user"><div class="bubble">${msg}</div></div>`;
+        
+        const result = core.think(msg);
+        input.value = '';
 
-        // Render User Message
-        const u = document.createElement('div'); u.className = 'msg-row user';
-        u.innerHTML = `<div class="bubble">${msg}</div>`;
-        chatView.appendChild(u);
-
-        userInput.value = '';
-        const answer = core.process(msg);
-
-        // Render AI Message with Learning Controls
         setTimeout(() => {
-            const a = document.createElement('div');
-            a.className = 'msg-row assistant';
-            a.innerHTML = `
-                <div class="flex flex-col items-start w-full">
-                    <div class="bubble">${answer}</div>
-                    <div class="feedback-wrap">
-                        <span class="fb-action" onclick="core.updateLearning(true); this.classList.add('liked'); this.nextElementSibling.style.display='none'">👍 มีประโยชน์</span>
-                        <span class="fb-action" onclick="core.updateLearning(false); this.classList.add('disliked'); this.previousElementSibling.style.display='none'">👎 ยังไม่ดีพอ</span>
-                    </div>
-                </div>
-            `;
-            chatView.appendChild(a);
+            chatView.innerHTML += `<div class="msg-row assistant"><div class="bubble shadow-sm">${result}</div></div>`;
             viewport.scrollTop = viewport.scrollHeight;
-        }, 600);
-    };
-
-    // System Boot Sequence
-    window.onload = () => {
-        let p = 0;
-        const itv = setInterval(() => {
-            p += Math.floor(Math.random() * 25);
-            if(p > 100) p = 100;
-            document.getElementById('bootInfo').innerText = `Optimizing BLM Neural Weights... ${p}%`;
-            if(p === 100) {
-                clearInterval(itv);
-                setTimeout(() => { 
-                    document.getElementById('loader').style.opacity = '0'; 
-                    setTimeout(() => document.getElementById('loader').style.display = 'none', 700); 
-                }, 400);
-            }
-        }, 200);
+        }, 500);
     };
 </script>
 </body>

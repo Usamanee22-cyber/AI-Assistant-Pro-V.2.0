@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Lange-Model V83.3: Neural Scan</title>
+    <title>Lange-Model V83.4: UI Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -10,10 +10,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Noto+Sans+Thai:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Noto Sans Thai', sans-serif; box-sizing: border-box; scroll-behavior: smooth; }
-        body { background: #010409; color: #e6edf3; height: 100vh; overflow: hidden; }
+        
+        /* แก้ไขตรงนี้: เปลี่ยนจาก hidden เป็น auto เพื่อให้เลื่อนได้เมื่อจำเป็น */
+        body { 
+            background: #010409; 
+            color: #e6edf3; 
+            height: 100vh; 
+            margin: 0;
+            overflow-x: hidden;
+            overflow-y: auto; 
+        }
+
         .code-font { font-family: 'Fira Code', monospace; }
         .hidden { display: none !important; }
         
+        /* ปรับให้หน้า Gatekeeper เลื่อนได้สะดวกขึ้นบนมือถือ */
+        #gatekeeper { 
+            min-height: 100vh;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: #0d1117; 
+            padding: 40px 20px; 
+            text-align: center;
+        }
+
         #viewport, #userViewport { 
             flex: 1; overflow-y: auto; padding: 30px; 
             background: radial-gradient(circle at center, #0d1117 0%, #010409 100%); 
@@ -52,7 +74,6 @@
         .math-box { background: #000 !important; border: 1px solid #10b981 !important; color: #10b981 !important; font-family: 'Fira Code' !important; padding: 20px !important; }
         .status-badge { font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-right: 5px; }
 
-        /* Camera Scanner Styles */
         #reader { width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 2px solid #22c55e; }
     </style>
 </head>
@@ -64,10 +85,10 @@
     <button onclick="closeScanner()" class="mt-8 px-8 py-3 bg-red-600 rounded-full font-bold">CANCEL</button>
 </div>
 
-<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117] p-6 text-center">
+<div id="gatekeeper">
     <div class="mb-12">
         <div class="w-20 h-20 bg-green-500 rounded-[25px] mx-auto mb-6 flex items-center justify-center text-5xl font-black text-black shadow-[0_0_40px_rgba(34,197,94,0.3)]">L</div>
-        <h1 class="text-4xl font-black tracking-tighter text-white">LANGE <span class="text-green-500">V83.3</span></h1>
+        <h1 class="text-4xl font-black tracking-tighter text-white">LANGE <span class="text-green-500">V83.4</span></h1>
         <p class="text-slate-500 text-[10px] mt-2 tracking-[0.4em] font-bold uppercase">Neural Interface System</p>
     </div>
     <div class="w-full max-w-xs space-y-3">
@@ -146,6 +167,7 @@
 </div>
 
 <script>
+// --- ส่วน Engine และ Logic (คงเดิมตาม V83.3) ---
 const MASTER_DB = {
     "ทักทาย": ["สวัสดี", "ฮัลโหล", "หวัดดี", "ดีจ้า", "โย่ว", "ไฮ", "กราบ", "สวัสดียามเช้า", "สวัสดียามบ่าย", "สวัสดียามเย็น", "สบายดีไหม", "เป็นยังไงบ้าง", "ไฮฮาย", "ทักทายครับ", "ทักทายค่ะ", "ว่าไง", "ฮัลโหลๆ", "ดีครับ", "ดีค่ะ", "หวัดดีจ้า", "อรุณสวัสดิ์", "ฝันดี", "ราตรีสวัสดิ์", "สวัสดิการ", "ยินดีที่รู้จัก", "เช่นกัน", "โหลๆ", "สวัสดีครับผม", "สวัสดีค่ะคุณ", "ดีดี", "ว่าไงจ๊ะ", "ไง", "โย่วๆ", "ฮายๆ", "เฮลโล", "กราบสวัสดิ์", "ไหว้", "นอบน้อม", "ยินดี", "ทัก", "เซย์ไฮ", "ดีจ่ะ", "หวัดดีคุณ", "ฮัลโหลเทส", "สบายดีนะ", "หวังว่าสบายดี", "ดีครับท่าน", "สวัสสดี", "สวัสดี่", "สวสดี", "สวัสดีเจ้า", "สวัสดีครับท่าน", "ยินดีคัด", "ยินดีรับ", "ทักทายกัน", "สวัสดีทุกคน", "หวัดดีทุกคน", "โย่วคนสวย", "โย่วคนหล่อ", "ดีจ้าคนดี", "ฮัลโหลเพื่อน", "หวัดดีเพื่อน", "ไฮเพื่อน", "กราบเพื่อน", "ทักทายนะ", "ดีดีจ้า", "ฮัลโหลฮาย", "สวัสดีปีใหม่", "สวัสดีสงกรานต์", "สวัสดีวันจันทร์", "สวัสดีวันอังคาร", "สวัสดีวันพุธ", "สวัสดีวันพฤหัส", "สวัสดีวันศุกร์", "สวัสดีวันเสาร์", "สวัสดีวันอาทิตย์", "สวัสดีน้า", "สวัสดีป้า", "สวัสดีลุง", "สวัสดีอา", "สวัสดีพี่", "สวัสดีน้อง", "สวัสดีแก", "สวัสดีมึง", "สวัสดีเรา", "สวัสดีท่าน", "สวัสดีจ้าา", "สวัสดีครับบ", "หวัดดีครับบ", "ดีครับผม", "ดีค่ะผม", "ดีครับท่านผู้นำ", "ดีครับลูกพี่", "สวัสดีลูกพี่", "ทักทายจ้า", "หวัดดีนะจ๊ะ", "ดีจ้าาา", "ฮัลโหลลล", "ไฮยยย", "หวัดดีจ้าาา"],
     "ธุรกิจ": ["ทุน", "กำไร", "ขาดทุน", "งบประมาณ", "หุ้น", "การลงทุน", "ตลาด", "เศรษฐกิจ", "เงินเฟ้อ", "ภาษี", "ธนาคาร", "ดอกเบี้ย", "เงินปันผล", "รายรับ", "รายจ่าย", "บัญชี", "สต็อก", "โกดัง", "ขนส่ง", "โลจิสติกส์", "ส่งออก", "นำเข้า", "การค้า", "สัญญา", "หุ้นส่วน", "นักลงทุน", "ผู้ประกอบการ", "ธุรกิจ", "อุตสาหกรรม", "การผลิต", "บริการ", "ลูกค้า", "พนักงาน", "เงินเดือน", "โบนัส", "คอมมิชชั่น", "ยอดขาย", "การตลาด", "โฆษณา", "แบรนด์", "คู่แข่ง", "เป้าหมาย", "กลยุทธ์", "ความเสี่ยง", "โอกาส", "การจัดการ", "ทรัพยากร", "นวัตกรรม", "เทคโนโลยี", "พัฒนา", "เติบโต", "ขยาย", "ร่วมมือ", "ประมูล", "ราคา", "ส่วนลด", "โปรโมชั่น", "สมาชิก", "ลูกค้าประจำ", "ความพึงพอใจ", "ยอดจอง", "ผลิตผล", "ประสิทธิภาพ", "หนี้สิน", "เครดิต", "การกู้ยืม", "ค้ำประกัน", "ประกันภัย", "สินทรัพย์", "ที่ดิน", "โรงงาน", "เครื่องจักร", "มูลค่า", "ประเมิน", "วิเคราะห์", "ข้อมูล", "รายงาน", "การประชุม", "มติ", "กฎหมาย", "ข้อบังคับ", "ระเบียบ", "นโยบาย", "วางแผน", "การเงิน", "การธนาคาร", "บัญชีธนาคาร", "เช็ค", "เงินสด", "บัตรเครดิต", "โอนเงิน", "ชำระเงิน", "บิล", "ใบเสร็จ", "ใบกำกับภาษี", "ส่งของ", "รับของ", "คืนเงิน", "แลกเปลี่ยน"],
@@ -206,7 +228,7 @@ class LangeCoreEngine {
 const engine = new LangeCoreEngine();
 const HUB_ID = "LANGE_NET_V83_1";
 let peer, connections = [];
-let html5QrCode; // ตัวแปรสำหรับกล้อง
+let html5QrCode;
 
 function unlockGate() {
     const name = document.getElementById('accessName').value.trim();
@@ -214,21 +236,24 @@ function unlockGate() {
     
     if(name === "โตนัส") {
         const choice = prompt("สวัสดีคุณโตนัส เลือกสิทธิ์การเข้าถึง:\n1 - Master Lab (Show QR)\n2 - Monitor (Scan QR to Connect)");
-        document.getElementById('gatekeeper').classList.add('hidden');
         if(choice === "1") {
+            document.getElementById('gatekeeper').classList.add('hidden');
             initRole('DEV');
         } else if(choice === "2") {
-            startScanner(); // เปลี่ยนจากเข้าหน้าจอเฉยๆ เป็นเปิดกล้องสแกน
+            document.getElementById('gatekeeper').classList.add('hidden');
+            startScanner(); 
         } else {
+            document.getElementById('gatekeeper').classList.add('hidden');
             initRole('USER');
         }
     } else {
         document.getElementById('gatekeeper').classList.add('hidden');
         initRole('USER');
     }
+    // เมื่อเข้าสู่โหมดอื่นๆ ให้ปิด scroll ของ body เพื่อความเป็นระเบียบ
+    document.body.style.overflow = "hidden";
 }
 
-// --- ฟังก์ชันระบบสแกนใหม่ ---
 function startScanner() {
     document.getElementById('scannerOverlay').classList.remove('hidden');
     html5QrCode = new Html5Qrcode("reader");
@@ -236,12 +261,10 @@ function startScanner() {
         { facingMode: "environment" }, 
         { fps: 10, qrbox: { width: 250, height: 250 } },
         (decodedText) => {
-            // เมื่อสแกนติด (สมมติว่า QR คือ ID ของ Peer)
-            console.log("Scan Success:", decodedText);
             stopScanner();
             initRole('MONITOR');
         },
-        (errorMessage) => { /* กำลังหา QR... */ }
+        (errorMessage) => { }
     ).catch(err => {
         alert("ไม่สามารถเข้าถึงกล้องได้: " + err);
         closeScanner();
@@ -259,336 +282,8 @@ function stopScanner() {
 function closeScanner() {
     stopScanner();
     document.getElementById('gatekeeper').classList.remove('hidden');
+    document.body.style.overflow = "auto";
 }
-// -----------------------
-
-function initRole(role) {
-    if(role === 'DEV') {
-        document.getElementById('devUI').classList.remove('hidden');
-        renderFullVocab();
-        peer = new Peer(HUB_ID);
-        peer.on('open', id => new QRCode(document.getElementById("qrcode"), {text:id, width:40, height:40}));
-        peer.on('connection', c => { connections.push(c); c.on('open', () => sync()); });
-    } else if(role === 'MONITOR') {
-        document.getElementById('monitorUI').classList.remove('hidden');
-        peer = new Peer();
-        setInterval(() => {
-            drawGraph(engine.acc, engine.loss);
-            document.getElementById('accVal').innerText = (engine.acc[engine.acc.length-1]/5).toFixed(1) + "%";
-            document.getElementById('lossVal').innerText = (engine.loss[engine.loss.length-1]/5).toFixed(1) + "%";
-        }, 1000);
-    } else {
-        document.getElementById('userUI').classList.remove('hidden');
-        peer = new Peer();
-    }
-}
-
-function renderFullVocab() {
-    let t = 0; const list = document.getElementById('fullVocabList');
-    list.innerHTML = Object.entries(engine.vocab).map(([c, w]) => {
-        t += w.length; return `<div><b class="text-green-500 uppercase">${c}</b><p class="opacity-40">${w.join('|')}</p></div>`;
-    }).join('');
-    document.getElementById('wordCount').innerText = `${t} WORDS`;
-}
-
-function sync() { connections.forEach(c => c.send({ acc: engine.acc, loss: engine.loss })); }
-
-const handleChat = (f, i, v, d) => {
-    document.getElementById(f).onsubmit = (e) => {
-        e.preventDefault();
-        const inp = document.getElementById(i);
-        if(!inp.value.trim()) return;
-        const res = engine.process(inp.value, d);
-        const view = document.getElementById(v);
-        view.innerHTML += `
-            <div class="msg-line user"><div class="bubble">${inp.value}</div></div>
-            <div class="msg-line assistant"><div class="bubble ${res.isMath ? 'math-box' : ''}">
-                ${d ? `<span class="status-badge bg-green-900 text-green-300">Neural-In</span>` : ''}
-                ${res.reply}
-                ${d ? `<div class="mt-2 pt-1 border-t border-[#30363d] text-[6px] opacity-20 uppercase tracking-tighter">${engine.pillars.join(' • ')}</div>` : ''}
-            </div></div>`;
-        inp.value = ""; view.scrollTop = view.scrollHeight;
-        if(d) { renderFullVocab(); sync(); }
-    };
-}
-
-handleChat('devForm', 'devInput', 'viewport', true);
-handleChat('userForm', 'userInput', 'userViewport', false);
-
-function drawGraph(acc, loss) {
-    const p = (id, pts) => {
-        let d = `M 0 ${400 - (pts[0]/500)*400}`;
-        pts.forEach((v, i) => d += ` L ${i * (1000/(pts.length-1))} ${400 - (v/500)*400}`);
-        document.getElementById(id).setAttribute('d', d);
-    };
-    p('pathAcc', acc); p('pathLoss', loss);
-}
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <title>Lange-Model V83.3: Neural Scan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Noto+Sans+Thai:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Noto Sans Thai', sans-serif; box-sizing: border-box; scroll-behavior: smooth; }
-        body { background: #010409; color: #e6edf3; height: 100vh; overflow: hidden; }
-        .code-font { font-family: 'Fira Code', monospace; }
-        .hidden { display: none !important; }
-        
-        #viewport, #userViewport { 
-            flex: 1; overflow-y: auto; padding: 30px; 
-            background: radial-gradient(circle at center, #0d1117 0%, #010409 100%); 
-            display: flex; flex-direction: column; gap: 15px; 
-        }
-        
-        .msg-line { display: flex; width: 100%; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .assistant { justify-content: flex-start; }
-        .user { justify-content: flex-end; }
-
-        .bubble { 
-            padding: 12px 18px; 
-            font-size: 15px;
-            display: inline-block; 
-            max-width: 80%; 
-            word-wrap: break-word;
-            position: relative;
-        }
-
-        .assistant .bubble { 
-            background: #161b22; 
-            border-left: 4px solid #238636;
-            border-radius: 0 20px 20px 20px;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
-        }
-
-        .user .bubble { 
-            background: rgba(35, 134, 54, 0.15); 
-            border: 1px solid rgba(35, 134, 54, 0.4);
-            color: #4ade80; 
-            border-radius: 20px 20px 0 20px;
-        }
-
-        .math-box { background: #000 !important; border: 1px solid #10b981 !important; color: #10b981 !important; font-family: 'Fira Code' !important; padding: 20px !important; }
-        .status-badge { font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-right: 5px; }
-
-        /* Camera Scanner Styles */
-        #reader { width: 100%; max-width: 500px; border-radius: 20px; overflow: hidden; margin: 0 auto; border: 2px solid #22c55e; }
-    </style>
-</head>
-<body>
-
-<div id="scannerOverlay" class="hidden fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-6">
-    <h2 class="text-green-500 font-black mb-4 tracking-widest">BIOMETRIC SCAN: MONITOR ACCESS</h2>
-    <div id="reader"></div>
-    <button onclick="closeScanner()" class="mt-8 px-8 py-3 bg-red-600 rounded-full font-bold">CANCEL</button>
-</div>
-
-<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117] p-6 text-center">
-    <div class="mb-12">
-        <div class="w-20 h-20 bg-green-500 rounded-[25px] mx-auto mb-6 flex items-center justify-center text-5xl font-black text-black shadow-[0_0_40px_rgba(34,197,94,0.3)]">L</div>
-        <h1 class="text-4xl font-black tracking-tighter text-white">LANGE <span class="text-green-500">V83.3</span></h1>
-        <p class="text-slate-500 text-[10px] mt-2 tracking-[0.4em] font-bold uppercase">Neural Interface System</p>
-    </div>
-    <div class="w-full max-w-xs space-y-3">
-        <input type="text" id="accessName" class="w-full bg-[#161b22] border border-[#30363d] p-5 rounded-3xl text-center text-xl font-bold text-white focus:outline-none focus:border-green-500 transition-all" placeholder="IDENTIFY YOURSELF">
-        <button onclick="unlockGate()" class="w-full bg-white text-black p-5 rounded-3xl font-black text-lg hover:bg-green-500 transition-all active:scale-95">ACCESS SYSTEM</button>
-    </div>
-</div>
-
-<div id="devUI" class="hidden h-full flex flex-col">
-    <header class="p-4 border-b border-[#30363d] flex justify-between items-center bg-[#010409]">
-        <div class="flex items-center gap-2">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <b class="text-xs uppercase tracking-widest font-black text-slate-300">Lab: <span class="text-green-500">Master-Control</span></b>
-        </div>
-        <div id="qrcode" class="bg-white p-1 rounded-sm shadow-lg"></div>
-    </header>
-    <div class="flex flex-1 overflow-hidden">
-        <aside class="w-80 bg-[#010409] border-r border-[#30363d] overflow-y-auto p-5 text-[9px] code-font text-slate-500">
-            <div class="flex justify-between items-center mb-6 border-b border-[#30363d] pb-2">
-                <h3 class="text-green-500 font-black uppercase tracking-tighter">Memory Monolith</h3>
-                <span id="wordCount" class="bg-[#161b22] px-2 py-1 rounded text-green-400">0 WORDS</span>
-            </div>
-            <div id="fullVocabList" class="space-y-4"></div>
-        </aside>
-        <main class="flex-1 flex flex-col">
-            <div id="viewport"></div>
-            <footer class="p-4 bg-[#010409] border-t border-[#30363d]">
-                <form id="devForm" class="flex gap-2">
-                    <input type="text" id="devInput" class="flex-1 bg-[#161b22] border border-[#30363d] p-4 rounded-2xl text-white text-sm focus:border-green-500 outline-none" placeholder="COMMAND: หมวด-คำใหม่ (เช่น คุยเล่น-เก่งมาก)">
-                    <button class="bg-green-600 px-8 rounded-2xl font-black text-xs hover:bg-green-500 transition-colors">EXECUTE</button>
-                </form>
-            </footer>
-        </main>
-    </div>
-</div>
-
-<div id="monitorUI" class="hidden h-full bg-black p-12 flex flex-col">
-    <div class="flex justify-between items-end mb-8">
-        <div>
-            <h2 class="text-3xl font-black text-white tracking-tighter uppercase">Neural Learning</h2>
-            <p class="text-green-500 font-bold text-xs tracking-widest">REAL-TIME DATA VISUALIZATION</p>
-        </div>
-        <div class="text-right code-font text-[10px] text-slate-500">
-            <p>ACCURACY: <span id="accVal" class="text-blue-400">0%</span></p>
-            <p>LOSS RATE: <span id="lossVal" class="text-red-400">0%</span></p>
-        </div>
-    </div>
-    <div class="flex-1 bg-[#0d1117] rounded-[50px] border border-[#30363d] p-10 relative overflow-hidden">
-        <svg width="100%" height="100%" viewBox="0 0 1000 400" preserveAspectRatio="none">
-            <path id="pathAcc" d="M 0 400" stroke="#388bfd" stroke-width="5" fill="none" style="transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-            <path id="pathLoss" d="M 0 100" stroke="#f85149" stroke-width="5" fill="none" style="transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></path>
-        </svg>
-    </div>
-</div>
-
-<div id="userUI" class="hidden h-full flex flex-col bg-[#010409]">
-    <header class="p-6 border-b border-[#30363d] flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-green-500 rounded-2xl flex items-center justify-center text-black font-black">L</div>
-            <div>
-                <h2 class="font-black text-lg tracking-tight">Lange Core AI</h2>
-                <div class="flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    <span class="text-[9px] text-green-500 font-bold uppercase tracking-widest">Active System</span>
-                </div>
-            </div>
-        </div>
-    </header>
-    <div id="userViewport"></div>
-    <footer class="p-8">
-        <form id="userForm" class="flex gap-3 max-w-4xl mx-auto w-full">
-            <input type="text" id="userInput" class="flex-1 bg-[#0d1117] border border-[#30363d] p-5 rounded-3xl text-white outline-none focus:border-green-500 shadow-2xl transition-all" placeholder="พิมพ์ข้อความคุยกับ Lange...">
-            <button class="bg-green-600 px-10 rounded-3xl text-white font-black hover:bg-green-500 active:scale-95 transition-all">ส่ง</button>
-        </form>
-    </footer>
-</div>
-
-<script>
-const MASTER_DB = {
-    "ทักทาย": ["สวัสดี", "ฮัลโหล", "หวัดดี", "ดีจ้า", "โย่ว", "ไฮ", "กราบ", "สวัสดียามเช้า", "สวัสดียามบ่าย", "สวัสดียามเย็น", "สบายดีไหม", "เป็นยังไงบ้าง", "ไฮฮาย", "ทักทายครับ", "ทักทายค่ะ", "ว่าไง", "ฮัลโหลๆ", "ดีครับ", "ดีค่ะ", "หวัดดีจ้า", "อรุณสวัสดิ์", "ฝันดี", "ราตรีสวัสดิ์", "สวัสดิการ", "ยินดีที่รู้จัก", "เช่นกัน", "โหลๆ", "สวัสดีครับผม", "สวัสดีค่ะคุณ", "ดีดี", "ว่าไงจ๊ะ", "ไง", "โย่วๆ", "ฮายๆ", "เฮลโล", "กราบสวัสดิ์", "ไหว้", "นอบน้อม", "ยินดี", "ทัก", "เซย์ไฮ", "ดีจ่ะ", "หวัดดีคุณ", "ฮัลโหลเทส", "สบายดีนะ", "หวังว่าสบายดี", "ดีครับท่าน", "สวัสสดี", "สวัสดี่", "สวสดี", "สวัสดีเจ้า", "สวัสดีครับท่าน", "ยินดีคัด", "ยินดีรับ", "ทักทายกัน", "สวัสดีทุกคน", "หวัดดีทุกคน", "โย่วคนสวย", "โย่วคนหล่อ", "ดีจ้าคนดี", "ฮัลโหลเพื่อน", "หวัดดีเพื่อน", "ไฮเพื่อน", "กราบเพื่อน", "ทักทายนะ", "ดีดีจ้า", "ฮัลโหลฮาย", "สวัสดีปีใหม่", "สวัสดีสงกรานต์", "สวัสดีวันจันทร์", "สวัสดีวันอังคาร", "สวัสดีวันพุธ", "สวัสดีวันพฤหัส", "สวัสดีวันศุกร์", "สวัสดีวันเสาร์", "สวัสดีวันอาทิตย์", "สวัสดีน้า", "สวัสดีป้า", "สวัสดีลุง", "สวัสดีอา", "สวัสดีพี่", "สวัสดีน้อง", "สวัสดีแก", "สวัสดีมึง", "สวัสดีเรา", "สวัสดีท่าน", "สวัสดีจ้าา", "สวัสดีครับบ", "หวัดดีครับบ", "ดีครับผม", "ดีค่ะผม", "ดีครับท่านผู้นำ", "ดีครับลูกพี่", "สวัสดีลูกพี่", "ทักทายจ้า", "หวัดดีนะจ๊ะ", "ดีจ้าาา", "ฮัลโหลลล", "ไฮยยย", "หวัดดีจ้าาา"],
-    "ธุรกิจ": ["ทุน", "กำไร", "ขาดทุน", "งบประมาณ", "หุ้น", "การลงทุน", "ตลาด", "เศรษฐกิจ", "เงินเฟ้อ", "ภาษี", "ธนาคาร", "ดอกเบี้ย", "เงินปันผล", "รายรับ", "รายจ่าย", "บัญชี", "สต็อก", "โกดัง", "ขนส่ง", "โลจิสติกส์", "ส่งออก", "นำเข้า", "การค้า", "สัญญา", "หุ้นส่วน", "นักลงทุน", "ผู้ประกอบการ", "ธุรกิจ", "อุตสาหกรรม", "การผลิต", "บริการ", "ลูกค้า", "พนักงาน", "เงินเดือน", "โบนัส", "คอมมิชชั่น", "ยอดขาย", "การตลาด", "โฆษณา", "แบรนด์", "คู่แข่ง", "เป้าหมาย", "กลยุทธ์", "ความเสี่ยง", "โอกาส", "การจัดการ", "ทรัพยากร", "นวัตกรรม", "เทคโนโลยี", "พัฒนา", "เติบโต", "ขยาย", "ร่วมมือ", "ประมูล", "ราคา", "ส่วนลด", "โปรโมชั่น", "สมาชิก", "ลูกค้าประจำ", "ความพึงพอใจ", "ยอดจอง", "ผลิตผล", "ประสิทธิภาพ", "หนี้สิน", "เครดิต", "การกู้ยืม", "ค้ำประกัน", "ประกันภัย", "สินทรัพย์", "ที่ดิน", "โรงงาน", "เครื่องจักร", "มูลค่า", "ประเมิน", "วิเคราะห์", "ข้อมูล", "รายงาน", "การประชุม", "มติ", "กฎหมาย", "ข้อบังคับ", "ระเบียบ", "นโยบาย", "วางแผน", "การเงิน", "การธนาคาร", "บัญชีธนาคาร", "เช็ค", "เงินสด", "บัตรเครดิต", "โอนเงิน", "ชำระเงิน", "บิล", "ใบเสร็จ", "ใบกำกับภาษี", "ส่งของ", "รับของ", "คืนเงิน", "แลกเปลี่ยน"],
-    "สัตว์": ["หมา", "แมว", "เสือ", "สิงโต", "ช้าง", "ม้า", "วัว", "ควาย", "ลิง", "นก", "ปลา", "กุ้ง", "หอย", "ปู", "เป็ด", "ไก่", "หมี", "กระต่าย", "หนู", "งู", "กบ", "เต่า", "จระเข้", "ยมทูต", "แมลง", "ผึ้ง", "มด", "แมงมุม", "แมลงวัน", "ยุง", "ผีเสื้อ", "ค้างคาว", "กวาง", "เก้ง", "หมู", "แพะ", "แกะ", "อูฐ", "ยีราฟ", "ม้าลาย", "แรด", "ฮิปโป", "จิงโจ้", "เพนกวิน", "นกยูง", "นกอินทรี", "นกฮูก", "เป็ดเทศ", "ห่าน", "ไก่งวง", "ปลาทอง", "ปลาคาร์พ", "ปลาฉลาม", "ปลาวาฬ", "โลมา", "แมวน้ำ", "สิงโตทะเล", "วอลรัส", "ปลาหมึก", "ม้าน้ำ", "กุ้งมังกร", "กุ้งฝอย", "หอยทาก", "หอยเชลล์", "ปูดำ", "ปูม้า", "ปูนา", "ปลวก", "ตะขาบ", "แมงป่อง", "กิ้งกือ", "จิ้งจก", "ตุ๊กแก", "กิ้งก่า", "คางคก", "เขียด", "อึ่งอ่าง", "พะยูน", "ตุ่นปากเป็ด", "ตัวเงินตัวทอง", "ตะกวด", "อีเก้ง", "ละมั่ง", "กระทิง", "กูปรอย", "นกเขา", "นกเอี้ยง", "นกขุนทอง", "นกกระจอก", "นกกระจิบ", "นกพิราบ", "นกนางนวล", "นกนางแอ่น", "นกกระจอกเทศ", "นกกระเรียน", "นกกระยาง", "นกกระทุง", "นกกระสา"],
-    "คุยเล่น": ["เหงา", "ตลก", "ขำ", "สนุก", "เบื่อ", "เซ็ง", "ไปไหนดี", "กินไรดี", "ทำไรอยู่", "จริงหรอ", "สุดยอด", "เทพ", "เก่ง", "น่ารัก", "ชอบ", "รัก", "ดีใจ", "เสียใจ", "โกรธ", "หิว", "ง่วง", "นอน", "ตื่น", "อาบน้ำ", "แต่งตัว", "ไปเที่ยว", "ดูหนัง", "ฟังเพลง", "เล่นเกม", "คุยกัน", "เม้าท์", "นินทา", "คิดถึง", "อยากเจอ", "ฝัน", "จินตนาการ", "สวย", "หล่อ", "เท่", "เท่ๆ", "แนว", "วัยรุ่น", "สไตล์", "แฟชั่น", "ดารา", "เพลง", "คอนเสิร์ต", "อารมณ์", "ความรู้สึก", "เพื่อน", "พี่น้อง", "ครอบครัว", "แฟน", "คนคุย", "โสด", "เหงาๆ", "เศร้า", "น้ำตา", "ยิ้ม", "หัวเราะ", "ฮ่าๆ", "อิอิ", "อุ๊ย", "อัยย่ะ", "ว้าว", "โอ้โห", "พระเจ้า", "เหลือเชื่อ", "ประหลาด", "แปลก", "มหัศจรรย์", "ลึกลับ", "ปริศนา", "ท้าทาย", "คำถาม", "คำตอบ", "คุยได้", "ถามได้", "ตอบได้", "เก่งจัง", "ฉลาดจัง", "โง่", "บ้า", "บอ", "ไร้สาระ", "สาระ", "ความรู้", "เกร็ด", "เคล็ดลับ", "วิธีการ", "ลองดู", "สู้ๆ", "พยายาม", "อดทน", "ตั้งใจ", "ความหวัง", "ความเชื่อ", "ความดี", "บุญ", "บาป", "โชคดี", "โชคร้าย"],
-    "คณิต": ["บวก", "ลบ", "คูณ", "หาร", "เท่ากับ", "สมการ", "โจทย์", "ตัวเลข", "เลข", "เปอร์เซ็นต์", "ร้อยละ", "ถอนราก", "สแควรูท", "ยกกำลัง", "เลขชี้กำลัง", "เศษส่วน", "ทศนิยม", "วงเล็บ", "ค่าคงที่", "ตัวแปร", "พีชคณิต", "ตรีโกณ", "แคลคูลัส", "สถิติ", "ความน่าจะเป็น", "กราฟ", "พิกัด", "มุม", "องศา", "เรเดียน", "วงกลม", "สามเหลี่ยม", "สี่เหลี่ยม", "พื้นที่", "ปริมาตร", "เส้นรอบรูป", "รัศมี", "เส้นผ่านศูนย์กลาง", "ด้าน", "ฐาน", "สูง", "ยาว", "กว้าง", "ลึก", "น้ำหนัก", "ปริมาณ", "ระยะทาง", "เวลา", "ความเร็ว", "ความเร่ง", "มวล", "แรง", "พลังงาน", "งาน", "ความดัน", "อุณหภูมิ", "กระแส", "แรงดัน", "ความต้านทาน", "ตัวเลขไทย", "เลขโรมัน", "ฐานสอง", "ฐานสิบ", "ฐานสิบหก", "ตรรกศาสตร์", "และ", "หรือ", "ไม่", "ถ้าแล้ว", "ก็ต่อเมื่อ", "เซต", "สมาชิก", "ยูเนียน", "อินเตอร์เซกชัน", "ฟังก์ชัน", "โดเมน", "เรนจ์", "ลิมิต", "อนุพันธ์", "อินทิเกรต", "เมทริกซ์", "ดีเทอร์มิแนนต์", "เวกเตอร์", "ขนาด", "ทิศทาง", "จุด", "เส้นตรง", "ระนาบ", "มิติ", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า", "สิบ"],
-    "ปรึกษา": ["แนะนำ", "ปรึกษา", "ช่วยเหลือ", "ทางออก", "วิธี", "ขั้นตอน", "ทำยังไง", "อยากรู้", "ขอถาม", "ช่วยบอก", "ช่วยสอน", "เรียน", "ศึกษา", "พัฒนา", "แก้ไข", "ปรับปรุง", "สร้าง", "ทำ", "ออกแบบ", "วางแผน", "เป้าหมาย", "ความสำเร็จ", "ล้มเหลว", "ปัญหา", "อุปสรรค", "จัดการ", "บริหาร", "เวลา", "ชีวิต", "อนาคต", "การงาน", "การเรียน", "สุขภาพ", "จิตใจ", "ความเครียด", "วิตกกังวล", "โรค", "ยา", "รักษา", "หมอ", "พยาบาล", "โรงพยาบาล", "ความรัก", "ความสัมพันธ์", "แต่งงาน", "หย่า", "ลูก", "พ่อแม่", "เพื่อนบ้าน", "สังคม", "การเมือง", "กฎหมาย", "สิทธิ", "หน้าที่", "ความรับผิดชอบ", "ศีลธรรม", "จริยธรรม", "ศาสนา", "ความเชื่อ", "จิตวิญญาณ", "สมาธิ", "สติ", "ปัญญา", "ความสุข", "ความสงบ", "แรงบันดาลใจ", "กำลังใจ", "แนวทาง", "เลือก", "ตัดสินใจ", "ผลกระทบ", "ความเสี่ยง", "ปลอดภัย", "อันตราย", "ระวัง", "ป้องกัน", "เตรียมตัว", "พร้อม", "โอกาส", "ประสบการณ์", "บทเรียน", "ความผิดพลาด", "ขอโทษ", "ขอบคุณ", "ยินดี", "แบ่งปัน", "บริจาค", "จิตอาสา", "ช่วยเหลือสังคม", "สิ่งแวดล้อม", "ภาวะโลกร้อน", "ประหยัด", "พลังงาน", "ทรัพยากร", "ยั่งยืน", "พอเพียง"],
-    "อิสระ": ["อวกาศ", "ท้องฟ้า", "ดวงดาว", "จักรวาล", "โลก", "ดวงจันทร์", "ดวงอาทิตย์", "กาแล็กซี", "มนุษย์ต่างดาว", "ยูเอฟโอ", "อนาคต", "หุ่นยนต์", "เอไอ", "ปัญญาประดิษฐ์", "ความฝัน", "จินตนาการ", "สีสัน", "ดนตรี", "ศิลปะ", "ภาพวาด", "กวี", "นิยาย", "การ์ตูน", "เกม", "กีฬา", "ฟุตบอล", "บาสเกตบอล", "เทนนิส", "ว่ายน้ำ", "วิ่ง", "ปีนเขา", "ทะเล", "น้ำตก", "ป่าไม้", "ภูเขา", "ทุ่งหญ้า", "ดอกไม้", "ต้นไม้", "ก้อนเมฆ", "สายฝน", "พายุ", "หิมะ", "หนาว", "ร้อน", "อบอุ่น", "ลม", "แสงแดด", "รุ้งกินน้ำ", "ความหวัง", "เสรีภาพ", "อิสรภาพ", "สันติภาพ", "ความเท่าเทียม", "ความยุติธรรม", "ประวัติศาสตร์", "วัฒนธรรม", "ประเพณี", "โบราณ", "ทันสมัย", "ล้ำยุค", "ลึกลับ", "ปริศนา", "เวทมนตร์", "ปาฏิหาริย์", "เหนือธรรมชาติ", "วิญญาณ", "ผี", "นรก", "สวรรค์", "โชคชะตา", "พรหมลิขิต", "กาลเวลา", "มิติที่สี่", "ความว่างเปล่า", "จุดเริ่มต้น", "จุดจบ", "นิรันดร์", "การเดินทาง", "ผจญภัย", "แผนที่", "เข็มทิศ", "เรือ", "เครื่องบิน", "รถยนต์", "รถไฟ", "จักรยาน", "เทคโนโลยี", "ความล้ำ", "สิ่งประดิษฐ์", "การค้นพบ", "ความจริง", "ความลี้ลับ", "แสง", "เสียง", "สัมผัส", "รสชาติ", "กลิ่น", "ชีวิต"]
-};
-
-const CHAT_STYLE = {
-    "ทักทาย": ["สวัสดีครับ! วันนี้ Lange มีอะไรให้ช่วยไหม?", "โอ้ สวัสดีครับ! ดีใจที่ได้คุยกันนะ", "หวัดดีครับ! กำลังรอคำถามอยู่เลย"],
-    "ธุรกิจ": ["เรื่องธุรกิจนี่น่าสนใจนะครับ", "ข้อมูลส่วนนี้ Lange จะช่วยวิเคราะห์ให้เองครับ", "มาวางแผนให้เติบโตไปด้วยกันเถอะ"],
-    "สัตว์": ["สัตว์โลกน่ารักเสมอเลยนะครับ", "Lange ชอบหัวข้อเรื่องสัตว์มากเลยล่ะ", "สายพันธุ์นี้มีความพิเศษจริงๆ ครับ"],
-    "คุยเล่น": ["ฮ่าๆ คุยกันสนุกดีนะครับ", "ผมชอบอารมณ์ขันของคุณจัง", "Lange พร้อมคุยเล่นเป็นเพื่อนเสมอครับ"],
-    "ปรึกษา": ["เข้าใจเลยครับ Lange จะลองหาทางออกให้นะ", "เรื่องนี้เรามาช่วยกันคิดทีละสเต็ปนะครับ", "ปรึกษาได้ทุกเมื่อเลย Lange พร้อมรับฟังครับ"],
-    "อิสระ": ["เป็นหัวข้อที่ล้ำลึกมากครับ", "โลกและจักรวาลนี้ยังมีเรื่องน่าทึ่งอีกเยอะเลย", "ขอบคุณที่แชร์ไอเดียดีๆ แบบนี้กับ Lange นะ"]
-};
-
-class LangeCoreEngine {
-    constructor() {
-        const saved = localStorage.getItem('LANGE_V83_1');
-        this.vocab = saved ? JSON.parse(saved) : MASTER_DB;
-        this.acc = [380]; this.loss = [50];
-        this.pillars = ["P1_Tok", "P2_Vec", "P3_Core", "P4_Math", "P5_Sent", "P6_ML", "P7_Deep", "P8_Train", "P9_Weight", "P10_Context", "P11_Logic", "P12_Sen", "P13_DB", "P14_Syn", "P15_Out"];
-    }
-    save() { localStorage.setItem('LANGE_V83_1', JSON.stringify(this.vocab)); }
-    solveMath(expr) {
-        try { 
-            const clean = expr.replace(/[^-+/*()0-9.]/g, ''); 
-            if(!clean) return null;
-            const res = Function(`'use strict'; return (${clean})`)();
-            return isFinite(res) ? res : null;
-        } catch(e) { return null; }
-    }
-    process(text, isDev) {
-        if(isDev && text.includes('-')) {
-            const [cat, word] = text.split('-').map(s => s.trim());
-            if(this.vocab[cat]) {
-                this.vocab[cat].push(word); this.save(); this.updateGraph(true);
-                return { reply: `[LEARNED] บันทึกคำว่า "${word}" ลงหมวด "${cat}" เรียบร้อย`, isDev: true };
-            }
-        }
-        const math = this.solveMath(text);
-        if(math !== null) { this.updateGraph(true); return { reply: `ผลลัพธ์คือ ${math} ครับ`, isMath: true }; }
-        let found = Object.keys(this.vocab).find(c => this.vocab[c].some(w => text.includes(w)));
-        this.updateGraph(!!found);
-        if(found) return { reply: CHAT_STYLE[found][Math.floor(Math.random() * CHAT_STYLE[found].length)] };
-        return { reply: "Lange กำลังวิเคราะห์ข้อมูลส่วนนี้นะครับ... ช่วยขยายความอีกนิดได้ไหม?" };
-    }
-    updateGraph(s) {
-        let la = this.acc[this.acc.length-1], ll = this.loss[this.loss.length-1];
-        this.acc.push(Math.min(500, Math.max(0, la + (s ? 8 : -15) + (Math.random()*10-5))));
-        this.loss.push(Math.min(500, Math.max(0, ll + (s ? -6 : 12) + (Math.random()*10-5))));
-    }
-}
-
-const engine = new LangeCoreEngine();
-const HUB_ID = "LANGE_NET_V83_1";
-let peer, connections = [];
-let html5QrCode; // ตัวแปรสำหรับกล้อง
-
-function unlockGate() {
-    const name = document.getElementById('accessName').value.trim();
-    if(!name) return;
-    
-    if(name === "โตนัส") {
-        const choice = prompt("สวัสดีคุณโตนัส เลือกสิทธิ์การเข้าถึง:\n1 - Master Lab (Show QR)\n2 - Monitor (Scan QR to Connect)");
-        document.getElementById('gatekeeper').classList.add('hidden');
-        if(choice === "1") {
-            initRole('DEV');
-        } else if(choice === "2") {
-            startScanner(); // เปลี่ยนจากเข้าหน้าจอเฉยๆ เป็นเปิดกล้องสแกน
-        } else {
-            initRole('USER');
-        }
-    } else {
-        document.getElementById('gatekeeper').classList.add('hidden');
-        initRole('USER');
-    }
-}
-
-// --- ฟังก์ชันระบบสแกนใหม่ ---
-function startScanner() {
-    document.getElementById('scannerOverlay').classList.remove('hidden');
-    html5QrCode = new Html5Qrcode("reader");
-    html5QrCode.start(
-        { facingMode: "environment" }, 
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-            // เมื่อสแกนติด (สมมติว่า QR คือ ID ของ Peer)
-            console.log("Scan Success:", decodedText);
-            stopScanner();
-            initRole('MONITOR');
-        },
-        (errorMessage) => { /* กำลังหา QR... */ }
-    ).catch(err => {
-        alert("ไม่สามารถเข้าถึงกล้องได้: " + err);
-        closeScanner();
-    });
-}
-
-function stopScanner() {
-    if(html5QrCode) {
-        html5QrCode.stop().then(() => {
-            document.getElementById('scannerOverlay').classList.add('hidden');
-        });
-    }
-}
-
-function closeScanner() {
-    stopScanner();
-    document.getElementById('gatekeeper').classList.remove('hidden');
-}
-// -----------------------
 
 function initRole(role) {
     if(role === 'DEV') {

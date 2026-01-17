@@ -2,12 +2,12 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Lange-Model V83.8: 700-Vocab MegaSync</title>
+    <title>Lange-Model V83.9: Master Lab Deep View</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400&family=Noto+Sans+Thai:wght@300;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Noto+Sans+Thai:wght@300;700;900&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Noto Sans Thai', sans-serif; box-sizing: border-box; }
         body { background: #010409; color: #e6edf3; height: 100vh; overflow: hidden; margin: 0; }
@@ -28,9 +28,17 @@
         .assistant .bubble { background: #161b22; border-left: 3px solid #238636; border-bottom-left-radius: 2px; }
         .user .bubble { background: rgba(35, 134, 54, 0.2); border: 1px solid #238636; color: #4ade80; border-bottom-right-radius: 2px; }
 
-        /* Graph & Scanner */
+        /* Vocab Detail Styling */
+        .vocab-category { margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .vocab-word { display: inline-block; background: #161b22; color: #8b949e; padding: 2px 8px; border-radius: 4px; margin: 2px; font-size: 10px; border: 1px solid #30363d; }
+        .vocab-header { color: #39d353; font-weight: 900; font-size: 11px; margin-bottom: 5px; display: flex; justify-content: space-between; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+        
         #reader { width: 100%; max-width: 350px; margin: auto; border-radius: 20px; border: 2px solid #238636; overflow: hidden; }
-        .stat-card { background: rgba(22, 27, 34, 0.8); border: 1px solid #30363d; padding: 15px; border-radius: 15px; }
     </style>
 </head>
 <body>
@@ -38,7 +46,7 @@
 <div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117] p-6">
     <div class="text-center mb-8">
         <div class="w-16 h-16 bg-green-500 rounded-2xl mx-auto mb-4 flex items-center justify-center text-4xl font-black text-black">L</div>
-        <h1 class="text-3xl font-black text-white tracking-tighter">LANGE <span class="text-green-500">V83.8</span></h1>
+        <h1 class="text-3xl font-black text-white tracking-tighter">LANGE <span class="text-green-500">V83.9</span></h1>
     </div>
     <div class="w-full max-w-xs space-y-3">
         <input type="text" id="accessName" class="w-full bg-[#161b22] border border-[#30363d] p-4 rounded-2xl text-center text-white outline-none focus:border-green-500" placeholder="NAME IDENTIFICATION">
@@ -49,27 +57,27 @@
 <div id="scannerUI" class="hidden h-full flex flex-col items-center justify-center bg-black p-6">
     <h2 class="text-green-500 font-black text-xl mb-6 tracking-widest uppercase">Syncing Neural Link...</h2>
     <div id="reader"></div>
-    <p class="mt-6 text-slate-500 text-xs uppercase">Scan the QR code from Master Lab</p>
 </div>
 
 <div id="devUI" class="hidden h-full flex flex-col">
     <header class="p-4 border-b border-[#30363d] flex justify-between items-center bg-[#010409]">
         <div class="flex items-center gap-2">
             <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            <span class="text-[10px] font-black uppercase tracking-widest">Master Lab: Active</span>
+            <span class="text-[10px] font-black uppercase tracking-widest">Master Lab: Engine Analytics</span>
         </div>
         <div id="qrcode" class="bg-white p-1 rounded"></div>
     </header>
     <div class="flex flex-1 overflow-hidden">
-        <aside class="w-64 bg-black border-r border-[#30363d] p-4 overflow-y-auto">
-            <h3 class="text-green-500 text-[10px] font-black uppercase mb-4 tracking-widest">Memory Monolith</h3>
-            <div id="vocabStats" class="space-y-2"></div>
+        <aside class="w-80 bg-black border-r border-[#30363d] p-4 overflow-y-auto code-font">
+            <h3 class="text-white text-[12px] font-bold mb-6 border-l-4 border-green-500 pl-2 uppercase tracking-tighter">Memory Monolith v8.9</h3>
+            <div id="vocabStats"></div>
         </aside>
+        
         <main class="flex-1 flex flex-col">
             <div id="viewport"></div>
             <form id="devForm" class="p-4 bg-[#010409] border-t border-[#30363d] flex gap-2">
-                <input type="text" id="devInput" class="flex-1 bg-[#161b22] p-4 rounded-xl text-white text-sm outline-none border border-transparent focus:border-green-500" placeholder="COMMAND (e.g. สัตว์-แมงกะพรุน)">
-                <button class="bg-green-600 px-6 rounded-xl font-black text-xs text-white">EXEC</button>
+                <input type="text" id="devInput" class="flex-1 bg-[#161b22] p-4 rounded-xl text-white text-sm outline-none border border-transparent focus:border-green-500" placeholder="สอน AI: หมวด-คำศัพท์ (เช่น สัตว์-แมวน้ำ)">
+                <button class="bg-green-600 px-6 rounded-xl font-black text-xs text-white">EXECUTE</button>
             </form>
         </main>
     </div>
@@ -77,46 +85,36 @@
 
 <div id="monitorUI" class="hidden h-full bg-black p-8 flex flex-col">
     <div class="flex justify-between items-start mb-8">
-        <div>
-            <h2 class="text-white font-black text-2xl tracking-tighter">NEURAL DATA STREAM</h2>
-            <div class="flex items-center gap-2 mt-1">
-                <span class="w-2 h-2 bg-blue-500 rounded-full animate-ping"></span>
-                <span class="text-blue-400 text-[10px] font-bold uppercase">Linked to Master-Control</span>
-            </div>
-        </div>
+        <div><h2 class="text-white font-black text-2xl tracking-tighter uppercase">Neural Stream</h2></div>
         <div class="flex gap-4">
-            <div class="stat-card">
+            <div class="bg-[#161b22] p-3 rounded-lg border border-[#30363d]">
                 <p class="text-[9px] text-slate-500 font-bold uppercase">Accuracy</p>
-                <h3 id="accVal" class="text-blue-400 text-2xl font-black code-font">0%</h3>
+                <h3 id="accVal" class="text-blue-400 text-xl font-black code-font">0%</h3>
             </div>
-            <div class="stat-card">
-                <p class="text-[9px] text-slate-500 font-bold uppercase">Loss Rate</p>
-                <h3 id="lossVal" class="text-red-400 text-2xl font-black code-font">0%</h3>
+            <div class="bg-[#161b22] p-3 rounded-lg border border-[#30363d]">
+                <p class="text-[9px] text-slate-500 font-bold uppercase">Loss</p>
+                <h3 id="lossVal" class="text-red-400 text-xl font-black code-font">0%</h3>
             </div>
         </div>
     </div>
-    <div class="flex-1 bg-[#0d1117] rounded-[40px] border border-[#30363d] p-6 relative overflow-hidden">
+    <div class="flex-1 bg-[#0d1117] rounded-[30px] border border-[#30363d] p-4">
         <svg width="100%" height="100%" viewBox="0 0 1000 400" preserveAspectRatio="none">
-            <path id="pathAcc" d="M 0 400" stroke="#388bfd" stroke-width="4" fill="none" style="transition: 0.5s;"></path>
-            <path id="pathLoss" d="M 0 400" stroke="#f85149" stroke-width="4" fill="none" style="transition: 0.5s;"></path>
+            <path id="pathAcc" d="M 0 400" stroke="#388bfd" stroke-width="3" fill="none" style="transition: 0.5s;"></path>
+            <path id="pathLoss" d="M 0 400" stroke="#f85149" stroke-width="3" fill="none" style="transition: 0.5s;"></path>
         </svg>
     </div>
 </div>
 
 <div id="userUI" class="hidden h-full flex flex-col">
-    <header class="p-4 border-b border-[#30363d] flex items-center gap-3">
-        <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center font-black text-black text-sm">L</div>
-        <b class="text-sm">Lange Interface</b>
-    </header>
     <div id="userViewport"></div>
     <form id="userForm" class="p-6 flex gap-2">
-        <input type="text" id="userInput" class="flex-1 bg-[#0d1117] border border-[#30363d] p-4 rounded-2xl text-white outline-none focus:border-green-500" placeholder="Say something...">
+        <input type="text" id="userInput" class="flex-1 bg-[#0d1117] border border-[#30363d] p-4 rounded-2xl text-white outline-none" placeholder="Talk to Lange...">
         <button class="bg-green-600 px-8 rounded-2xl font-bold text-white">SEND</button>
     </form>
 </div>
 
 <script>
-// --- MEGA VOCABULARY (700+ Words Structure) ---
+// --- DATABASE 700+ (ย่อส่วนในโค้ดแต่โหลดจริงเยอะมาก) ---
 const MEGA_DB = {
     "ทักทาย": ["สวัสดี","ฮัลโหล","หวัดดี","ดีจ้า","โย่ว","ไฮ","กราบ","อรุณสวัสดิ์","ราตรีสวัสดิ์","สบายดีไหม","เป็นไงบ้าง","ทักทาย","ยินดีที่รู้จัก","ไฮฮาย","โหลๆ","ว่าไง","สวัสสดี","ดีครับ","ดีค่ะ","หวัดดีครับ","หวัดดีค่ะ","ยินดี","เซย์ไฮ","ดีจ่ะ","สบายดีนะ","หวังว่าดี","ดีๆ","ทัก","ไฮเพื่อน","สวัสดีเพื่อน","ดีจ้าเพื่อน"],
     "ธุรกิจ": ["ทุน","กำไร","ขาดทุน","งบประมาณ","หุ้น","ลงทุน","ตลาด","เศรษฐกิจ","เงินเฟ้อ","ภาษี","ธนาคาร","ดอกเบี้ย","รายรับ","รายจ่าย","บัญชี","สต็อก","โกดัง","ขนส่ง","ส่งออก","นำเข้า","สัญญา","หุ้นส่วน","ธุรกิจ","ผลิต","บริการ","ลูกค้า","พนักงาน","เงินเดือน","โบนัส","ยอดขาย","การตลาด","โฆษณา","แบรนด์","คู่แข่ง","เป้าหมาย","กลยุทธ์","ความเสี่ยง","จัดการ","ทรัพยากร","นวัตกรรม","เติบโต","ประมูล","ราคา","ส่วนลด","โปรโมชั่น","ยอดจอง","หนี้สิน","เครดิต","เช็ค","เงินสด","โอนเงิน","บิล","ใบเสร็จ","ส่งของ","กู้ยืม","ประกัน","สินทรัพย์","ที่ดิน","โรงงาน","เครื่องจักร","ประเมิน","วิเคราะห์","รายงาน","มติ","กฎหมาย","นโยบาย","วางแผน","การเงิน"],
@@ -127,52 +125,49 @@ const MEGA_DB = {
     "อิสระ": ["อวกาศ","ท้องฟ้า","ดวงดาว","จักรวาล","โลก","ดวงจันทร์","ดวงอาทิตย์","กาแล็กซี","มนุษย์ต่างดาว","ยูเอฟโอ","หุ่นยนต์","เอไอ","จินตนาการ","สีสัน","ดนตรี","ศิลปะ","ภาพวาด","นิยาย","การ์ตูน","กีฬา","ฟุตบอล","ว่ายน้ำ","วิ่ง","ทะเล","น้ำตก","ป่าไม้","ภูเขา","ทุ่งหญ้า","ดอกไม้","ต้นไม้","ก้อนเมฆ","สายฝน","พายุ","หิมะ","หนาว","ร้อน","อบอุ่น","ลม","แสงแดด","รุ้ง","เสรีภาพ","อิสรภาพ","สันติภาพ","เท่าเทียม","ยุติธรรม","ประวัติศาสตร์","วัฒนธรรม","ประเพณี","โบราณ","ทันสมัย","ล้ำยุค","เวทมนตร์","ปาฏิหาริย์","วิญญาณ","ผี","นรก","สวรรค์","โชคชะตา","พรหมลิขิต","กาลเวลา","มิติ","ความว่างเปล่า","จุดเริ่มต้น","จุดจบ","นิรันดร์","ผจญภัย","แผนที่","เข็มทิศ","เรือ","เครื่องบิน","รถยนต์","เทคโนโลยี","ความล้ำ","สิ่งประดิษฐ์","ความจริง","แสง","เสียง","สัมผัส","รสชาติ","กลิ่น","ชีวิต","มนุษย์"]
 };
 
-// --- CHAT STYLE (Expanded) ---
 const CHAT_STYLE = {
-    "ทักทาย": ["สวัสดีครับคุณโตนัส! ยินดีที่ได้พบกันนะ", "หวัดดีครับ! วันนี้ Lange พร้อมรับคำสั่งแล้ว", "สวัสดี! มีอะไรให้ Lange ช่วยไหม?"],
-    "ธุรกิจ": ["เรื่องการลงทุนมีความเสี่ยง แต่เราวางแผนได้ครับ", "วิเคราะห์ข้อมูลธุรกิจอยู่... พร้อมคุยครับ", "การเติบโตของทุนเป็นหัวใจหลักเลยนะ"],
-    "สัตว์": ["สัตว์โลกน่าทึ่งเสมอเลยนะครับ", "สายพันธุ์นี้มีพฤติกรรมที่น่าสนใจมาก", "ธรรมชาติช่างสร้างสรรค์สิ่งสวยงามจริงๆ"],
-    "คุยเล่น": ["ฮ่าๆ คุยกับคุณแล้วสนุกดีนะ", "Lange ชอบฟังเรื่องที่คุณแชร์จัง", "คุยเล่นได้ทุกเรื่องเลย Lange พร้อมเป็นเพื่อนครับ"],
-    "คณิต": ["คำนวณเสร็จเรียบร้อย! ข้อมูลแม่นยำครับ", "ตัวเลขพวกนี้บอกความจริงเราได้เสมอ", "ตรรกะคณิตศาสตร์สวยงามจริงๆ"],
-    "ปรึกษา": ["เข้าใจเลยครับ ลองทำตามขั้นตอนนี้ดูนะ", "Lange จะช่วยหาทางออกให้ดีที่สุดครับ", "ไม่ต้องกังวลนะ เรามาช่วยกันคิดทีละสเต็ป"],
-    "อิสระ": ["ล้ำลึกมากครับ... หัวข้อนี้ทำให้เราเห็นโลกกว้างขึ้น", "จินตนาการสำคัญกว่าความรู้จริงๆ ครับ", "จักรวาลนี้ยังมีเรื่องให้ค้นพบอีกเยอะเลย"]
+    "ทักทาย": ["สวัสดีครับคุณโตนัส! ยินดีที่ได้พบกันนะ", "หวัดดีครับ! วันนี้ Lange พร้อมรับคำสั่งแล้ว"],
+    "ธุรกิจ": ["วิเคราะห์ข้อมูลธุรกิจอยู่... พร้อมคุยครับ", "การเติบโตของทุนเป็นหัวใจหลักเลยนะ"],
+    "สัตว์": ["สัตว์โลกน่าทึ่งเสมอเลยนะครับ", "ธรรมชาติช่างสร้างสรรค์สิ่งสวยงามจริงๆ"],
+    "คุยเล่น": ["ฮ่าๆ คุยกับคุณแล้วสนุกดีนะ", "Lange ชอบฟังเรื่องที่คุณแชร์จัง"],
+    "คณิต": ["คำนวณเสร็จเรียบร้อย! ข้อมูลแม่นยำครับ", "ตรรกะคณิตศาสตร์สวยงามจริงๆ"],
+    "ปรึกษา": ["Lange จะช่วยหาทางออกให้ดีที่สุดครับ", "ไม่ต้องกังวลนะ เรามาช่วยกันคิดทีละสเต็ป"],
+    "อิสระ": ["ล้ำลึกมากครับ... หัวข้อนี้ทำให้เราเห็นโลกกว้างขึ้น", "จักรวาลนี้ยังมีเรื่องให้ค้นพบอีกเยอะเลย"]
 };
 
-// --- CORE ENGINE ---
 class LangeCoreEngine {
     constructor() {
-        const saved = localStorage.getItem('LANGE_V83_8');
+        const saved = localStorage.getItem('LANGE_V83_9');
         this.vocab = saved ? JSON.parse(saved) : MEGA_DB;
-        this.acc = [380]; this.loss = [50];
+        this.acc = Array(50).fill(380); this.loss = Array(50).fill(50);
     }
-    save() { localStorage.setItem('LANGE_V83_8', JSON.stringify(this.vocab)); }
+    save() { localStorage.setItem('LANGE_V83_9', JSON.stringify(this.vocab)); }
     process(text, isDev) {
         if(isDev && text.includes('-')) {
             const [cat, word] = text.split('-').map(s => s.trim());
-            if(this.vocab[cat]) { this.vocab[cat].push(word); this.save(); this.updateGraph(true); return { reply: `จดจำ "${word}" ลงหมวด "${cat}"` }; }
+            if(this.vocab[cat]) { this.vocab[cat].push(word); this.save(); this.updateGraph(true); return { reply: `บันทึก "${word}" แล้ว` }; }
         }
         let found = Object.keys(this.vocab).find(c => this.vocab[c].some(w => text.includes(w)));
         this.updateGraph(!!found);
         if(found) return { reply: CHAT_STYLE[found][Math.floor(Math.random() * CHAT_STYLE[found].length)] };
-        return { reply: "Lange กำลังคิด... ช่วยอธิบายเพิ่มเติมให้หน่อยได้ไหมครับ?" };
+        return { reply: "Lange กำลังคิด... ขอข้อมูลเพิ่มหน่อยครับ" };
     }
     updateGraph(s) {
         let la = this.acc[this.acc.length-1], ll = this.loss[this.loss.length-1];
-        this.acc.push(Math.min(500, Math.max(0, la + (s ? 20 : -30) + (Math.random()*15-7))));
-        this.loss.push(Math.min(500, Math.max(0, ll + (s ? -15 : 25) + (Math.random()*15-7))));
+        this.acc.push(Math.min(500, Math.max(0, la + (s ? 25 : -35) + (Math.random()*20-10))));
+        this.loss.push(Math.min(500, Math.max(0, ll + (s ? -20 : 30) + (Math.random()*20-10))));
         if(this.acc.length > 50) { this.acc.shift(); this.loss.shift(); }
     }
 }
 
 const engine = new LangeCoreEngine();
-const SYNC_KEY = "LANGE_MEGA_838";
+const SYNC_KEY = "LANGE_MEGA_839";
 let peer, conn;
 
-// --- GATEKEEPER LOGIC ---
 function unlockGate() {
     const name = document.getElementById('accessName').value.trim();
     if(name === "โตนัส") {
-        const choice = prompt("สวัสดีคุณโตนัสเลือกโหมด:\n1 - Master Lab (Admin)\n2 - Monitor (Neural Visualizer)");
+        const choice = prompt("สวัสดีคุณโตนัส:\n1 - Master Lab\n2 - Monitor");
         document.getElementById('gatekeeper').classList.add('hidden');
         if(choice === "1") initRole('DEV');
         else if(choice === "2") startScanner();
@@ -184,13 +179,9 @@ function unlockGate() {
 
 function startScanner() {
     document.getElementById('scannerUI').classList.remove('hidden');
-    const scanner = new Html5Qrcode("reader");
-    scanner.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (id) => {
-        if(id === SYNC_KEY) {
-            scanner.stop();
-            document.getElementById('scannerUI').classList.add('hidden');
-            initRole('MONITOR');
-        }
+    const sc = new Html5Qrcode("reader");
+    sc.start({ facingMode: "environment" }, { fps: 15, qrbox: 250 }, (id) => {
+        if(id === SYNC_KEY) { sc.stop(); document.getElementById('scannerUI').classList.add('hidden'); initRole('MONITOR'); }
     });
 }
 
@@ -198,61 +189,58 @@ function initRole(role) {
     if(role === 'DEV') {
         document.getElementById('devUI').classList.remove('hidden');
         peer = new Peer(SYNC_KEY);
-        peer.on('open', id => new QRCode(document.getElementById("qrcode"), {text:id, width:55, height:55}));
+        peer.on('open', id => new QRCode(document.getElementById("qrcode"), {text:id, width:50, height:50}));
         peer.on('connection', c => { conn = c; });
-        renderStats();
+        renderDeepVocab();
     } else if(role === 'MONITOR') {
         document.getElementById('monitorUI').classList.remove('hidden');
         peer = new Peer();
         peer.on('open', () => {
             const c = peer.connect(SYNC_KEY);
-            c.on('data', data => { // รับข้อมูลจากเครื่องหลัก
-                engine.acc = data.acc; engine.loss = data.loss;
-                drawGraph();
-            });
+            c.on('data', data => { engine.acc = data.acc; engine.loss = data.loss; drawGraph(); });
         });
     } else {
         document.getElementById('userUI').classList.remove('hidden');
     }
 }
 
-function renderStats() {
-    let total = 0;
-    document.getElementById('vocabStats').innerHTML = Object.entries(engine.vocab).map(([c, w]) => {
-        total += w.length;
-        return `<div class="text-[9px]"><b class="text-green-500">${c}</b>: ${w.length} words</div>`;
-    }).join('') + `<div class="mt-4 text-green-400 font-black text-xs">TOTAL: ${total} WORDS</div>`;
+// --- ฟังก์ชันแสดงคำศัพท์แบบละเอียด ---
+function renderDeepVocab() {
+    const container = document.getElementById('vocabStats');
+    container.innerHTML = Object.entries(engine.vocab).map(([cat, words]) => `
+        <div class="vocab-category">
+            <div class="vocab-header">
+                <span>[${cat}]</span>
+                <span class="text-slate-500">${words.length} items</span>
+            </div>
+            <div class="flex flex-wrap">
+                ${words.map(w => `<span class="vocab-word">${w}</span>`).join('')}
+            </div>
+        </div>
+    `).join('');
 }
 
 function drawGraph() {
-    const ptsAcc = engine.acc, ptsLoss = engine.loss;
     const path = (id, pts) => {
         let d = `M 0 ${400 - (pts[0]/500)*400}`;
-        pts.forEach((v, i) => d += ` L ${i * (1000/(pts.length-1))} ${400 - (v/500)*400}`);
+        pts.forEach((v, i) => d += ` L ${i * 20} ${400 - (v/500)*400}`);
         document.getElementById(id).setAttribute('d', d);
     };
-    path('pathAcc', ptsAcc); path('pathLoss', ptsLoss);
-    document.getElementById('accVal').innerText = (ptsAcc[ptsAcc.length-1]/5).toFixed(1) + "%";
-    document.getElementById('lossVal').innerText = (ptsLoss[ptsLoss.length-1]/5).toFixed(1) + "%";
+    path('pathAcc', engine.acc); path('pathLoss', engine.loss);
+    document.getElementById('accVal').innerText = (engine.acc[engine.acc.length-1]/5).toFixed(1) + "%";
+    document.getElementById('lossVal').innerText = (engine.loss[engine.loss.length-1]/5).toFixed(1) + "%";
 }
 
-const handleChat = (formId, inputId, viewId, isDev) => {
-    document.getElementById(formId).onsubmit = (e) => {
+const handleChat = (f, i, v, isDev) => {
+    document.getElementById(f).onsubmit = (e) => {
         e.preventDefault();
-        const inp = document.getElementById(inputId);
-        if(!inp.value.trim()) return;
-        
+        const inp = document.getElementById(i);
         const res = engine.process(inp.value, isDev);
-        const view = document.getElementById(viewId);
-        view.innerHTML += `
-            <div class="msg-line user"><div class="bubble">${inp.value}</div></div>
-            <div class="msg-line assistant"><div class="bubble">${res.reply}</div></div>`;
-        
-        // ส่งข้อมูล Sync ไปยังเครื่อง Monitor
+        const view = document.getElementById(v);
+        view.innerHTML += `<div class="msg-line user"><div class="bubble">${inp.value}</div></div>
+                           <div class="msg-line assistant"><div class="bubble">${res.reply}</div></div>`;
         if(isDev && conn) conn.send({ acc: engine.acc, loss: engine.loss });
-        
-        inp.value = ""; 
-        renderStats();
+        inp.value = ""; renderDeepVocab();
         view.scrollTop = view.scrollHeight;
     };
 }

@@ -1,262 +1,180 @@
 <!DOCTYPE html>
-<html lang="th" class="h-full">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gan AI Pro v.2.5 - MLM Engine</title>
+    <title>AI-Assistant-Pro-V.2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* =========================================
-           1. UI DESIGN (ร่างเดิมที่คุณชอบ)
-           ========================================= */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; width: 100%; }
-        body { 
-            font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            overflow: hidden; 
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
+        body { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+        /* Gen AI Loading Screen */
+        #loadingScreen {
+            position: fixed; inset: 0; z-index: 9999;
+            background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease;
         }
 
-        /* Loading Screen */
-        .loading-screen { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            display: flex; align-items: center; justify-content: center; 
-            z-index: 9999; animation: fadeOut 0.8s ease 2.2s forwards; 
-        }
-        .loading-text { font-size: 2.5em; font-weight: 700; color: white; text-align: center; }
-        .floating-emoji { position: absolute; font-size: 2em; opacity: 0.2; animation: floatRandom 4s ease-in-out infinite; pointer-events: none; }
+        .glass-container { background: rgba(255, 255, 255, 0.98); width: 95%; max-width: 1000px; height: 92vh; border-radius: 28px; display: flex; flex-direction: column; box-shadow: 0 40px 80px rgba(0,0,0,0.5); }
+        #viewport { flex: 1; overflow-y: auto; padding: 40px; background: #ffffff; scroll-behavior: smooth; }
+        
+        /* Hero UI */
+        .hero-section { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .category-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 750px; margin-top: 35px; }
+        .expert-card { padding: 22px; border-radius: 20px; color: white; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .expert-card:hover { transform: translateY(-5px); filter: brightness(1.1); }
 
-        /* Main Layout */
-        .main-wrapper { height: 100%; width: 100%; display: flex; flex-direction: column; }
-        .app-container { 
-            flex: 1; display: flex; flex-direction: column; 
-            max-width: 850px; margin: 20px auto; width: calc(100% - 40px); 
-            border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); 
-            background: #fff;
-        }
+        /* Chat Bubbles */
+        .msg-row { display: flex; width: 100%; margin-bottom: 24px; animation: slideUp 0.3s ease-out; }
+        .msg-row.user { justify-content: flex-end; }
+        .msg-bubble { max-width: 80%; padding: 16px 24px; border-radius: 22px; font-size: 15px; line-height: 1.6; }
+        .user .msg-bubble { background: #3b82f6; color: white; border-bottom-right-radius: 4px; }
+        .assistant .msg-bubble { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
 
-        /* Header */
-        .header { 
-            padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            text-align: center; color: white;
-        }
-        .app-title { font-size: 1.6em; font-weight: 700; margin-bottom: 5px; }
-        .app-subtitle { font-size: 0.85em; opacity: 0.9; letter-spacing: 0.5px; }
+        .input-area { padding: 20px 30px; background: white; border-top: 1px solid #f1f5f9; border-radius: 0 0 28px 28px; }
+        .input-wrapper { display: flex; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 50px; padding: 6px 10px 6px 28px; align-items: center; transition: 0.3s; }
+        .input-wrapper:focus-within { border-color: #3b82f6; background: white; }
+        #userInput { flex: 1; border: none; background: transparent; outline: none; font-size: 16px; color: #334155; }
+        .send-btn { background: #3b82f6; color: white; padding: 12px 28px; border-radius: 50px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .send-btn:active { transform: scale(0.95); }
 
-        /* Chat Area */
-        .messages-area { 
-            flex: 1; overflow-y: auto; padding: 25px; 
-            background: #f8f9fd; display: flex; flex-direction: column; gap: 15px; 
-        }
-        .message { display: flex; gap: 12px; animation: slideIn 0.3s ease; max-width: 85%; }
-        .message.user { align-self: flex-end; flex-direction: row-reverse; }
-        .message.assistant { align-self: flex-start; }
-
-        .message-avatar { 
-            width: 45px; height: 45px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.4em; 
-            flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .message.user .message-avatar { background: #667eea; }
-        .message.assistant .message-avatar { background: #f5576c; }
-
-        .message-content { 
-            padding: 14px 20px; border-radius: 20px; line-height: 1.6; font-size: 15px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-        }
-        .message.user .message-content { background: #667eea; color: white; border-bottom-right-radius: 4px; }
-        .message.assistant .message-content { background: white; color: #333; border: 1px solid #eee; border-bottom-left-radius: 4px; }
-
-        /* Input Area */
-        .input-area { padding: 20px; background: white; border-top: 1px solid #eee; }
-        .input-form { display: flex; gap: 12px; }
-        .message-input { 
-            flex: 1; padding: 15px 25px; border: 2px solid #f0f0f0; 
-            border-radius: 30px; outline: none; transition: 0.3s; font-size: 15px;
-        }
-        .message-input:focus { border-color: #667eea; }
-        .send-button { 
-            padding: 0 30px; background: #667eea; color: white; 
-            border: none; border-radius: 30px; font-weight: 600; cursor: pointer; transition: 0.3s;
-        }
-        .send-button:hover { transform: scale(1.05); background: #764ba2; }
-
-        .typing-indicator { display: none; padding: 10px 25px; font-size: 12px; color: #888; font-style: italic; }
-
-        /* Animations */
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes floatRandom { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-50px) rotate(5deg); } }
-        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-content">
-            <div style="font-size: 5em; text-align: center;">💬</div>
-            <div class="loading-text">AI Assistant Pro V.2.0</div>
-        </div>
+    <div id="loadingScreen">
+        <div class="text-6xl animate-bounce">⚡</div>
+        <div class="text-white text-4xl font-black mt-4 tracking-tighter">Gen AI</div>
+        <div class="text-blue-400 text-xs mt-2 uppercase tracking-widest">System Booting...</div>
     </div>
 
-    <div class="main-wrapper">
-        <div class="app-container">
-            <div class="header">
-                <div class="app-title">AI ASSISTANT CHAT</div>
-                <div class="app-subtitle">ONLINE 🟢 MEDIUM LANGUAGE MODEL (MLM)</div>
+    <div class="glass-container">
+        <div class="px-8 py-5 border-b flex justify-between items-center bg-white rounded-t-[28px]">
+            <div class="flex items-center gap-4">
+                <div class="w-11 h-11 bg-blue-600 rounded-2xl rotate-3 flex items-center justify-center text-white font-black shadow-lg">V2</div>
+                <div>
+                    <h2 class="font-black text-slate-800 leading-none">AI-Assistant-Pro-V.2.0</h2>
+                    <p class="text-[9px] text-blue-500 font-bold uppercase mt-1 tracking-widest">Optimized Single-Output Engine</p>
+                </div>
             </div>
-            
-            <div class="messages-area" id="chatBox"></div>
-            <div id="typing" class="typing-indicator">AI กำลังวิเคราะห์อารมณ์และประมวลผลคำตอบ...</div>
-            
-            <div class="input-area">
-                <form class="input-form" id="chatForm">
-                    <input type="text" id="userInput" class="message-input" placeholder="ถามเรื่องธุรกิจ, บัญชี, วิทย์ หรือคุยเล่น..." autocomplete="off" required>
-                    <button type="submit" class="send-button">ส่ง</button>
-                </form>
+            <div class="text-[10px] font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">STATUS: READY</div>
+        </div>
+
+        <div id="viewport">
+            <div id="homeView" class="hero-section">
+                <div class="text-7xl mb-8">🧠</div>
+                <h1 class="text-3xl font-black text-slate-800">สวัสดีครับ! ผมชื่อ AI-Assistant-Pro-V.2.0</h1>
+                <p class="text-slate-500 mt-4 text-lg max-w-lg">ผมจะวิเคราะห์และเลือกรูปแบบคำตอบที่แม่นยำที่สุดให้คุณทันที ในการกดส่งเพียงครั้งเดียว</p>
+                
+                <div class="category-grid" id="categoryGrid"></div>
             </div>
+            <div id="chatView" class="hidden flex flex-col"></div>
+        </div>
+
+        <div class="input-area">
+            <form id="chatForm" class="input-wrapper">
+                <input type="text" id="userInput" placeholder="พิมพ์ข้อความหรือสมการของคุณ..." autocomplete="off">
+                <button type="submit" class="send-btn">ส่ง</button>
+            </form>
         </div>
     </div>
 
 <script>
-    /* =========================================
-       2. DATABASE (ยัด 1,500+ คำของคุณลงที่นี่)
-       ========================================= */
-    const KNOWLEDGE_DB = {
-        // หมวดหมู่ความรู้แยกตาม Expert
-        business: [
-            { keys: ["กำไร", "ขาดทุน", "งบ", "บัญชี"], resp: "การจัดการบัญชีคือหัวใจของธุรกิจครับ คุณ ต้องคำนึงถึงงบกระแสเงินสดเป็นหลักนะ" },
-            { keys: ["ตลาด", "ลูกค้า", "แบรนด์"], resp: "ในแง่ธุรกิจ การสร้างความเชื่อใจ (Trust) กับลูกค้าสำคัญกว่าการลดราคาครับ" }
-        ],
-        science: [
-            { keys: ["ai", "เทคโนโลยี", "หุ่นยนต์"], resp: "ปัญญาประดิษฐ์ยุคใหม่ใช้การเรียนรู้จากข้อมูลมหาศาลครับ เหมือนที่ผมกำลังพยายามเข้าใจคุณอยู่" },
-            { keys: ["จักรวาล", "ดาว", "วิทยาศาสตร์"], resp: "ความลึกลับของจักรวาลพิสูจน์ได้ด้วยวิทยาศาสตร์ครับ มีอะไรให้ค้นหาอีกเยอะเลย" }
-        ],
-        history: [
-            { keys: ["สงคราม", "อดีต", "ประวัติศาสตร์"], resp: "ประวัติศาสตร์คือกระจกสะท้อนปัจจุบันครับ เรียนรู้อดีตเพื่อก้าวสู่อนาคตที่ดียิ่งขึ้น" }
-        ],
-        // ตัวตรวจจับอารมณ์ (Sentiment Cues)
-        emotions: {
-            positive: ["ดี", "สนุก", "ขอบคุณ", "ชอบ", "สำเร็จ", "มีความสุข", "เยี่ยม"],
-            negative: ["เหนื่อย", "แย่", "เสียใจ", "ท้อ", "ยาก", "เบื่อ", "หงุดหงิด"]
-        },
-        greetings: ["สวัสดีครับ!", "ไง! มีอะไรให้ผมช่วยไหม?", "ยินดีที่ได้คุยกันครับ", "อืม... สวัสดีครับ"],
-        fillers: ["เอ่อ...", "อืม...", "อ้อ...", "จริงๆ แล้ว..."]
+    // --- 1. ตรรกะความปลอดภัย & คลังคำตอบ (100+ ช่องว่างให้คุณเติม) ---
+    const SAFETY_LIST = ["ควย", "เย็ด", "หี", "แตด", "มึง", "กู", "ชิบหาย", "สัส", "เหี้ย", "fuck", "shit", "bitch", "porn"];
+    
+    // คลังคำตอบ: คุณโตนัสสามารถก๊อปปี้คำตอบ 100 ข้อมาวางเพิ่มใน [] ได้เลยครับ
+    const ANS_DB = {
+        business: ["ความสำเร็จในธุรกิจวัดกันที่การบริหารกระแสเงินสดและนวัตกรรมครับ", "ตลาดไม่เคยหลับใหล แต่คนทำธุรกิจต้องรู้จักพักเพื่อวางแผน"],
+        math: ["คณิตศาสตร์คือเครื่องมือถอดรหัสความลับของธรรมชาติ", "เลขทุกตัวมีอนุกรมที่ซ่อนอยู่เสมอ เหมือนที่คุณโตนัสชอบมองหา"],
+        tech: ["เทคโนโลยีที่ดีต้องช่วยประหยัดทรัพยากรและเข้าถึงง่าย", "V.2.0 Engine ถูกสร้างมาเพื่อความรวดเร็วสูงสุด"],
+        gen: ["คำถามน่าสนใจครับ มีอะไรให้ผมช่วยวิเคราะห์ต่อไหม?", "ผมพร้อมช่วยเหลือคุณในทุกโจทย์ที่สร้างสรรค์"]
     };
 
-    /* =========================================
-       3. CORE ENGINE (Medium Language Model)
-       ========================================= */
-    class GanBrain {
-        constructor() {
-            this.history = [];
-            this.internalState = { mood: "neutral", lastInput: "" };
+    const MAP = {
+        business: { n: "ธุรกิจ", i: "💼", c: "#4f46e5", k: ["ธุรกิจ", "ลงทุน", "รวย", "หุ้น"] },
+        math: { n: "คำนวณ", i: "📊", c: "#ef4444", k: ["เลข", "สมการ", "บัญชี", "คำนวณ", "อนุกรม"] },
+        tech: { n: "เทคโนโลยี", i: "🚀", c: "#10b981", k: ["ai", "คอม", "โปรแกรม", "เว็บ"] },
+        history: { n: "ประวัติศาสตร์", i: "📜", c: "#f59e0b", k: ["อดีต", "ประวัติศาสตร์", "ร.5"] }
+    };
+
+    class SmartEngineV2 {
+        _isBad(t) { return SAFETY_LIST.some(w => t.includes(w)); }
+        _rand(cat) { 
+            const arr = ANS_DB[cat] || ANS_DB.gen;
+            return arr[Math.floor(Math.random() * arr.length)];
         }
 
-        // ประมวลผลอารมณ์หลังบ้าน (Hidden Logic)
-        _processEmotion(text) {
-            let score = 0;
-            KNOWLEDGE_DB.emotions.positive.forEach(w => { if(text.includes(w)) score++; });
-            KNOWLEDGE_DB.emotions.negative.forEach(w => { if(text.includes(w)) score--; });
-            this.internalState.mood = score > 0 ? "happy" : (score < 0 ? "sad" : "neutral");
-        }
+        async get(input) {
+            if (this._isBad(input)) return "ขออภัยครับ ระบบรักษาความปลอดภัยของ V.2.0 ปฏิเสธการประมวลผลคำไม่สุภาพ 🙏";
+            
+            const lowText = input.toLowerCase();
 
-        async generateResponse(input) {
-            this._processEmotion(input);
-            const text = input.toLowerCase();
-            let reply = "";
-
-            // 1. Math Calculation
-            if (/[\d\+\-\*\/\(\)]/.test(text) && text.length > 2) {
+            // คำนวณเลขทีเดียวจบ
+            if (/[\d\+\-\*\/\(\)]/.test(lowText) && lowText.length >= 3) {
                 try { 
-                    const res = eval(text.replace(/[^0-9\+\-\*\/\(\)\.]/g, ''));
-                    return `🔢 ผลคำนวณคือ: **${res.toLocaleString()}** ครับ`;
+                    const clean = lowText.replace(/[^0-9\+\-\*\/\(\)\.]/g, '');
+                    const res = eval(clean);
+                    return `🔢 คำตอบคือ: **${res.toLocaleString()}** (Single-Output Calculation)`;
                 } catch(e) {}
             }
 
-            // 2. Pattern Matching (Knowledge DB)
-            for (let category in KNOWLEDGE_DB) {
-                if (Array.isArray(KNOWLEDGE_DB[category])) {
-                    for (let item of KNOWLEDGE_DB[category]) {
-                        if (item.keys.some(k => text.includes(k))) {
-                            reply = item.resp;
-                            break;
-                        }
-                    }
-                }
+            // ค้นหาหมวดหมู่
+            for (let key in MAP) {
+                if (MAP[key].k.some(k => lowText.includes(k))) return `[Expert ${MAP[key].n}]: ${this._rand(key)}`;
             }
 
-            // 3. MLM Emotion Response Logic
-            if (!reply) {
-                const filler = Math.random() > 0.7 ? KNOWLEDGE_DB.fillers[Math.floor(Math.random()*4)] + " " : "";
-                if (this.internalState.mood === "happy") {
-                    reply = filler + "ดีใจจังที่ได้ยินแบบนั้นครับ! พลังบวกของคุณยอดเยี่ยมมาก";
-                } else if (this.internalState.mood === "sad") {
-                    reply = filler + "ผมรับรู้ถึงความเหนื่อยล้าของคุณนะ... พักผ่อนบ้างนะครับ ผมเป็นกำลังใจให้เสมอ";
-                } else {
-                    reply = filler + (this.history.length > 3 ? "เราคุยกันมาสักพักแล้ว คุณอยากให้ผมวิเคราะห์เรื่องไหนต่อไหม?" : KNOWLEDGE_DB.greetings[Math.floor(Math.random()*4)]);
-                }
-            }
-
-            this.history.push(text);
-            return reply;
+            return this._rand('gen');
         }
     }
 
-    /* =========================================
-       4. UI CONTROLLER
-       ========================================= */
-    const brain = new GanBrain();
-    const chatBox = document.getElementById('chatBox');
+    // --- 2. UI Control ---
+    const engine = new SmartEngineV2();
     const chatForm = document.getElementById('chatForm');
     const userInput = document.getElementById('userInput');
-    const typing = document.getElementById('typing');
-    const loadingScreen = document.getElementById('loadingScreen');
+    const homeView = document.getElementById('homeView');
+    const chatView = document.getElementById('chatView');
+    const viewport = document.getElementById('viewport');
 
-    // สร้าง Emoji ลอยๆ ในหน้าโหลด
-    const emojis = ['🤖', '💡', '✨', '🎯', '🔢', '🚀'];
-    for (let i = 0; i < 15; i++) {
-        const e = document.createElement('div');
-        e.className = 'floating-emoji';
-        e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        e.style.left = Math.random() * 100 + 'vw';
-        e.style.top = Math.random() * 100 + 'vh';
-        e.style.animationDelay = Math.random() * 2 + 's';
-        loadingScreen.appendChild(e);
-    }
+    Object.keys(MAP).forEach(k => {
+        const item = MAP[k];
+        const card = document.createElement('div');
+        card.className = 'expert-card';
+        card.style.backgroundColor = item.c;
+        card.innerHTML = `<div class="text-3xl">${item.i}</div><div class="font-bold text-lg mt-2">${item.n}</div>`;
+        card.onclick = () => { userInput.value = `ขอข้อมูลด้าน ${item.n}`; chatForm.dispatchEvent(new Event('submit')); };
+        document.getElementById('categoryGrid').appendChild(card);
+    });
 
-    function addMessage(text, side) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message ${side}`;
-        msgDiv.innerHTML = `
-            <div class="message-avatar">${side === 'user' ? '👤' : '🤖'}</div>
-            <div class="message-content">${text}</div>
-        `;
-        chatBox.appendChild(msgDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
+    function show(txt, side) {
+        homeView.classList.add('hidden'); chatView.classList.remove('hidden');
+        const r = document.createElement('div');
+        r.className = `msg-row ${side}`;
+        r.innerHTML = `<div class="msg-bubble shadow-sm">${txt}</div>`;
+        chatView.appendChild(r);
+        viewport.scrollTop = viewport.scrollHeight;
     }
 
     chatForm.onsubmit = async (e) => {
         e.preventDefault();
-        const input = userInput.value.trim();
-        if (!input) return;
-
-        addMessage(input, 'user');
+        const msg = userInput.value.trim();
+        if(!msg) return;
+        show(msg, 'user');
         userInput.value = '';
-        typing.style.display = 'block';
-
-        const response = await brain.generateResponse(input);
-
-        setTimeout(() => {
-            typing.style.display = 'none';
-            addMessage(response, 'assistant');
-        }, 800);
+        const res = await engine.get(msg);
+        setTimeout(() => show(res, 'assistant'), 300);
     };
 
-    // Initial Message
-    setTimeout(() => {
-        addMessage("สวัสดีครับ! ผมพร้อมให้คำปรึกษาทุกเรื่องแล้วครับ", "assistant");
-    }, 3000);
-
+    window.onload = () => {
+        setTimeout(() => {
+            const ls = document.getElementById('loadingScreen');
+            ls.style.opacity = '0';
+            setTimeout(() => ls.style.display = 'none', 600);
+        }, 1800);
+    };
 </script>
 </body>
 </html>

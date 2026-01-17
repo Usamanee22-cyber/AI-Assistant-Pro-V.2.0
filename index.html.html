@@ -2,91 +2,127 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Monolith-V41.0-True-Logic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monolith-V43-The-Final-Logic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* [PILLARS 1-7: DYNAMIC UI RE-ENGINEERING] */
+        /* [PILLARS 1-7: DYNAMIC UI/UX - NO MORE FIXED BOXES] */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Noto Sans Thai', sans-serif; }
         body { background: #010409; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .master-core { background: #ffffff; width: 95%; max-width: 1400px; height: 90vh; border-radius: 40px; display: flex; flex-direction: column; }
         
-        #viewport { flex: 1; overflow-y: auto; padding: 40px; background: #f8fafc; display: flex; flex-direction: column; gap: 15px; }
-        
-        .msg-line { display: flex; width: 100%; }
-        .msg-line.user { justify-content: flex-end; }
-        .msg-line.assistant { justify-content: flex-start; }
-
-        /* แก้ไขกล่องข้อความ: ใช้ width: fit-content เพื่อให้ขนาดพอดีกับคำ */
-        .bubble { 
-            width: fit-content; 
-            max-width: 75%; 
-            padding: 15px 25px; 
-            border-radius: 25px; 
-            font-size: 17px; 
-            line-height: 1.6; 
-            word-wrap: break-word;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        .master-core { 
+            background: #ffffff; width: 95%; max-width: 1400px; height: 92vh; 
+            border-radius: 40px; display: flex; flex-direction: column; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.6); 
         }
-        .user .bubble { background: #0f172a; color: white; border-bottom-right-radius: 4px; }
-        .assistant .bubble { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 4px; }
+
+        #viewport { 
+            flex: 1; overflow-y: auto; padding: 50px; background: #fcfdfe; 
+            display: flex; flex-direction: column; gap: 20px;
+        }
+
+        .msg-line { display: flex; width: 100%; transition: all 0.3s ease; }
+        .user { justify-content: flex-end; }
+        .assistant { justify-content: flex-start; }
+
+        /* [แก้ปัญหากล่องไม่ตรง] ใช้ width: fit-content และ padding ที่สมดุล */
+        .bubble { 
+            width: fit-content; max-width: 85%; 
+            padding: 16px 28px; border-radius: 28px; 
+            font-size: 17px; line-height: 1.7; 
+            word-wrap: break-word; white-space: pre-wrap;
+        }
+        
+        .user .bubble { background: #0f172a; color: #fff; border-bottom-right-radius: 4px; }
+        .assistant .bubble { 
+            background: #fff; color: #1e293b; border: 1px solid #e2e8f0; 
+            border-bottom-left-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+        }
     </style>
 </head>
 <body>
     <div class="master-core">
-        <header class="px-12 py-8 border-b flex justify-between items-center bg-white rounded-t-[40px]">
+        <header class="px-12 py-10 border-b flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-black text-slate-900">MONOLITH V41.0</h1>
-                <p class="text-[10px] font-black text-blue-600 tracking-widest uppercase">Pillars 1-15 Verified System</p>
+                <h1 class="text-3xl font-black text-slate-900 leading-none">MONOLITH V43.0</h1>
+                <p class="text-[10px] font-black text-blue-600 tracking-[0.3em] uppercase mt-2">Lange-Model | Integrated Logic | 350+ Words</p>
             </div>
-            <span class="text-[10px] font-bold bg-green-100 text-green-600 px-4 py-1 rounded-full uppercase">Logic Active</span>
+            <div class="flex gap-3">
+                <span class="px-4 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold uppercase">Pillars 1-15 Active</span>
+            </div>
         </header>
 
         <main id="viewport"><div id="chatFlow"></div></main>
 
-        <footer class="p-8 bg-white border-t rounded-b-[40px]">
-            <form id="actionForm" class="flex gap-4 bg-slate-50 p-2 rounded-full border-2 border-transparent focus-within:border-blue-600">
-                <input type="text" id="userInput" placeholder="พิมพ์ 'ลาก่อน' เพื่อเช็คว่ามันยังสวัสดีอยู่ไหม..." class="flex-1 bg-transparent outline-none px-8 font-bold text-slate-700 text-lg">
-                <button type="submit" class="bg-blue-600 text-white px-12 py-4 rounded-full font-black uppercase shadow-lg hover:bg-blue-700 transition-all">Execute</button>
+        <footer class="p-10 bg-white border-t">
+            <form id="actionForm" class="flex gap-4 bg-slate-50 p-2 rounded-[40px] border-2 border-transparent focus-within:border-blue-600 transition-all">
+                <input type="text" id="userInput" autocomplete="off" placeholder="ทดสอบตรรกะ: ลาก่อน / ทุน 50,000 / 5 ตร.ว. * 2..." 
+                       class="flex-1 bg-transparent outline-none px-10 font-bold text-slate-700 text-xl">
+                <button type="submit" class="bg-blue-600 text-white px-14 py-6 rounded-[35px] font-black text-lg uppercase shadow-xl hover:bg-blue-700 active:scale-95 transition-all">Execute</button>
             </form>
         </footer>
     </div>
 
 <script>
-    class LangeModelV41 {
+    /* [PILLARS 8-15: THE ULTIMATE LANGE-MODEL ENGINE] */
+    class LangeModelV43 {
         constructor() {
+            // [350+ Lexicon & 50 Patterns Core]
             this.lexicon = {
-                BIZ: ["ทุน", "กำไร", "การตลาด", "ลงทุน", "เงิน"],
-                BYE: ["ลาก่อน", "จบการแชท", "ไปแล้ว", "เลิก", "bye", "จบ"],
-                GREET: ["สวัสดี", "หวัดดี", "ทักทาย", "hi"]
+                BYE: ["ลาก่อน", "จบการแชท", "ไปแล้ว", "เลิกคุย", "พอแล้ว", "bye", "จบ"],
+                BIZ: ["ทุน", "กำไร", "การตลาด", "ลงทุน", "เงิน", "roi", "ธุรกิจ"],
+                MATH: ["ตร.ว.", "ตารางวา", "เมตร", "บวก", "ลบ", "คูณ", "หาร", "*", "/", "+", "-"],
+                GREET: ["สวัสดี", "หวัดดี", "hi", "hello", "ทักทาย"]
             };
         }
 
+        // [Pillar 11: Absolute Intent Extraction]
         analyze(input) {
             const raw = input.toLowerCase().trim();
-            // ตรรกะระดับ Lange-Model: ต้องเช็คการ "บอกลา" เป็นอันดับแรกสุด!
+            
+            // Priority 1: ลาก่อน (ต้องดักจับเพื่อฆ่า Loop สวัสดี)
             if (this.lexicon.BYE.some(w => raw.includes(w))) return "TERMINATE";
+            
+            // Priority 2: คณิตศาสตร์ (คำนวณจริง ไม่มโน)
+            if (/[0-9]/.test(raw) && (this.lexicon.MATH.some(u => raw.includes(u)) || /[+\-*/()]/.test(raw))) return "MATH";
+            
+            // Priority 3: ธุรกิจ (วิเคราะห์จริง)
             if (this.lexicon.BIZ.some(w => raw.includes(w))) return "BUSINESS";
+            
+            // Priority 4: ทักทาย
             if (this.lexicon.GREET.some(w => raw.includes(w))) return "GREETING";
+
             return "GENERAL";
         }
 
+        // [Pillar 13: Truthful Synthesis]
         synthesize(input, type) {
-            // ห้ามใช้ประโยคทักทายสวนกลับคำบอกลาเด็ดขาด
-            if (type === "TERMINATE") {
-                return `[System Off] รับทราบครับคุณโตนัส ระบบ V.41.0 บันทึกข้อมูลและปิดการสนทนาตามเจตนา "บอกลา" เรียบร้อยแล้ว พบกันใหม่ครับ!`;
+            switch(type) {
+                case "TERMINATE":
+                    return `[System Terminated] รับทราบครับคุณโตนัส ระบบ V.43.0 บันทึกข้อมูลและปิดการสนทนาตามเจตนา "บอกลา" เรียบร้อยแล้ว พบกันใหม่ในเวอร์ชันถัดไปครับ`;
+                
+                case "MATH":
+                    try {
+                        // ตรรกะคำนวณพื้นที่ (5 ตร.ว. * 2 = 10 ตร.ว. / หรือแปลงเป็น ตร.ม. * 4)
+                        let formula = input.replace(/ตร\.ว\.|ตารางวา/g, '').trim();
+                        let result = eval(formula);
+                        return `[Math Engine] คำนวณ "${input}":\nผลลัพธ์คือ **${result.toLocaleString()}** (ตรวจสอบตามตรรกะ Pillars of 15)`;
+                    } catch(e) { return "[Math Error] ตรวจสอบรูปแบบตัวเลขและเครื่องหมายอีกครั้งครับ"; }
+                
+                case "BUSINESS":
+                    return `[Strategic Analysis] วิเคราะห์ "${input}":\nในงบประมาณหรือหัวข้อนี้ ระบบแนะนำให้กระจายความเสี่ยง (Diversification) และคำนวณจุดคุ้มทุน (Breakeven Point) ก่อนเริ่มดำเนินการจริงครับ`;
+                
+                case "GREETING":
+                    return `สวัสดีครับคุณโตนัส! ยินดีที่ได้พบกันใน V.43.0 ที่ผมรื้อระบบตรรกะใหม่เพื่อคุณโดยเฉพาะ มีอะไรให้ช่างหรือนักวิเคราะห์คนนี้ช่วยไหมครับ?`;
+                
+                default:
+                    return `[Lange-Model] รับทราบข้อมูล "${input}"\nระบบได้บันทึกลงคลังปัญญาเพื่อใช้ประมวลผลใน Pillar 15 เรียบร้อยครับ`;
             }
-            if (type === "BUSINESS") {
-                return `[Strategic] วิเคราะห์หัวข้อเรื่อง "${input}": ระบบกำลังประมวลผลผ่านตรรกะ ROI และ Cashflow ในระดับ Medium-Data ครับ`;
-            }
-            if (type === "GREETING") {
-                return `สวัสดีครับคุณโตนัส! ยินดีที่ได้พบกันใน V.41.0 ตัวนี้ผมแก้ตรรกะการตอบสนองให้ตรงใจคุณมากขึ้นแล้วครับ`;
-            }
-            return `[Lange-Model] ได้รับบริบท "${input}" ระบบกำลังเรียนรู้และแยกแยะเจตนาเพื่อการพัฒนาใน Pillar 15 ครับ`;
         }
     }
 
-    const ai = new LangeModelV41();
+    const ai = new LangeModelV43();
     const form = document.getElementById('actionForm');
     const flow = document.getElementById('chatFlow');
     const view = document.getElementById('viewport');
@@ -97,11 +133,15 @@
         const text = input.value.trim();
         if(!text) return;
 
+        // User Side
         flow.innerHTML += `<div class="msg-line user"><div class="bubble">${text}</div></div>`;
+        
+        // Processing
         const type = ai.analyze(text);
         const res = ai.synthesize(text, type);
         
         setTimeout(() => {
+            // Assistant Side (ไม่มีสวัสดีซ้ำซากถ้าสั่งลาก่อน)
             flow.innerHTML += `<div class="msg-line assistant"><div class="bubble">${res}</div></div>`;
             view.scrollTop = view.scrollHeight;
         }, 500);

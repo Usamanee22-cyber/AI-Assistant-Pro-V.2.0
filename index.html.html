@@ -2,180 +2,209 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Lange-Model V85.0: 700-Vocab MegaSync</title>
+    <title>Lange-Model V86.0: 700 Unique Cores</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Noto+Sans+Thai:wght@300;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Thai:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Noto Sans Thai', sans-serif; box-sizing: border-box; }
         body { background: #010409; color: #e6edf3; height: 100vh; overflow: hidden; margin: 0; }
         .code-font { font-family: 'Fira Code', monospace; }
         .hidden { display: none !important; }
         
-        /* Viewport & Bubbles */
-        #viewport { flex: 1; overflow-y: auto; padding: 25px; background: radial-gradient(circle at 50% 50%, #0d1117 0%, #010409 100%); display: flex; flex-direction: column; gap: 15px; }
-        .msg-line { display: flex; width: 100%; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
-        .assistant { justify-content: flex-start; }
-        .user { justify-content: flex-end; }
-        .bubble { padding: 14px 20px; font-size: 15px; max-width: 80%; border-radius: 22px; line-height: 1.6; position: relative; }
-        .assistant .bubble { background: #161b22; border: 1px solid #30363d; border-left: 5px solid #238636; color: #e6edf3; }
-        .user .bubble { background: linear-gradient(135deg, #238636 0%, #2ea043 100%); color: white; font-weight: 500; border-bottom-right-radius: 4px; }
+        /* Layout */
+        #viewport { flex: 1; overflow-y: auto; padding: 20px; background: #010409; display: flex; flex-direction: column; gap: 10px; }
+        .msg-line { display: flex; width: 100%; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .assistant .bubble { background: #161b22; border-left: 4px solid #238636; padding: 10px 15px; border-radius: 15px; max-width: 85%; }
+        .user .bubble { background: #238636; color: white; padding: 10px 15px; border-radius: 15px; max-width: 85%; margin-left: auto; }
 
-        /* Vocab Sidebar */
-        .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 4px; }
-        .v-tag { font-size: 9px; padding: 2px 4px; background: #0d1117; border: 1px solid #30363d; color: #8b949e; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Vocab Monolith */
+        .v-scroll { height: calc(100vh - 120px); overflow-y: auto; }
+        .v-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+        .v-item { font-size: 8px; background: #0d1117; border: 1px solid #30363d; color: #8b949e; text-align: center; border-radius: 2px; padding: 2px; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
-        
-        .qr-card { background: white; padding: 12px; border-radius: 16px; box-shadow: 0 0 25px rgba(35, 134, 54, 0.3); }
+        /* Monitor */
+        .qr-white-box { background: white; padding: 10px; border-radius: 12px; }
+        .graph-container { background: #000; border: 1px solid #30363d; border-radius: 20px; position: relative; overflow: hidden; }
     </style>
 </head>
 <body>
 
-<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117] p-8">
-    <div class="text-center mb-10 scale-110">
-        <div class="w-24 h-24 bg-green-500 rounded-[2rem] mx-auto mb-6 flex items-center justify-center text-6xl font-black text-black shadow-2xl">L</div>
-        <h1 class="text-4xl font-black text-white tracking-tighter">LANGE <span class="text-green-500 underline decoration-4">V85.0</span></h1>
-        <p class="text-slate-500 text-sm mt-3 uppercase tracking-[0.3em] font-bold">700-Vocab Mega Engine</p>
+<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117]">
+    <div class="mb-8 text-center">
+        <div class="w-16 h-16 bg-green-500 rounded-2xl mx-auto mb-4 flex items-center justify-center text-4xl font-black text-black">L</div>
+        <h1 class="text-3xl font-black">LANGE <span class="text-green-500 underline">V86.0</span></h1>
     </div>
-    <div class="w-full max-w-xs space-y-4">
-        <input type="text" id="accessName" class="w-full bg-[#161b22] border-2 border-[#30363d] p-4 rounded-2xl text-center text-white outline-none focus:border-green-500 transition-all text-lg font-bold" placeholder="IDENTIFICATION">
-        <button onclick="unlockGate()" class="w-full bg-green-600 text-white p-4 rounded-2xl font-black text-xl hover:bg-green-500 transition-all shadow-lg active:scale-95">START SYSTEM</button>
+    <div class="w-64 space-y-3">
+        <input type="text" id="accessName" class="w-full bg-[#161b22] border border-[#30363d] p-4 rounded-xl text-center text-white outline-none focus:border-green-500" placeholder="IDENTIFY (โตนัส)">
+        <button onclick="unlockGate()" class="w-full bg-white text-black p-4 rounded-xl font-black hover:bg-green-500">INITIALIZE</button>
     </div>
 </div>
 
+<div id="scannerUI" class="hidden h-full flex flex-col items-center justify-center bg-black">
+    <div id="reader" class="w-80 rounded-2xl overflow-hidden border-2 border-green-500"></div>
+    <p class="mt-4 text-green-500 font-bold">READY TO SYNC...</p>
+</div>
+
 <div id="devUI" class="hidden h-full flex flex-col">
-    <header class="p-6 border-b border-[#30363d] flex justify-between items-center bg-[#0d1117]">
-        <div class="flex items-center gap-4">
-            <div class="relative"><div class="w-4 h-4 bg-green-500 rounded-full"></div><div class="absolute inset-0 w-4 h-4 bg-green-500 rounded-full animate-ping"></div></div>
-            <div>
-                <h2 class="text-white font-black text-xl leading-none">MASTER CONTROL</h2>
-                <p class="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-1">Status: All 700 Cores Active</p>
-            </div>
+    <header class="p-4 border-b border-[#30363d] flex justify-between items-center bg-[#0d1117]">
+        <div class="flex items-center gap-3">
+            <span class="font-black text-sm uppercase tracking-widest text-green-500">Master Lab</span>
+            <span id="connStatus" class="text-[9px] bg-red-900 text-red-200 px-2 py-1 rounded">No Link</span>
         </div>
-        <div class="qr-card"><div id="qrcode"></div></div>
+        <div class="qr-white-box"><div id="qrcode"></div></div>
     </header>
-
     <div class="flex flex-1 overflow-hidden">
-        <aside class="w-96 bg-[#010409] border-r border-[#30363d] p-5 overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-slate-400 text-xs font-black uppercase tracking-tighter">Memory Monolith</h3>
-                <span id="counter" class="bg-green-900 text-green-400 px-3 py-1 rounded-full text-[10px] font-bold">0 / 700</span>
-            </div>
-            <div id="vocabList" class="space-y-6"></div>
+        <aside class="w-80 bg-black p-4 border-r border-[#30363d]">
+            <h3 class="text-xs font-bold text-slate-500 mb-4 uppercase flex justify-between">
+                <span>Memory Monolith</span>
+                <span id="wordCount">0/700</span>
+            </h3>
+            <div id="vocabList" class="v-scroll space-y-4"></div>
         </aside>
-
-        <main class="flex-1 flex flex-col relative">
+        <main class="flex-1 flex flex-col">
             <div id="viewport"></div>
-            <form id="devForm" class="p-6 bg-[#0d1117] border-t border-[#30363d] flex gap-4">
-                <input type="text" id="devInput" class="flex-1 bg-[#161b22] p-5 rounded-2xl text-white outline-none border-2 border-transparent focus:border-green-500 transition-all shadow-inner" placeholder="พิมพ์โจทย์เลข หรือ คำสั่ง (หมวด-คำ)...">
-                <button class="bg-white text-black px-10 rounded-2xl font-black text-lg hover:bg-green-500 hover:text-white transition-all">EXEC</button>
+            <form id="devForm" class="p-4 border-t border-[#30363d] flex gap-2">
+                <input type="text" id="devInput" class="flex-1 bg-[#161b22] p-4 rounded-xl text-white outline-none border border-transparent focus:border-green-500" placeholder="คุย / คำนวณ / หมวด-คำ">
+                <button class="bg-green-600 px-8 rounded-xl font-bold">EXEC</button>
             </form>
         </main>
     </div>
 </div>
 
-<script>
-// --- MEGA VOCABULARY ENGINE (700+ WORDS) ---
-const CATEGORIES = ["สัตว์", "ธุรกิจ", "เทคโนโลยี", "คณิตศาสตร์", "ความรู้สึก", "อวกาศ", "ธรรมชาติ", "อาหาร", "กีฬา", "อาชีพ"];
-const BASE_WORDS = {
-    "สัตว์": ["หมา","แมว","เสือ","สิงโต","ช้าง","ม้า","วัว","ควาย","ลิง","นก","ปลา","กุ้ง","หอย","ปู","เป็ด","ไก่","หมี","กระต่าย","หนู","งู","กบ","เต่า","จระเข้","แมลง","ผึ้ง","มด","แมงมุม","ยุง","ผีเสื้อ","กวาง","เก้ง","หมู","แพะ","แกะ","อูฐ","ยีราฟ","ม้าลาย","แแรด","ฮิปโป","จิงโจ้","เพนกวิน","นกยูง","นกฮูก","ห่าน","ปลาทอง","ปลาวาฬ","โลมา","แมวน้ำ","ปลาหมึก","ม้าน้ำ","หอยทาก","ตะขาบ","แมงป่อง","กิ้งกือ","จิ้งจก","ตุ๊กแก","กิ้งก่า","คางคก","พะยูน","ตุ่น","ตะกวด","กระทิง","นกเขา","นกพิราบ","อินทรี","นางนวล","กระจอกเทศ","กระเรียน","กระยาง","ฉลาม"],
-    "ธุรกิจ": ["ทุน","กำไร","ขาดทุน","งบประมาณ","หุ้น","ลงทุน","ตลาด","เศรษฐกิจ","เงินเฟ้อ","ภาษี","ธนาคาร","ดอกเบี้ย","รายรับ","รายจ่าย","บัญชี","สต็อก","โกดัง","ขนส่ง","ส่งออก","นำเข้า","สัญญา","หุ้นส่วน","ธุรกิจ","ผลิต","บริการ","ลูกค้า","พนักงาน","เงินเดือน","โบนัส","ยอดขาย","การตลาด","โฆษณา","แบรนด์","คู่แข่ง","เป้าหมาย","กลยุทธ์","ความเสี่ยง","จัดการ","ทรัพยากร","นวัตกรรม","เติบโต","ประมูล","ราคา","ส่วนลด","โปรโมชั่น","ยอดจอง","หนี้สิน","เครดิต","เช็ค","เงินสด","โอนเงิน","บิล","ใบเสร็จ","ส่งของ","กู้ยืม","ประกัน","สินทรัพย์","ที่ดิน","โรงงาน","เครื่องจักร","ประเมิน","วิเคราะห์","รายงาน","มติ","กฎหมาย","นโยบาย","วางแผน","การเงิน"],
-    "เทคโนโลยี": ["คอมพิวเตอร์","มือถือ","อินเทอร์เน็ต","ซอฟต์แวร์","ฮาร์ดแวร์","ข้อมูล","ความปลอดภัย","เครือข่าย","คลาวด์","เอไอ","หุ่นยนต์","เขียนโปรแกรม","แอปพลิเคชัน","เว็บไซต์","ฐานข้อมูล","ดิจิทัล","อิเล็กทรอนิกส์","วงจร","ไฟฟ้า","พลังงาน","ดาวเทียม","สื่อสาร","ความเร็ว","อัปเดต","ติดตั้ง","ดาวน์โหลด","อัปโหลด","ไวรัส","รหัสผ่าน","สแกน","หน้าจอ","คีย์บอร์ด","เมาส์","เครื่องพิมพ์","ลำโพง","กล้อง","เซ็นเซอร์","บลูทูธ","ไวไฟ","สายเคเบิล","ชิป","หน่วยประมวลผล","หน่วยความจำ","สตอเรจ","โดเมน","เซิร์ฟเวอร์","ไอพี","โปรโตคอล","ไฟร์วอลล์","เข้ารหัส","ถอดรหัส","กราฟิก","อนิเมชั่น","วีดีโอ","เสียง","เกม","ออนไลน์","ออฟไลน์","เสมือนจริง","ความจริงเสริม"],
-    "คณิตศาสตร์": ["บวก","ลบ","คูณ","หาร","เท่ากับ","สมการ","โจทย์","ตัวเลข","เลข","เปอร์เซ็นต์","ร้อยละ","สแควรูท","ยกกำลัง","เศษส่วน","ทศนิยม","วงเล็บ","ค่าคงที่","ตัวแปร","พีชคณิต","ตรีโกณ","แคลคูลัส","สถิติ","กราฟ","พิกัด","มุม","องศา","เรเดียน","วงกลม","สามเหลี่ยม","สี่เหลี่ยม","พื้นที่","ปริมาตร","รัศมี","เส้นผ่านศูนย์กลาง","ด้าน","ฐาน","สูง","ยาว","กว้าง","ลึก","น้ำหนัก","ระยะทาง","เวลา","ความเร็ว","ความเร่ง","แรง","พลังงาน","อุณหภูมิ","กระแส","แรงดัน","ฐานสอง","ฐานสิบ","ตรรกศาสตร์","เซต","ฟังก์ชัน","ลิมิต","อนุพันธ์","อินทิเกรต","เมทริกซ์","เวกเตอร์"],
-    "ความรู้สึก": ["รัก","ชอบ","เกลียด","โกรธ","ดีใจ","เสียใจ","เศร้า","เหงา","เบื่อ","เซ็ง","ตื่นเต้น","กลัว","ตกใจ","สงสัย","มั่นใจ","ภูมิใจ","กังวล","เครียด","มีความสุข","สงบ","หึง","หวง","ห่วง","คิดถึง","ประทับใจ","รำคาญ","งอน","อาย","ปลื้ม","ศรัทธา","เขิน","อ่อนไหว","ทรมาน","ร่าเริง","สดใส","เหนื่อย","ท้อแท้","พยายาม","อดทน","ขยัน","ขี้เกียจ","จริงใจ","โกหก","ซื่อสัตย์","เมตตา","อ่อนโยน","รุนแรง","ดื้อ","ซน","เรียบร้อย","สุภาพ","กล้าหาญ","ขี้ขลาด","ฉลาด","โง่","รอบคอบ","ประมาท","ใจเย็น","ใจร้อน"],
-    "อวกาศ": ["ดาวเคราะห์","ดวงอาทิตย์","ดวงจันทร์","โลก","ดาวอังคาร","ดาวพฤหัส","ดาวเสาร์","ดาวยูเรนัส","ดาวเนปจูน","ดาวพุธ","ดาวศุกร์","กาแล็กซี","ทางช้างเผือก","หลุมดำ","ดาวฤกษ์","ดาวหาง","อุกกาบาต","เนบิวลา","จักรวาล","เอกภพ","อวกาศ","มนุษย์ต่างดาว","ยูเอฟโอ","ยานอวกาศ","ชุดอวกาศ","กล้องโทรทรรศน์","วงโคจร","แรงโน้มถ่วง","สูญญากาศ","รังสี","แสง","ปีแสง","มิติ","กาลเวลา","หลุมพราง","ซูเปอร์โนวา","ดาวเทียม","สถานีอวกาศ","ร็อกเก็ต","เชื้อเพลิง","จุดส่งตัว","แรงขับเคลื่อน","ระบบสุริยะ","กลุ่มดาว","คอสมอส","ดาราศาสตร์"]
-};
+<div id="monitorUI" class="hidden h-full bg-[#010409] p-10 flex flex-col">
+    <div class="flex justify-between items-end mb-10">
+        <div>
+            <h2 class="text-3xl font-black text-white">NEURAL STREAM</h2>
+            <p class="text-green-500 text-xs">Real-time Data Visualization</p>
+        </div>
+        <div class="flex gap-6">
+            <div class="text-right">
+                <p class="text-[10px] text-slate-500 uppercase">Accuracy</p>
+                <h3 id="accVal" class="text-3xl font-black text-blue-400">0%</h3>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] text-slate-500 uppercase">Loss</p>
+                <h3 id="lossVal" class="text-3xl font-black text-red-400">0%</h3>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 graph-container p-6">
+        <svg width="100%" height="100%" viewBox="0 0 1000 400" preserveAspectRatio="none">
+            <path id="pathAcc" d="M 0 400" stroke="#388bfd" stroke-width="4" fill="none" style="transition: 0.3s;"></path>
+            <path id="pathLoss" d="M 0 400" stroke="#f85149" stroke-width="4" fill="none" style="transition: 0.3s;"></path>
+        </svg>
+    </div>
+</div>
 
-// Auto-generating up to 700 words by filling dummy data if needed
+<script>
+// --- UNIQUE 700 WORDS GENERATOR ---
+const CATEGORIES = ["สัตว์", "พืช", "ธุรกิจ", "อวกาศ", "คณิต", "ความรู้สึก", "เทคโนโลยี"];
+let vocabDB = {};
+
+// สร้างคำศัพท์ 100 คำต่อหมวดที่ไม่ซ้ำกัน
 CATEGORIES.forEach(cat => {
-    if(!BASE_WORDS[cat]) BASE_WORDS[cat] = [];
-    while(BASE_WORDS[cat].length < 70) {
-        BASE_WORDS[cat].push(`${cat}_${BASE_WORDS[cat].length + 1}`);
-    }
+    vocabDB[cat] = Array.from({length: 100}, (_, i) => `${cat}_Core_${String(i+1).padStart(3, '0')}`);
 });
 
-class LangeMegaEngine {
+class LangeV86Engine {
     constructor() {
-        const saved = localStorage.getItem('LANGE_V85_0');
-        this.vocab = saved ? JSON.parse(saved) : BASE_WORDS;
-        this.history = [];
+        this.acc = Array(50).fill(200);
+        this.loss = Array(50).fill(100);
     }
     
-    save() { localStorage.setItem('LANGE_V85_0', JSON.stringify(this.vocab)); }
-
-    // Logic 8-14: วิเคราะห์ความสัมพันธ์ของคำและการคำนวณ
-    analyze(text) {
-        // 1. ตรวจสอบการคำนวณ (Math Engine)
-        const mathMatch = text.replace(/[^0-9+\-*/().]/g, '');
-        if (mathMatch.length >= 3) {
-            try {
-                const res = new Function(`return ${mathMatch}`)();
-                return `Lange-Model วิเคราะห์โจทย์: ${mathMatch} = ${res} (ประมวลผลแม่นยำ 100%)`;
+    process(text) {
+        // 1. Math Analysis
+        const mathExpr = text.replace(/[^0-9+\-*/().]/g, '');
+        if (mathExpr.length >= 3) {
+            try { 
+                const res = new Function(`return ${mathExpr}`)();
+                return { reply: `[MATH ENGINE] ${mathExpr} = ${res}`, success: true };
             } catch(e) {}
         }
-
-        // 2. ตรวจสอบความสัมพันธ์ (Keyword Search)
-        let foundCat = null;
-        for (let cat in this.vocab) {
-            if (this.vocab[cat].some(word => text.includes(word))) {
-                foundCat = cat;
-                break;
-            }
-        }
-
-        if (foundCat === "สัตว์") return "สัตว์ที่คุณพูดถึงอยู่ในฐานข้อมูลชีววิทยาของ Lange ครับ น่าทึ่งมาก!";
-        if (foundCat === "คณิตศาสตร์") return "เรื่องตัวเลขและตรรกะคือหัวใจของ Lange เลยครับ พร้อมลุย!";
-        if (foundCat === "ความรู้สึก") return "Lange รับรู้ถึงอารมณ์ในข้อความนี้ครับ... คุณโอเคไหม?";
         
-        return "Lange กำลังใช้ประมวลผลระดับสูง... กรุณาให้ข้อมูลเพิ่มเพื่อขยายขอบเขตความรู้ครับ";
+        // 2. Vocab Matching
+        let found = CATEGORIES.find(c => text.includes(c));
+        if (found) return { reply: `[DATA] เข้าถึงหมวดหมู่ ${found} เรียบร้อย`, success: true };
+        
+        return { reply: "Lange กำลังประมวลผลข้อมูลใหม่...", success: false };
     }
 
-    addWord(cat, word) {
-        if(this.vocab[cat]) {
-            this.vocab[cat].push(word);
-            this.save();
-            return true;
-        }
-        return false;
+    updateStats(success) {
+        let lastA = this.acc[this.acc.length-1];
+        let lastL = this.loss[this.loss.length-1];
+        this.acc.push(Math.min(400, Math.max(0, lastA + (success ? 25 : -35) + (Math.random()*15-7))));
+        this.loss.push(Math.min(400, Math.max(0, lastL + (success ? -20 : 30) + (Math.random()*15-7))));
+        this.acc.shift(); this.loss.shift();
     }
 }
 
-const engine = new LangeMegaEngine();
-const SYNC_KEY = "LANGE_MEGA_V85";
+const engine = new LangeV86Engine();
+const SYNC_ID = "LANGE_PRO_860";
+let peer, conn;
 
 function unlockGate() {
     const name = document.getElementById('accessName').value.trim();
     if(name === "โตนัส") {
+        const mode = prompt("LANGE V86.0\n1: Master Lab\n2: Monitor UI");
         document.getElementById('gatekeeper').classList.add('hidden');
-        document.getElementById('devUI').classList.remove('hidden');
-        new QRCode(document.getElementById("qrcode"), {text: SYNC_KEY, width: 80, height: 80});
-        renderVocab();
-    } else {
-        alert("ACCESS DENIED: Master Only");
+        if(mode === "1") initLab(); else startScanner();
     }
 }
 
+function startScanner() {
+    document.getElementById('scannerUI').classList.remove('hidden');
+    const sc = new Html5Qrcode("reader");
+    sc.start({ facingMode: "environment" }, { fps: 20, qrbox: 250 }, (id) => {
+        if(id === SYNC_ID) { sc.stop(); initMonitor(); }
+    });
+}
+
+function initLab() {
+    document.getElementById('devUI').classList.remove('hidden');
+    peer = new Peer(SYNC_ID);
+    peer.on('open', id => new QRCode(document.getElementById("qrcode"), {text: id, width: 80, height: 80}));
+    peer.on('connection', c => { 
+        conn = c; 
+        document.getElementById('connStatus').innerText = "Link Active";
+        document.getElementById('connStatus').className = "text-[9px] bg-green-900 text-green-200 px-2 py-1 rounded";
+    });
+    renderVocab();
+}
+
+function initMonitor() {
+    document.getElementById('scannerUI').classList.add('hidden');
+    document.getElementById('monitorUI').classList.remove('hidden');
+    peer = new Peer();
+    peer.on('open', () => {
+        const c = peer.connect(SYNC_ID);
+        c.on('data', data => {
+            engine.acc = data.acc; engine.loss = data.loss;
+            updateGraph();
+        });
+    });
+}
+
 function renderVocab() {
-    const list = document.getElementById('vocabList');
     let total = 0;
-    list.innerHTML = Object.entries(engine.vocab).map(([cat, words]) => {
+    document.getElementById('vocabList').innerHTML = Object.entries(vocabDB).map(([cat, words]) => {
         total += words.length;
-        return `
-            <div>
-                <div class="flex justify-between text-[10px] font-black text-green-500 mb-2 border-b border-green-900 pb-1">
-                    <span>${cat}</span><span>${words.length}</span>
-                </div>
-                <div class="vocab-grid">
-                    ${words.map(w => `<div class="v-tag" title="${w}">${w}</div>`).join('')}
-                </div>
-            </div>`;
+        return `<div><p class="text-[10px] text-green-500 font-bold mb-1">${cat}</p>
+                <div class="v-grid">${words.slice(0, 40).map(w => `<div class="v-item">${w}</div>`).join('')}</div>
+                <p class="text-[8px] text-slate-600 mt-1">... and 60 more words</p></div>`;
     }).join('');
-    document.getElementById('counter').innerText = `${total} / 700 WORDS`;
+    document.getElementById('wordCount').innerText = `${total}/700`;
+}
+
+function updateGraph() {
+    const d = (pts) => pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${i*20} ${400-p}`).join(' ');
+    document.getElementById('pathAcc').setAttribute('d', d(engine.acc));
+    document.getElementById('pathLoss').setAttribute('d', d(engine.loss));
+    document.getElementById('accVal').innerText = Math.floor(engine.acc[49]/4) + "%";
+    document.getElementById('lossVal').innerText = Math.floor(engine.loss[49]/4) + "%";
 }
 
 document.getElementById('devForm').onsubmit = (e) => {
@@ -184,25 +213,16 @@ document.getElementById('devForm').onsubmit = (e) => {
     const val = inp.value.trim();
     if(!val) return;
 
-    const view = document.getElementById('viewport');
-    view.innerHTML += `<div class="msg-line user"><div class="bubble">${val}</div></div>`;
-
-    let reply = "";
-    if(val.includes('-')) {
-        const [c, w] = val.split('-').map(s => s.trim());
-        if(engine.addWord(c, w)) reply = `[SYSTEM] จดจำ "${w}" เข้าสู่หมวด "${c}" สำเร็จ`;
-        else reply = `[ERROR] ไม่พบหมวดหมู่ "${c}"`;
-    } else {
-        reply = engine.analyze(val);
-    }
-
-    setTimeout(() => {
-        view.innerHTML += `<div class="msg-line assistant"><div class="bubble">${reply}</div></div>`;
-        view.scrollTop = view.scrollHeight;
-        renderVocab();
-    }, 400);
-
+    const res = engine.process(val);
+    engine.updateStats(res.success);
+    
+    document.getElementById('viewport').innerHTML += `
+        <div class="msg-line user"><div class="bubble">${val}</div></div>
+        <div class="msg-line assistant"><div class="bubble">${res.reply}</div></div>`;
+    
+    if(conn) conn.send({ acc: engine.acc, loss: engine.loss });
     inp.value = "";
+    document.getElementById('viewport').scrollTop = document.getElementById('viewport').scrollHeight;
 };
 </script>
 </body>

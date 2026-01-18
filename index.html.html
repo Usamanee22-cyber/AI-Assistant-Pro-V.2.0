@@ -226,6 +226,18 @@ document.getElementById('chatForm').onsubmit = async (e) => {
     await addTrace("ML/DL ENGINE", "Processing through 15 Neural Pillars...");
     await addTrace("BLM PARAMS", "Accessing 900+ Parameter Monolith...");
     
+    // --- [INSERTED MATH LOGIC ONLY] ---
+    let mathResult = null;
+    const mathRegex = /[0-9+\-*/().]{3,}/;
+    if (mathRegex.test(text)) {
+        try {
+            // ทำการกรองเฉพาะตัวอักษรที่ใช้คำนวณเพื่อความปลอดภัย
+            const cleanExpr = text.match(/[0-9+\-*/(). ]+/g).join('');
+            mathResult = Function('"use strict"; return (' + cleanExpr + ')')();
+        } catch (err) { mathResult = null; }
+    }
+    // ------------------------------------
+
     // AI Reasoning Logic
     let categoryFound = "ปรัชญา"; 
     for (let cat in MONOLITH) {
@@ -245,7 +257,15 @@ document.getElementById('chatForm').onsubmit = async (e) => {
     };
 
     const ex = MONOLITH["อุทาน"][Math.floor(Math.random() * MONOLITH["อุทาน"].length)];
-    let reply = responses[categoryFound] || `${ex}! Lange-Model V95.3 ประมวลผลข้อมูลเสร็จสิ้นในรูปแบบ AI ทรงปัญญา`;
+    
+    // --- [RESPONSE LOGIC WITH MATH] ---
+    let reply = "";
+    if (mathResult !== null) {
+        reply = `${ex}! ระบบประมวลผลสมการเสร็จสิ้น คำตอบคือ: ${mathResult}`;
+    } else {
+        reply = responses[categoryFound] || `${ex}! Lange-Model V95.3 ประมวลผลข้อมูลเสร็จสิ้นในรูปแบบ AI ทรงปัญญา`;
+    }
+    // ------------------------------------
 
     document.getElementById('viewport').innerHTML += `<div class="msg-line assistant"><div class="bubble">${reply}</div></div>`;
     input.value = "";

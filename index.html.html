@@ -73,7 +73,7 @@
         </div>
 
         <div id="graphView" class="hidden flex-1 p-8 bg-[#010409] overflow-y-auto">
-            <h2 class="text-xl font-black mb-4 v95-accent italic">NEURAL LOSS (LIVE SIMULATION)</h2>
+            <h2 class="text-xl font-black mb-4 v95-accent italic">NEURAL KNOWLEDGE FLOW</h2>
             <div class="glass p-6 rounded-2xl h-[450px] w-full">
                 <canvas id="liveLossChart"></canvas>
             </div>
@@ -85,18 +85,16 @@
 // --- [MONOLITH & LOCAL STORAGE SYSTEM] ---
 const DEFAULT_MONOLITH = {
     "คณิต": ["บวก","ลบ","คูณ","หาร","เท่ากับ","สมการ","โจทย์","ตัวเลข","เลข","เปอร์เซ็นต์","ร้อยละ","สแควรูท","ยกกำลัง","เศษส่วน","ทศนิยม","วงเล็บ","ค่าคงที่","ตัวแปร","พีชคณิต","ตรีโกณ","แคลคูลัส","สถิติ","กราฟ","พิกัด","มุม","องศา","เรเดียน","วงกลม","สามเหลี่ยม","สี่เหลี่ยม","พื้นที่","ปริมาตร","รัศมี","เส้นผ่านศูนย์กลาง","ด้าน","ฐาน","สูง","ยาว","กว้าง","ลึก","น้ำหนัก","ระยะทาง","เวลา","ความเร็ว","ความเร่ง","แรง","พลังงาน","อุณหภูมิ","กระแส","แรงดัน","ความต้านทาน","ฐานสอง","ฐานสิบ","ตรรกศาสตร์","เซต","ความน่าจะเป็น","ฟังก์ชัน","ลิมิต","อนุพันธ์","อินทิกรัล","เมทริกซ์","เวกเตอร์","เรขาคณิต","ความชัน","จุดตัด","ขนาน","ตั้งฉาก","ทรงกรวย","ทรงกระบอก","ทรงกลม","พหุนาม","อนุกรม","ลำดับ","สูตร","นิยาม","ทฤษฎี","บทพิสูจน์","ตาราง","ค่าเฉลี่ย","ฐานนิยม","มัธยฐาน","ส่วนเบี่ยงเบน","ความแปรปรวน","ความถี่","ความสัมพันธ์","ผลรวม","ตัวประกอบ","จำนวนเต็ม","จำนวนจริง","จำนวนเชิงซ้อน","จำนวนตรรกยะ","จำนวนอตรรกยะ","หาสัมประสิทธิ์","นิพจน์","ตัวหารร่วม","ตัวคูณร่วม"],
-    "ธรรมชาติ": ["ป่า","เขา","ดิน","หิน","ทราย","น้ำ","ลม","ไฟ","เมฆ","หมอก","แดด","ฝน","พายุ","รุ้ง","ทะเล","คลื่น","หาด","เกาะ","ถ้ำ","แม่น้ำ","ลำธาร","น้ำตก","หุบเขา","หน้าผา","ต้นไม้","หญ้า","ดอกไม้","ใบไม้","กิ่งไม้","ราก","เมล็ด","ผลไม้","แร่ธาตุ","ทองคำ","เงิน","เหล็ก","ทองแดง","สังกะสี","น้ำมัน","ก๊าซ","ถ่านหิน","เพชร","พลอย","ดินเหนียว","ดินทราย","ดินร่วน","อากาศ","ออกซิเจน","ไนโตรเจน","คาร์บอน","ชั้นบรรยากาศ","โอโซน","ลมบก","ลมทะเล","มรสุม","ไต้ฝุ่น","แผ่นดินไหว","ภูเขาไฟ","ลาวา","แมกมา","ธารน้ำแข็ง","ขั้วโลก","เส้นศูนย์สูตร","ฤดูกาล","ฤดูร้อน","ฤดูหนาว","ฤดูฝน","ใบไม้ผลิ","ใบไม้ร่วง","ป่าดิบชิง","ป่าสน","ทุ่งหญ้า","ทะเลทราย","ปะการัง","สาหร่าย","พืช","สัตว์","แมลง","แบคทีเรีย","รา","ไวรัส","ระบบนิเวศ","โซ่อาหาร","ความหลากหลาย","การปรับตัว","การวิวัฒนาการ","การสืบพันธุ์","การเจริญเติบโต","แสงสว่าง","ความมืด","กลางวัน","กลางคืน","สุริยุปราคา","จันทรุปราคา"],
-    "ความรู้สึก": ["รัก","เกลียด","โกรธ","หลง","เศร้า","ดีใจ","เสียใจ","กลัว","กล้า","ระแวง","สงสัย","มั่นใจ","ตื่นเต้น","เบื่อ","เหงา","ท้อ","หิว","อิ่ม","ง่วง","เหนื่อย","สดชื่น","ผ่อนคลาย","เครียด","กังวล","ภูมิใจ","ละอาย","สำนึก","ขอบคุณ","ขอโทษ","เมตตา","กรุณา","มุทิตา","อุเบกขา","สงบ","ฟุ้งซ่าน","ห่วง","ใย","คิดถึง","คะนึง","โหยหา","เจ็บ","ปวด","ร้าว","ทรมาน","สุข","สำราญ","รื่นรมย์","หงุดหงิด","รำคาญ","อาฆาต","แค้น","อภัย","ชื่นชม","ศรัทธา","เลื่อมใส","หวัง","สิ้นหวัง","รันทด","อนาถ","เวทนา","เอ็นดู","รังเกียจ","ดูถูก","เหยียด","ยอมรับ","ปฏิเสธ","จริงใจ","หลอกลวง","ซื่อสัตย์","ทรยศ","ซาบซึ้ง","ประทับใจ","เขิน","อาย","ประหม่า","โล่งใจ","ตกใจ","สับสน","ลังเล","แน่วแน่","ใจดี","ใจดำ","ใจร้าย","ใจเย็น","ใจร้อน","เกรงใจ","ถ่อมตัว","จองหอง","อวดดี","ดื้อ","ยอม"]
+    "ธรรมชาติ": ["ป่า","เขา","ดิน","หิน","ทราย","น้ำ","ลม","ไฟ","เมฆ","หมอก","แดด","ฝน","พายุ","รุ้ง","ทะเล","คลื่น","หาด","เกาะ","ถ้ำ","แม่น้ำ","ลำธาร","น้ำตก","หุบเขา","หน้าผา","ต้นไม้","หญ้า","ดอกไม้","ใบไม้","กิ่งไม้","ราก","เมล็ด","ผลไม้","แร่ธาตุ","ทองคำ","เงิน","เหล็ก","ทองแดง","สังกะสี","น้ำมัน","ก๊าซ","ถ่านหิน","เพชร","พลอย","ดินเหนียว","ดินทราย","ดินร่วน","อากาศ","ออกซิเจน","ไนโตรเจน","คาร์บอน","ชั้นบรรยากาศ","โอโซน","ลมบก","ลมทะเล","มรสุม","ไต้ฝุ่น","แผ่นดินไหว","ภูเขาไฟ","ลาวา","แมกมา","ธารน้ำแข็ง","ขั้วโลก","เส้นศูนย์สูตร","ฤดูกาล","ฤดูร้อน","ฤดูหนาว","ฤดูฝน","ใบไม้ผลิ","ใบไม้ร่วง","ป่าดิบชิง","ป่าสน","ทุ่งหญ้า","ทะเลทราย","ปะการัง","สาหร่าย","พืช","สัตว์","แมลง","แบคทีเรีย","รา","ไวรัส","ระบบนิเวศ","โซ่อาหาร","ความหลากหลาย","การปรับตัว","การวิวัฒนาการ","การสืบพันธุ์","การเจริญเติบโต","แสงสว่าง","ความมืด","กลางวัน","กลางคืน","สุริยุปราคา","จันุปราคา"],
+    "ความรู้สึก": ["รัก","เกลียด","โกรธ","หลง","เศร้า","ดีใจ","เสียใจ","กลัว","กล้า","ระแวง","สงสัย","มั่นใจ","ตื่นเต้น","เบื่อ","เหงา","ท้อ","หิว","อิ่ม","ง่วง","เหนื่อย","สดชื่น","ผ่อนคลาย","เครียด","กกังวล","ภูมิใจ","ละอาย","สำนึก","ขอบคุณ","ขอโทษ","เมตตา","กรุณา","มุทิตา","อุเบกขา","สงบ","ฟุ้งซ่าน","ห่วง","ใย","คิดถึง","คะนึง","โหยหา","เจ็บ","ปวด","ร้าว","ทรมาน","สุข","สำราญ","รื่นรมย์","หงุดหงิด","รำคาญ","อาฆาต","แค้น","อภัย","ชื่นชม","ศรัทธา","เลื่อมใส","หวัง","สิ้นหวัง","รันทด","อนาถ","เวทนา","เอ็นดู","รังเกียจ","ดูถูก","เหยียด","ยอมรับ","ปฏิเสธ","จริงใจ","หลอกลวง","ซื่อสัตย์","ทรยศ","ซาบซึ้ง","ประทับใจ","เขิน","อาย","ประหม่า","โล่งใจ","ตกใจ","สับสน","ลังเล","แน่วแน่","ใจดี","ใจดำ","ใจร้าย","ใจเย็น","ใจร้อน","เกรงใจ","ถ่อมตัว","จองหอง","อวดดี","ดื้อ","ยอม"]
 };
 
-// โหลดข้อมูลจาก Local Storage หรือใช้ค่าเริ่มต้น
 let MONOLITH = JSON.parse(localStorage.getItem('LANGE_V95_MEMORY')) || DEFAULT_MONOLITH;
 
 function saveMemory() {
     localStorage.setItem('LANGE_V95_MEMORY', JSON.stringify(MONOLITH));
 }
 
-// สร้าง RAW Data ให้ครบ 900+ (ห้าม Node หลอก)
 Object.keys(MONOLITH).forEach(c => { 
     while(MONOLITH[c].length < 300) { MONOLITH[c].push(`${c}_Data_Unit_${MONOLITH[c].length}`); } 
 });
@@ -104,8 +102,9 @@ Object.keys(MONOLITH).forEach(c => {
 let currentUser = "";
 let lossChart = null;
 let dataPoints = 100;
-let trainData = Array.from({length: dataPoints}, (_, i) => 2.5 * Math.exp(-i/20) + Math.random()*0.2);
-let validData = Array.from({length: dataPoints}, (_, i) => 2.0 * Math.exp(-i/25) + 0.8 + Math.random()*0.3);
+// เริ่มต้นด้วยข้อมูลที่นิ่ง (Static)
+let trainData = Array.from({length: dataPoints}, () => 1.0);
+let validData = Array.from({length: dataPoints}, () => 1.2);
 
 function checkAccess() {
     const name = document.getElementById('accessName').value.trim();
@@ -137,15 +136,19 @@ function renderLearning() {
     `).join('');
 }
 
+// --- จุดที่ 2: กราฟขยับเมื่อมีการเพิ่มคำใหม่ลงในหมวด ---
 function trainToken() {
     const val = document.getElementById('learnInput').value;
     if (!val.includes("-")) return alert("รูปแบบผิด! ต้องเป็น หมวด-คำใหม่");
     const [cat, word] = val.split("-");
     if (MONOLITH[cat.trim()]) {
         MONOLITH[cat.trim()].push(word.trim());
-        saveMemory(); // เซฟลงเครื่องทันที
+        saveMemory();
         renderLearning();
         document.getElementById('learnInput').value = "";
+        
+        // ขยับกราฟเมื่อมีการเรียนรู้ (Spike)
+        triggerNeuralActivity(1.5, 0.8);
     } else {
         alert("ไม่พบหมวดหมู่นี้!");
     }
@@ -158,27 +161,36 @@ function initLossGraph() {
         data: {
             labels: Array.from({length: dataPoints}, (_, i) => i),
             datasets: [
-                { label: 'Train Loss (Blue)', data: trainData, borderColor: '#1f6feb', backgroundColor: 'rgba(31, 111, 235, 0.1)', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true },
-                { label: 'Val Loss (Orange)', data: validData, borderColor: '#d18131', borderWidth: 2, pointRadius: 0, tension: 0.3 }
+                { label: 'Neural Gain', data: trainData, borderColor: '#58a6ff', backgroundColor: 'rgba(88, 166, 255, 0.1)', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true },
+                { label: 'System Knowledge', data: validData, borderColor: '#00ff88', borderWidth: 2, pointRadius: 0, tension: 0.4 }
             ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: { duration: 0 },
+            responsive: true, maintainAspectRatio: false,
+            animation: { duration: 200 },
             scales: {
-                y: { grid: { color: '#30363d' }, ticks: { color: '#8b949e' } },
+                y: { grid: { color: '#30363d' }, ticks: { display: false }, min: 0, max: 3 },
                 x: { display: false }
             },
-            plugins: { legend: { labels: { color: '#e6edf3', font: { weight: 'bold' } } } }
+            plugins: { legend: { labels: { color: '#e6edf3' } } }
         }
     });
+}
 
-    setInterval(() => {
-        trainData.shift(); trainData.push(0.5 + Math.random() * 0.1);
-        validData.shift(); validData.push(1.0 + Math.random() * 0.15);
-        lossChart.update();
-    }, 100);
+// ฟังก์ชันหัวใจสำคัญ: ทำให้กราฟขยับตาม "ความรู้" (Triggered Activity)
+function triggerNeuralActivity(spike1, spike2) {
+    if (!lossChart) return;
+    
+    // คำนวณฐานความรู้จริงจากจำนวนคำใน MONOLITH
+    const totalKnowledge = Object.values(MONOLITH).flat().length / 900;
+
+    trainData.shift(); 
+    trainData.push(totalKnowledge + (Math.random() * spike1)); 
+    
+    validData.shift(); 
+    validData.push(totalKnowledge * 0.9 + (Math.random() * spike2));
+    
+    lossChart.update();
 }
 
 async function addTrace(pillar, detail) {
@@ -189,6 +201,7 @@ async function addTrace(pillar, detail) {
     await new Promise(r => setTimeout(r, 200));
 }
 
+// --- จุดที่ 1: กราฟขยับเมื่อมีการพิมพ์แชท (ตามความรู้ที่ตอบ) ---
 document.getElementById('chatForm').onsubmit = async (e) => {
     e.preventDefault();
     const input = document.getElementById('userInput');
@@ -198,6 +211,9 @@ document.getElementById('chatForm').onsubmit = async (e) => {
     document.getElementById('viewport').innerHTML += `<div class="msg-line user"><div class="bubble">${text}</div></div>`;
     document.getElementById('traceLog').innerHTML = "";
     
+    // กราฟขยับเมื่อเริ่มประมวลผล (Signal Spike)
+    triggerNeuralActivity(0.5, 0.3);
+
     await addTrace("TOKENIZE", "Decoding 942-Parameter Nodes...");
     await addTrace("LOCAL-MEMORY", "Accessing Persistent Storage...");
     
@@ -208,6 +224,10 @@ document.getElementById('chatForm').onsubmit = async (e) => {
     let reply = mathRes !== null ? `${ex}! ผลลัพธ์คือ ${mathRes}` : `${ex}! Lange-Model วิเคราะห์เสร็จสิ้น`;
 
     document.getElementById('viewport').innerHTML += `<div class="msg-line assistant"><div class="bubble">${reply}</div></div>`;
+    
+    // กราฟขยับอีกครั้งเมื่อตอบเสร็จ (Knowledge Integration)
+    triggerNeuralActivity(0.8, 0.5);
+
     input.value = "";
     document.getElementById('viewport').scrollTop = document.getElementById('viewport').scrollHeight;
 };

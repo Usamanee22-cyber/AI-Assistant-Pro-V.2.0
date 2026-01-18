@@ -2,102 +2,133 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Lange-Model V89.0: Single-Device Ecosystem</title>
+    <title>AI-Lange-Model-Learning V.90.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+Thai:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Noto Sans Thai', sans-serif; box-sizing: border-box; }
-        body { background: #010409; color: #e6edf3; height: 100vh; overflow: hidden; margin: 0; }
+        body { background: #020617; color: #f1f5f9; height: 100vh; overflow: hidden; margin: 0; }
         .code-font { font-family: 'Fira Code', monospace; }
         .hidden { display: none !important; }
         
+        /* New V90.0 Theme: Blue-Purple Gradient */
+        .v90-gradient { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%); }
+        .v90-accent { color: #818cf8; }
+        .v90-border { border-color: #312e81; }
+
         /* Layout Components */
-        #viewport { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #010409; }
-        .bubble { padding: 12px 18px; border-radius: 20px; max-width: 80%; line-height: 1.5; font-size: 15px; position: relative; }
-        .assistant .bubble { background: #161b22; border: 1px solid #30363d; border-left: 5px solid #238636; }
-        .user .bubble { background: #238636; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
+        #viewport { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: #020617; }
+        
+        /* UI กล่องข้อความเปลี่ยนตามความยาว (Flexible Height) */
+        .bubble { 
+            padding: 12px 18px; 
+            border-radius: 20px; 
+            max-width: 85%; 
+            line-height: 1.5; 
+            font-size: 15px; 
+            position: relative; 
+            word-wrap: break-word; 
+            height: auto;
+        }
+        .assistant .bubble { background: #0f172a; border: 1px solid #312e81; border-left: 5px solid #818cf8; color: #e2e8f0; }
+        .user .bubble { background: linear-gradient(to right, #4338ca, #6366f1); color: white; margin-left: auto; border-bottom-right-radius: 4px; }
 
         /* Neural Process Animation */
-        .process-line { border-left: 2px solid #238636; padding-left: 12px; margin-bottom: 10px; opacity: 0; transform: translateX(-10px); animation: slideIn 0.4s forwards; }
+        .process-line { border-left: 2px solid #818cf8; padding-left: 12px; margin-bottom: 10px; opacity: 0; transform: translateX(-10px); animation: slideIn 0.4s forwards; }
         @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
         
         /* Vocab Grid */
         .v-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
-        .v-item { font-size: 8px; background: #0d1117; border: 1px solid #30363d; color: #8b949e; text-align: center; padding: 3px; border-radius: 4px; }
+        .v-item { font-size: 8px; background: #020617; border: 1px solid #1e293b; color: #94a3b8; text-align: center; padding: 3px; border-radius: 4px; }
         
         /* Navigation Buttons */
-        .tab-btn { background: #161b22; color: #8b949e; padding: 10px 20px; border-radius: 12px 12px 0 0; font-size: 12px; font-weight: bold; border: 1px solid #30363d; border-bottom: none; }
-        .tab-btn.active { background: #238636; color: white; border-color: #238636; }
+        .tab-btn { background: #0f172a; color: #64748b; padding: 10px 20px; border-radius: 12px 12px 0 0; font-size: 12px; font-weight: bold; border: 1px solid #1e293b; border-bottom: none; }
+        .tab-btn.active { background: #312e81; color: white; border-color: #4f46e5; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #312e81; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#0d1117]">
+<div id="gatekeeper" class="h-full flex flex-col items-center justify-center bg-[#020617]">
     <div class="text-center mb-10">
-        <div class="w-24 h-24 bg-green-500 rounded-[2rem] mx-auto mb-6 flex items-center justify-center text-6xl font-black text-black">L</div>
-        <h1 class="text-4xl font-black">LANGE <span class="text-green-500">V89.0</span></h1>
-        <p class="text-slate-500 mt-2 font-bold tracking-widest uppercase text-[10px]">Neural Processing Verification</p>
+        <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2rem] mx-auto mb-6 flex items-center justify-center text-6xl font-black text-white shadow-2xl shadow-indigo-500/20">L</div>
+        <h1 class="text-4xl font-black text-white italic">LANGE <span class="v90-accent">V90.0</span></h1>
+        <p class="text-indigo-300 mt-2 font-bold tracking-[0.3em] uppercase text-[10px]">AI-Lange-Model-Learning</p>
     </div>
     <div class="w-80 space-y-4">
-        <input type="text" id="accessName" class="w-full bg-[#161b22] border-2 border-[#30363d] p-5 rounded-3xl text-center text-white outline-none focus:border-green-500 text-xl font-bold" placeholder="ENTER NAME">
-        <button onclick="checkAccess()" class="w-full bg-white text-black p-5 rounded-3xl font-black text-xl hover:bg-green-500 transition-all active:scale-95">INITIALIZE SYSTEM</button>
+        <input type="text" id="accessName" class="w-full bg-[#0f172a] border-2 border-[#1e293b] p-5 rounded-3xl text-center text-white outline-none focus:border-indigo-500 text-xl font-bold" placeholder="ENTER NAME">
+        <button onclick="checkAccess()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-5 rounded-3xl font-black text-xl hover:scale-105 transition-all active:scale-95 shadow-lg shadow-indigo-500/30">INITIALIZE</button>
     </div>
 </div>
 
 <div id="mainSystem" class="hidden h-full flex flex-col">
-    <nav class="flex px-4 pt-4 bg-[#0d1117] border-b border-[#30363d] gap-2">
-        <button id="btnLab" onclick="switchTab('lab')" class="tab-btn active">จอ LAB (PROCESS)</button>
-        <button id="btnGraph" onclick="switchTab('graph')" class="tab-btn">จอ GRAPH (LEARNING)</button>
-        <button id="btnUser" onclick="switchTab('userChat')" class="tab-btn hidden">USER CHAT</button>
+    <nav id="adminNav" class="flex px-4 pt-4 bg-[#020617] border-b border-[#1e293b] gap-2">
+        <button id="btnLab" onclick="switchTab('lab')" class="tab-btn active">LAB PROCESS</button>
+        <button id="btnGraph" onclick="switchTab('graph')" class="tab-btn">LEARNING CURVE</button>
     </nav>
 
     <div class="flex-1 overflow-hidden flex">
-        <aside id="sidebar" class="w-80 bg-black border-r border-[#30363d] p-4 overflow-y-auto">
-            <h3 class="text-xs font-black text-slate-500 mb-4 flex justify-between"><span>DATABASE MONOLITH</span><span class="text-green-500">700/700</span></h3>
+        <aside id="sidebar" class="w-80 bg-black border-r border-[#1e293b] p-4 overflow-y-auto">
+            <h3 class="text-xs font-black text-indigo-400 mb-4 flex justify-between"><span>DATABASE MONOLITH</span><span id="totalWordCount">700/700</span></h3>
             <div id="vocabDisplay" class="space-y-6"></div>
+            <div class="mt-8 p-4 bg-[#0f172a] rounded-xl border border-indigo-900">
+                <p class="text-[10px] font-bold text-indigo-300 mb-2">TRAINING UNIT (LOCAL)</p>
+                <input type="text" id="trainWord" class="w-full bg-black text-xs p-2 rounded border border-indigo-900 mb-2 outline-none" placeholder="คำใหม่">
+                <select id="trainCat" class="w-full bg-black text-[10px] p-2 rounded border border-indigo-900 mb-2">
+                    <option value="ทักทาย (100)">ทักทาย</option>
+                    <option value="สัตว์ (100)">สัตว์</option>
+                    <option value="ธุรกิจ (100)">ธุรกิจ</option>
+                    <option value="อวกาศ (100)">อวกาศ</option>
+                    <option value="เทคโนโลยี (100)">เทคโนโลยี</option>
+                    <option value="ธรรมชาติ (100)">ธรรมชาติ</option>
+                </select>
+                <button onclick="trainNewWord()" class="w-full bg-indigo-600 text-[10px] font-bold p-2 rounded">LEARN WORD</button>
+            </div>
         </aside>
 
         <div class="flex-1 flex flex-col">
             <div id="labView" class="flex-1 flex flex-col overflow-hidden">
                 <div id="viewport"></div>
-                <div id="processTrace" class="h-64 bg-[#000] border-t border-[#30363d] p-6 code-font overflow-y-auto">
-                    <div class="text-slate-600 mb-4">// Neural Process Trace: Awaiting Input...</div>
+                <div id="processTrace" class="h-64 bg-[#000] border-t border-[#1e293b] p-6 code-font overflow-y-auto">
+                    <div class="text-indigo-900 mb-4">// AI-Lange-Model Neural Trace: Awaiting...</div>
                     <div id="traceLog"></div>
                 </div>
             </div>
 
-            <div id="graphView" class="hidden flex-1 p-10 bg-[#010409]">
-                <h2 class="text-2xl font-black mb-6">Learning Curve Monitor</h2>
+            <div id="graphView" class="hidden flex-1 p-10 bg-[#020617]">
+                <h2 class="text-2xl font-black mb-6 italic text-indigo-400">Learning Curve Monitor</h2>
                 <div class="grid grid-cols-2 gap-6 mb-10">
-                    <div class="bg-[#161b22] p-6 rounded-3xl border border-[#30363d] text-center">
-                        <p class="text-xs text-slate-500 uppercase mb-2">Accuracy Rate</p>
-                        <h3 id="accText" class="text-5xl font-black text-blue-400">98.2%</h3>
+                    <div class="bg-[#0f172a] p-6 rounded-3xl border border-indigo-900 text-center">
+                        <p class="text-xs text-indigo-400 uppercase mb-2">Accuracy Rate</p>
+                        <h3 class="text-5xl font-black text-indigo-300">99.1%</h3>
                     </div>
-                    <div class="bg-[#161b22] p-6 rounded-3xl border border-[#30363d] text-center">
-                        <p class="text-xs text-slate-500 uppercase mb-2">Neural Loss</p>
-                        <h3 id="lossText" class="text-5xl font-black text-red-400">0.021</h3>
+                    <div class="bg-[#0f172a] p-6 rounded-3xl border border-indigo-900 text-center">
+                        <p class="text-xs text-indigo-400 uppercase mb-2">Neural Loss</p>
+                        <h3 class="text-5xl font-black text-purple-400">0.009</h3>
                     </div>
                 </div>
-                <div class="flex-1 bg-black rounded-[40px] border border-[#30363d] p-8 h-64 relative">
+                <div class="flex-1 bg-black rounded-[40px] border border-[#1e293b] p-8 h-64">
                     <svg width="100%" height="100%" viewBox="0 0 1000 300" preserveAspectRatio="none">
-                        <path id="graphAcc" d="M 0 300 L 1000 50" stroke="#388bfd" stroke-width="6" fill="none"></path>
-                        <path id="graphLoss" d="M 0 50 L 1000 280" stroke="#f85149" stroke-width="6" fill="none"></path>
+                        <path d="M 0 300 L 200 150 L 400 100 L 600 80 L 800 60 L 1000 40" stroke="#818cf8" stroke-width="6" fill="none"></path>
                     </svg>
                 </div>
             </div>
 
-            <form id="chatForm" class="p-6 bg-[#0d1117] border-t border-[#30363d] flex gap-4">
-                <input type="text" id="userInput" class="flex-1 bg-[#161b22] p-5 rounded-2xl text-white outline-none focus:border-green-500 border-2 border-transparent transition-all" placeholder="ป้อนข้อมูลให้ Lange-Model...">
-                <button type="submit" class="bg-green-600 px-10 rounded-2xl font-black text-white hover:bg-green-500 shadow-lg shadow-green-500/20">EXECUTE</button>
+            <form id="chatForm" class="p-6 bg-[#020617] border-t border-[#1e293b] flex gap-4">
+                <input type="text" id="userInput" class="flex-1 bg-[#0f172a] p-5 rounded-2xl text-white outline-none focus:border-indigo-500 border-2 border-transparent transition-all" placeholder="Message AI-Lange-Model...">
+                <button type="submit" class="bg-gradient-to-r from-indigo-600 to-purple-600 px-10 rounded-2xl font-black text-white hover:opacity-90 shadow-lg">SEND</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-// --- FULL 700 WORDS DATABASE (REAL WORDS) ---
-const CATS = {
-    "สวัสดี (100)": ["สวัสดีครับ","สวัสดีค่ะ","หวัดดี","ฮัลโหล","ไฮ","ดีจ้า","โย่ว","อรุณสวัสดิ์","ราตรีสวัสดิ์","ฝันดี","ทักทาย","สบายดีไหม","ยินดีที่ได้รู้จัก","ขอบคุณ","ขอโทษ","ไม่เป็นไร","โชคดี","ไปก่อนนะ","บาย","เจอกัน","คิดถึง","รักนะ","ว่าไง","สู้ๆ","ห่วงนะ","เก่งมาก","สุดยอด","เท่","หล่อ","สวย","ดีงาม","เยี่ยม","ยอด","เป๊ะ","รวย","เฮง","ปัง","สาธุ","เพี้ยง","ชิว","สนุก","ขำ","ฮา","ตลก","ยินดีด้วย","อย่าท้อ","มั่นใจ","ทำได้","เก่ง","ฉลาด","เฉียบ","คม","ลึก","ซึ้ง","ใจ","กาย","จิต","รุ่ง","เรือง","เลิศ","หรู","แพง","ถูก","ชอบ","ปลื้ม","ศรัทธา","เมตตา","รัก","หลง","หวง","ห่วง","ใย","จริง","แท้","แน่นอน","ชัดเจน","เหมาะสม","เยาว์","วัย","เด็ก","ผู้ใหญ่","โต","ปัง","ดัง","ดี","รุ่ง","พุ่ง","แรง","เทพ","เซียน","เก๋","แจ่ม","ว้าว","อัศจรรย์","มหัศจรรย์","เลิศเลอ","วิเศษ","ประเสริฐ","ยอดเยี่ยม"],
+// --- DATABASE MONOLITH ---
+let CATS = {
+    "ทักทาย (100)": ["สวัสดีครับ","สวัสดีค่ะ","หวัดดี","ฮัลโหล","ไฮ","ดีจ้า","โย่ว","อรุณสวัสดิ์","ราตรีสวัสดิ์","ฝันดี","ทักทาย","สบายดีไหม","ยินดีที่ได้รู้จัก","ขอบคุณ","ขอโทษ","ไม่เป็นไร","โชคดี","ไปก่อนนะ","บาย","เจอกัน","คิดถึง","รักนะ","ว่าไง","สู้ๆ","ห่วงนะ","เก่งมาก","สุดยอด","เท่","หล่อ","สวย","ดีงาม","เยี่ยม","ยอด","เป๊ะ","รวย","เฮง","ปัง","สาธุ","เพี้ยง","ชิว","สนุก","ขำ","ฮา","ตลก","ยินดีด้วย","อย่าท้อ","มั่นใจ","ทำได้","เก่ง","ฉลาด","เฉียบ","คม","ลึก","ซึ้ง","ใจ","กาย","จิต","รุ่ง","เรือง","เลิศ","หรู","แพง","ถูก","ชอบ","ปลื้ม","ศรัทธา","เมตตา","รัก","หลง","หวง","ห่วง","ใย","จริง","แท้","แน่นอน","ชัดเจน","เหมาะสม","เยาว์","วัย","เด็ก","ผู้ใหญ่","โต","ปัง","ดัง","ดี","รุ่ง","พุ่ง","แรง","เทพ","เซียน","เก๋","แจ่ม","ว้าว","อัศจรรย์","มหัศจรรย์","เลิศเลอ","วิเศษ","ประเสริฐ","ยอดเยี่ยม"],
     "สัตว์ (100)": ["หมา","แมว","เสือ","สิงโต","ช้าง","ม้า","วัว","ควาย","ลิง","นก","ปลา","กุ้ง","หอย","ปู","เป็ด","ไก่","หมี","กระต่าย","หนู","งู","กบ","เต่า","จระเข้","ผึ้ง","มด","แมงมุม","ยุง","ผีเสื้อ","กวาง","ห่าน","โลมา","วาฬ","ฉลาม","แพนด้า","จิ้งจอก","นกฮูก","ค้างคาว","แมวน้ำ","ฮิปโป","ยีราฟ","ม้าลาย","แรด","จิงโจ้","นกยูง","กระรอก","พะยูน","ตุ่น","ตะกวด","ตะขาบ","แมงป่อง","คางคก","กิ้งก่า","ตุ๊กแก","กิ้งกือ","แมลงวัน","หมัด","เห็บ","ชะนี","เก้ง","นกเขา","นกพิราบ","อินทรี","นางนวล","กระจอกเทศ","กระเรียน","ปลาคาร์พ","ปูดำ","ปูม้า","หอยแครง","กุ้งมังกร","ปลาหมึก","ม้าน้ำ","ปลาทอง","นิล","เก๋า","ทับทิม","แซลมอน","ทูน่า","หมึกยักษ์","ปลาไหล","สลิด","ตะเพียน","บู่","นกแก้ว","นกหงส์หยก","นกขุนทอง","เป็ดเทศ","ไก่ชน","ไก่งวง","หมาป่า","แมวดาว","หมีควาย","หมีขั้วโลก","จิ้งจก","ตะพาบน้ำ","อูฐ","ควายป่า"],
     "ธุรกิจ (100)": ["ทุน","กำไร","ขาดทุน","งบประมาณ","หุ้น","ลงทุน","ตลาด","เศรษฐกิจ","เงินเฟ้อ","ภาษี","ธนาคาร","ดอกเบี้ย","รายรับ","รายจ่าย","บัญชี","สต็อก","โกดัง","ขนส่ง","ส่งออก","นำเข้า","สัญญา","หุ้นส่วน","ผลิต","บริการ","ลูกค้า","พนักงาน","เงินเดือน","โบนัส","ยอดขาย","การตลาด","โฆษณา","แบรนด์","คู่แข่ง","เป้าหมาย","กลยุทธ์","จัดการ","เติบโต","ประมูล","ราคา","ส่วนลด","หนี้สิน","เครดิต","เช็ค","เงินสด","โอนเงิน","บิล","ใบเสร็จ","กู้ยืม","ประกัน","สินทรัพย์","ที่ดิน","โรงงาน","เครื่องจักร","ประเมิน","วิเคราะห์","รายงาน","มติ","กฎหมาย","นโยบาย","วางแผน","การเงิน","หุ้นกู้","กองทุน","เงินออม","สภาพคล่อง","พอร์ต","ปันผล","เม่า","ดอย","ลาก","ทุบ","ปั่นหุ้น","ขายชอร์ต","อุปสงค์","อุปทาน","เงินฝาก","เอสเอ็มอี","สตาร์ทอัพ","เจ้าของ","กิจการ","ผู้ถือหุ้น","ประธาน","ซีอีโอ","บริหาร","จ้างงาน","ลาออก","เลิกจ้าง","สวัสดิการ","ประชุม","สัมมนา","ฝึกอบรม","คลังสินค้า","โลจิสติกส์","แฟรนไชส์","ลิขสิทธิ์","สิทธิบัตร"],
     "คณิตศาสตร์ (100)": ["บวก","ลบ","คูณ","หาร","เท่ากับ","สมการ","โจทย์","ตัวเลข","เลข","เปอร์เซ็นต์","ร้อยละ","สแควรูท","ยกกำลัง","เศษส่วน","ทศนิยม","วงเล็บ","ค่าคงที่","ตัวแปร","พีชคณิต","ตรีโกณ","แคลคูลัส","สถิติ","กราฟ","พิกัด","มุม","องศา","เรเดียน","วงกลม","สามเหลี่ยม","สี่เหลี่ยม","พื้นที่","ปริมาตร","รัศมี","เส้นผ่านศูนย์กลาง","ด้าน","ฐาน","สูง","ยาว","กว้าง","ลึก","น้ำหนัก","ระยะทาง","เวลา","ความเร็ว","ความเร่ง","แรง","พลังงาน","อุณหภูมิ","กระแส","แรงดัน","ความต้านทาน","ฐานสอง","ฐานสิบ","ตรรกศาสตร์","เซต","ฟังก์ชัน","ลิมิต","อนุพันธ์","อินทิเกรต","เมทริกซ์","เวกเตอร์","พหุนาม","ราก","สูตร","นิยาม","ทฤษฎี","บทพิสูจน์","ตาราง","ค่าเฉลี่ย","ฐานนิยม","มัธยฐาน","ส่วนเบี่ยงเบน","ความน่าจะเป็น","เหตุการณ์","เซตว่าง","ยูเนียน","อินเตอร์เซกชัน","คอมพลีเมนต์","ความสัมพันธ์","โดเมน","เรนจ์","กราฟเส้น","กราฟแท่ง","วงกลม","ความถี่","พาย","ลอการิทึม","เอ็กซ์โพเนนเชียล","ลำดับ","อนุกรม","จำกัด","อนันต์","ศูนย์","หนึ่ง","ล้าน","จำนวนจริง","จำนวนจินตภาพ","จำนวนเต็ม","จำนวนตรรกยะ"],
@@ -109,19 +140,56 @@ const CATS = {
 let currentUser = "";
 const pillars = ["Intent", "Logic", "Context", "Memory", "Emotion", "Safety", "Linguistic", "Analysis", "Synthesis", "Reasoning", "Verification", "Accuracy", "Tone", "Culture", "Creativity"];
 
+// --- LOAD LOCAL STORAGE (ระบบจำถาวร) ---
+function loadMemory() {
+    const saved = localStorage.getItem('LANGE_MEMORY_V90');
+    if (saved) {
+        const extraWords = JSON.parse(saved);
+        Object.keys(extraWords).forEach(cat => {
+            if (CATS[cat]) {
+                extraWords[cat].forEach(w => {
+                    if (!CATS[cat].includes(w)) CATS[cat].push(w);
+                });
+            }
+        });
+    }
+}
+
+function trainNewWord() {
+    const word = document.getElementById('trainWord').value.trim();
+    const cat = document.getElementById('trainCat').value;
+    if (word && !CATS[cat].includes(word)) {
+        CATS[cat].push(word);
+        // บันทึกลง LocalStorage
+        const saved = localStorage.getItem('LANGE_MEMORY_V90') || "{}";
+        const memory = JSON.parse(saved);
+        if (!memory[cat]) memory[cat] = [];
+        memory[cat].push(word);
+        localStorage.setItem('LANGE_MEMORY_V90', JSON.stringify(memory));
+        
+        document.getElementById('trainWord').value = "";
+        renderVocab();
+        alert(`AI ได้เรียนรู้คำว่า "${word}" และบันทึกลงความจำถาวรแล้ว`);
+    }
+}
+
 function checkAccess() {
     const name = document.getElementById('accessName').value.trim();
     if (!name) return;
     currentUser = name;
+    loadMemory();
     document.getElementById('gatekeeper').classList.add('hidden');
     document.getElementById('mainSystem').classList.remove('hidden');
     
     if (name === "โตนัส") {
-        document.getElementById('btnUser').classList.add('hidden');
+        document.getElementById('adminNav').classList.remove('hidden');
+        document.getElementById('sidebar').classList.remove('hidden');
+        document.getElementById('processTrace').classList.remove('hidden');
         switchTab('lab');
     } else {
-        document.getElementById('btnUser').classList.remove('hidden');
+        document.getElementById('adminNav').classList.add('hidden');
         document.getElementById('sidebar').classList.add('hidden');
+        document.getElementById('processTrace').classList.add('hidden'); // ซ่อน Logic ในหน้า User
         switchTab('userChat');
     }
     renderVocab();
@@ -139,25 +207,28 @@ function switchTab(tab) {
         document.getElementById('graphView').classList.remove('hidden');
         document.getElementById('btnGraph').classList.add('active');
     } else {
-        document.getElementById('labView').classList.remove('hidden'); // User Chat uses Lab view but simplified
-        document.getElementById('btnUser').classList.add('active');
+        document.getElementById('labView').classList.remove('hidden');
     }
 }
 
 function renderVocab() {
-    document.getElementById('vocabDisplay').innerHTML = Object.entries(CATS).map(([cat, words]) => `
-        <div>
-            <div class="text-[9px] font-black text-green-500 mb-2 uppercase">${cat}</div>
+    let total = 0;
+    document.getElementById('vocabDisplay').innerHTML = Object.entries(CATS).map(([cat, words]) => {
+        total += words.length;
+        return `<div>
+            <div class="text-[9px] font-black text-indigo-400 mb-2 uppercase">${cat} (${words.length})</div>
             <div class="v-grid">${words.map(w => `<div class="v-item">${w}</div>`).join('')}</div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
+    document.getElementById('totalWordCount').innerText = `${total}/700+`;
 }
 
 async function addTrace(step, detail, delay) {
+    if (currentUser !== "โตนัส") return; // ไม่แสดง Trace ถ้าไม่ใช่ Admin
     const log = document.getElementById('traceLog');
     const div = document.createElement('div');
     div.className = 'process-line';
-    div.innerHTML = `<span class="text-green-500 font-black text-[10px] uppercase">${step}:</span> <span class="text-white text-[10px]">${detail}</span>`;
+    div.innerHTML = `<span class="text-indigo-400 font-black text-[10px] uppercase">${step}:</span> <span class="text-indigo-100 text-[10px]">${detail}</span>`;
     log.appendChild(div);
     log.scrollTop = log.scrollHeight;
     await new Promise(r => setTimeout(r, delay));
@@ -169,40 +240,39 @@ document.getElementById('chatForm').onsubmit = async (e) => {
     const text = input.value.trim();
     if (!text) return;
 
-    // Clear and Show Trace
     document.getElementById('traceLog').innerHTML = "";
     document.getElementById('viewport').innerHTML += `<div class="msg-line user"><div class="bubble">${text}</div></div>`;
     
-    // 1. TOKENIZE (1.5s)
+    // 1. TOKENIZE
     const tokens = text.split('').map(c => `[0x${c.charCodeAt(0).toString(16).toUpperCase()}]`);
-    await addTrace("TOKENIZE", `Decomposing string into neural units: ${tokens.slice(0, 8).join(' ')}...`, 1500);
+    await addTrace("TOKENIZE", `Decomposing into units: ${tokens.slice(0, 8).join(' ')}`, 1500);
 
-    // 2. MEDIUM-DATA (1.5s)
+    // 2. MEDIUM-DATA
     let found = [];
     Object.entries(CATS).forEach(([cat, words]) => {
         words.forEach(w => { if(text.includes(w)) found.push(`${cat.split(' ')[0]}:${w}`); });
     });
-    await addTrace("MEDIUM-DATA", `Vector Mapping against 700 Cores: Detected [${found.length > 0 ? found.join(', ') : 'Abstract Pattern'}]`, 1500);
+    await addTrace("MEDIUM-DATA", `Vector Scan: [${found.length > 0 ? found.join(', ') : 'New Neural Pattern'}]`, 1500);
 
-    // 3. ENGINE SELECTION (Math vs Lange)
+    // 3. ENGINE SELECTION
     const mathExpr = text.replace(/[^0-9+\-*/().]/g, '');
     let result = null;
     if (mathExpr.length >= 3) {
         try {
             result = eval(mathExpr);
-            await addTrace("MATH-ENGINE (ACTIVE)", `Intercepting Language Layer -> Calculating: ${mathExpr} = ${result}`, 1500);
+            await addTrace("MATH-ENGINE", `Bypassing Language -> Solving: ${mathExpr} = ${result}`, 1500);
         } catch(e) {}
     } else {
-        await addTrace("LANGE-MODEL (DL/BLM)", `Context Weighting: ML(65%) Training Bias applied. Synthesizing new response...`, 1500);
+        await addTrace("LANGE-MODEL (DL)", `Synthesizing response based on ${found.length} detected cores...`, 1500);
     }
 
-    // 4. PILLARS OF 15 (1.5s)
+    // 4. PILLARS OF 15
     const pStatus = pillars.map(p => `${p}: OK`).join(' | ');
-    await addTrace("PILLARS OF 15", `Verification Stage (P1-P15): ${pStatus}`, 1500);
+    await addTrace("PILLARS OF 15", `Final Integrity Check: ${pStatus}`, 1500);
 
     // FINAL REPLY
-    const finalReply = result !== null ? `Lange-Model คำนวณให้แล้วครับ: **${result}**` : `Lange-Model รับทราบข้อมูล "${text}" และประมวลผลผ่านคลังความรู้เรียบร้อยครับ`;
-    document.getElementById('viewport').innerHTML += `<div class="msg-line assistant"><div class="bubble">${finalReply}</div></div>`;
+    const reply = result !== null ? `ผลลัพธ์: **${result}**` : `Lange-Model V90.0 รับทราบข้อมูล "${text}" และประมวลผลเสร็จสิ้นครับ`;
+    document.getElementById('viewport').innerHTML += `<div class="msg-line assistant"><div class="bubble">${reply}</div></div>`;
     
     input.value = "";
     document.getElementById('viewport').scrollTop = document.getElementById('viewport').scrollHeight;

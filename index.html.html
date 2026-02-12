@@ -2,258 +2,79 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>LANGE MODEL V.150 | FULL LLM LEVEL 5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Interface</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans+Thai:wght@400;700;900&display=swap');
-        body { background: #010409; color: #e6edf3; font-family: 'Noto Sans Thai', sans-serif; overflow: hidden; }
-        .monolith-area { font-size: 8px; color: #30363d; line-height: 1.2; letter-spacing: 1px; }
-        .glass-ui { background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(25px); border: 1px solid #30363d; }
-        .highlight-word { color: #58a6ff; text-shadow: 0 0 5px #1d4ed8; }
-        #chat-flow::-webkit-scrollbar { width: 4px; }
-        #chat-flow::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
+        body { background-color: #0f172a; color: white; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .chat-container { height: calc(100vh - 160px); overflow-y: auto; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="p-4 md:p-8">
 
-<div id="gatekeeper" class="fixed inset-0 z-[100] bg-[#010409] flex flex-col items-center justify-center p-6">
-    <h1 class="text-7xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400 mb-4">LANGE</h1>
-    <p class="text-gray-600 font-mono tracking-[1.5em] mb-12">FULL NEURAL INTERFACE</p>
-    <input type="text" id="id-input" class="bg-black border-2 border-blue-900/30 p-5 rounded-3xl text-center text-3xl font-bold w-full max-w-md outline-none focus:border-blue-500 transition-all" placeholder="IDENTIFY">
-    <button onclick="authSystem()" class="mt-10 bg-blue-600 px-16 py-5 rounded-full font-black text-xl hover:scale-110 transition-transform">INITIALIZE CORE</button>
-</div>
+    <div class="max-w-4xl mx-auto">
+        <header class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Gemini AI Dashboard
+            </h1>
+            <div class="text-xs text-slate-400">Status: <span class="text-green-400">Online</span></div>
+        </header>
 
-<div id="admin-menu" class="hidden fixed inset-0 z-[90] bg-black/95 flex flex-col items-center justify-center">
-    <h2 class="text-4xl font-black mb-16">ADMIN COMMAND: <span class="text-blue-500">โตนัส</span></h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-6xl px-10">
-        <button onclick="launch(1)" class="glass-ui p-12 rounded-[40px] text-left hover:border-blue-500 transition-all group">
-            <h3 class="text-blue-500 font-black text-3xl mb-4">1. ADMIN TRAINING</h3>
-            <p class="text-gray-500 font-mono">Generates Neural Handshake (QR Source)</p>
-        </button>
-        <button onclick="launch(2)" class="glass-ui p-12 rounded-[40px] text-left hover:border-green-500 transition-all">
-            <h3 class="text-green-500 font-black text-3xl mb-4">2. GRAPH LEARNING</h3>
-            <p class="text-gray-500 font-mono">Neural Curve & Scanner Interface</p>
-        </button>
-        <button onclick="launch(3)" class="glass-ui p-12 rounded-[40px] text-left hover:border-yellow-500 transition-all">
-            <h3 class="text-yellow-500 font-black text-3xl mb-4">3. LOCAL STRONG</h3>
-            <p class="text-gray-500 font-mono">Distributed Database Sync</p>
-        </button>
-    </div>
-</div>
-
-<div id="main-system" class="hidden h-full flex flex-col">
-    <div id="sync-toast" class="hidden fixed top-10 left-1/2 -translate-x-1/2 z-[200] bg-blue-600 text-white px-12 py-5 rounded-full font-black shadow-[0_0_50px_rgba(37,99,235,0.6)] animate-bounce">เชื่อมต่อสำเร็จ</div>
-
-    <header class="p-5 border-b border-[#30363d] flex justify-between items-center bg-[#010409]">
-        <div class="flex items-center gap-6">
-            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <span class="text-2xl font-black tracking-tighter">LANGE LLM <span class="text-blue-500">V.150</span></span>
-        </div>
-        <div class="relative">
-            <input type="password" id="local-pass" class="bg-black border border-gray-800 text-[10px] p-2 rounded w-24 opacity-20 hover:opacity-100 transition-all" placeholder="PASSCODE" onchange="checkPass(this.value)">
-        </div>
-    </header>
-
-    <div class="flex-1 flex overflow-hidden">
-        <main class="flex-1 flex flex-col border-r border-[#30363d]">
-            <div id="chat-flow" class="flex-1 overflow-y-auto p-10 space-y-8 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-            
-            <div class="h-56 bg-black border-t border-[#30363d] p-6 font-mono text-[11px] overflow-hidden">
-                <div class="flex justify-between text-blue-500 font-bold mb-3">
-                    <span>LLM_NEURAL_PROCESSING_TRACE</span>
-                    <span id="cycle-count">CYCLES: 0</span>
+        <div id="chatBox" class="chat-container glass rounded-2xl p-6 mb-6 space-y-4">
+            <div class="flex gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs">AI</div>
+                <div class="bg-slate-700/50 p-3 rounded-2xl rounded-tl-none max-w-[80%]">
+                    สวัสดีครับ! ผมคือ AI ที่รันบน GitHub Pages มีอะไรให้ช่วยไหมครับ? เย่!
                 </div>
-                <div id="trace-log" class="text-gray-500 space-y-1"></div>
             </div>
+        </div>
 
-            <form onsubmit="executeLLM(event)" class="p-8 bg-[#0d1117] flex gap-5">
-                <input type="text" id="user-in" class="flex-1 bg-black border border-[#30363d] p-6 rounded-[30px] outline-none focus:border-blue-500 text-xl font-bold" placeholder="ป้อนชุดคำสั่งระดับสูง..." autocomplete="off">
-                <button class="bg-blue-600 px-14 rounded-[30px] font-black text-xl hover:bg-blue-500 transition-all shadow-lg active:scale-95">GENERATE</button>
-            </form>
-        </main>
-
-        <aside id="monolith-view" class="w-2/5 p-8 overflow-y-auto bg-black hidden lg:block">
-            <h4 class="text-xs font-black text-blue-900 mb-8 tracking-[0.5em] uppercase border-b border-blue-900/30 pb-4">Hard-Coded Monolith: 10,000 Data Points</h4>
-            <div id="monolith-grid" class="monolith-area flex flex-wrap gap-2"></div>
-        </aside>
+        <div class="relative">
+            <input type="text" id="userInput" 
+                class="w-full glass rounded-xl py-4 px-6 pr-16 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                placeholder="พิมพ์คำถามของคุณที่นี่...">
+            <button onclick="sendMessage()" 
+                class="absolute right-3 top-2 bottom-2 px-4 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors">
+                ส่ง
+            </button>
+        </div>
     </div>
-</div>
 
-<div id="overlay" class="hidden fixed inset-0 z-[110] bg-black/98 flex flex-col items-center justify-center p-10">
-    <div id="qr-target" class="bg-white p-8 rounded-[40px] hidden shadow-[0_0_100px_rgba(255,255,255,0.1)]"></div>
-    <div id="cam-target" class="w-full max-w-lg hidden rounded-[40px] overflow-hidden border-8 border-blue-600">
-        <div id="reader"></div>
-    </div>
-    <button onclick="closeOverlay()" class="mt-16 text-gray-500 font-bold text-xl underline">CANCEL SYNC</button>
-</div>
+    <script>
+        // ฟังก์ชันส่งข้อความ
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            const message = input.value.trim();
 
-<script>
-// --- [1. THE MONOLITH: 10,000 WORDS & BIG-DATA HARD-CODED] ---
-// คำศัพท์และแนวทางการตอบแบบดิบๆ ห้ามย่อ ห้ามโกง ห้ามซ่อน
-const VOCAB = [
-    // หมวด 1-1000: สังคม, กฎหมาย, การปกครอง
-    "สังคม", "ประชาชน", "กฎหมาย", "รัฐธรรมนูญ", "บริหาร", "ตุลาการ", "สิทธิ", "เสรีภาพ", "เลือกตั้ง", "ภาษี", "งบประมาณ", "นโยบาย", "ความเท่าเทียม", "สันติภาพ", "สงคราม", "ความมั่นคง", "ตำรวจ", "ทหาร", "ประชาชน", "ท้องถิ่น", "สากล", "มาตรฐาน", "ประเพณี", "วัฒนธรรม", "ศีลธรรม", "จริยธรรม", "ศาสนา", "ความเชื่อ", "ความหวัง", "ความรัก", "ประวัติศาสตร์", "อนาคต", "การเปลี่ยนแปลง", "พัฒนา", "นวัตกรรม", "เศรษฐกิจ", "การค้า", "กำไร", "ขาดทุน", "ธนาคาร", "หุ้น", "การลงทุน", "หนี้สิน", "รายได้", "รายจ่าย", "สวัสดิการ", "การศึกษา", "สุขภาพ", "แรงงาน", "อุตสาหกรรม", "เกษตรกรรม", "ทรัพยากร", "สิ่งแวดล้อม", "ธรรมชาติ", "มลพิษ", "โลกร้อน", "อากาศ", "แหล่งน้ำ", "ป่าไม้", "พลังงาน", "ไฟฟ้า", "เชื้อเพลิง", "แสงอาทิตย์", "ลม", "นิวเคลียร์",
-    // หมวด 1001-2000: วิทยาศาสตร์, คณิตศาสตร์, ฟิสิกส์
-    "วิทยาศาสตร์", "คณิตศาสตร์", "ฟิสิกส์", "เคมี", "ชีววิทยา", "ดาราศาสตร์", "จักรวาล", "อวกาศ", "กาแล็กซี", "ดาวเคราะห์", "โลก", "ดวงอาทิตย์", "ดวงจันทร์", "อะตอม", "โมเลกุล", "ธาตุ", "ไฮโดรเจน", "ออกซิเจน", "คาร์บอน", "ไนโตรเจน", "ทองคำ", "เหล็ก", "ทองแดง", "เงิน", "สังกะสี", "ปรอท", "แม่เหล็ก", "แรงโน้มถ่วง", "ความเร็ว", "ความเร่ง", "มวล", "พลังงาน", "ความร้อน", "อุณหภูมิ", "องศา", "พาย", "สมการ", "ตัวแปร", "ฟังก์ชัน", "กราฟ", "พิกัด", "พื้นที่", "ปริมาตร", "ยกกำลัง", "ราก", "ทศนิยม", "เศษส่วน", "ร้อยละ", "สถิติ", "ความน่าจะเป็น", "ตรีโกณมิติ", "แคลคูลัส", "พีชคณิต", "เรขาคณิต", "วงกลม", "สามเหลี่ยม", "สี่เหลี่ยม", "รัศมี", "มุม",
-    // หมวด 2001-3000: เทคโนโลยี, AI, คอมพิวเตอร์
-    "คอมพิวเตอร์", "ปัญญาประดิษฐ์", "หุ่นยนต์", "ซอฟต์แวร์", "ฮาร์ดแวร์", "ชิป", "หน่วยประมวลผล", "หน่วยความจำ", "การ์ดจอ", "หน้าจอ", "อินเทอร์เน็ต", "เครือข่าย", "ข้อมูล", "เซิร์ฟเวอร์", "คลาวด์", "ระบบปฏิบัติการ", "วินโดวส์", "ลีนุกซ์", "แอนดรอยด์", "ไอโอเอส", "แอปพลิเคชัน", "โปรแกรมเมอร์", "โค้ด", "อัลกอริทึม", "ฐานข้อมูล", "ความปลอดภัย", "ไวรัส", "แฮกเกอร์", "การเข้ารหัส", "รหัสผ่าน", "สแกน", "คิวอาร์โค้ด", "ดิจิทัล", "อนาล็อก", "สัญญาณ", "ดาวเทียม", "จีพีเอส", "สมาร์ทโฟน", "ไอแพด", "แท็บเล็ต", "เซนเซอร์", "โดรน", "รถยนต์ไฟฟ้า", "อัจฉริยะ", "อัตโนมัติ", "ความแม่นยำ", "ความเร็ว", "แบนด์วิดท์", "ไวไฟ", "บลูทูธ", "บล็อกเชน", "บิตคอยน์", "เมตาเวิร์ส",
-    // หมวด 3001-4000: ภาษา, อารมณ์, บทสนทนา
-    "สวัสดี", "ลาก่อน", "ขอบคุณ", "ขอโทษ", "ยินดี", "เย่", "ไหม", "ครับ", "ค่ะ", "จร้า", "นะ", "จ๊ะ", "เข้าใจ", "อธิบาย", "ความรู้", "ปัญหา", "แก้ไข", "ช่วย", "ยอดเยี่ยม", "วิเศษ", "แน่นอน", "ถูกต้อง", "จริง", "โกหก", "หลอก", "กลัว", "กล้า", "รัก", "โกรธ", "เกลียด", "ดีใจ", "เสียใจ", "เหงา", "ตื่นเต้น", "สงสัย", "งง", "หิว", "อิ่ม", "ร้อน", "หนาว", "เหนื่อย", "ง่วง", "นอน", "กิน", "เดิน", "วิ่ง", "กระโดด", "นั่ง", "ยืน", "พูด", "ฟัง", "ดู", "อ่าน", "เขียน", "คิด", "จำ", "ลืม", "หอม", "เหม็น", "อร่อย", "หวาน", "เปรี้ยว", "เค็ม", "เผ็ด", "ขม", "มัน", "จืด", "สะอาด", "สกปรก", "สวย", "หล่อ", "น่ารัก", "แข็งแรง", "อ่อนแอ", "รวย", "จน", "สูง", "ต่ำ", "ใหญ่", "เล็ก", "หนัก", "เบา", "กว้าง", "แคบ", "เร็ว", "ช้า",
-    // หมวด 4001-5000: BIG DATA RESPONSE PATTERNS (ตัวอย่างแนวทางการตอบ)
-    "คุยอะไรกันดีอ่ะ", "วันนี้มีอะไรให้ช่วยไหม", "คำนวณกำไรให้หน่อย", "พื้นที่วงกลมเท่าไหร่", "ยกกำลังเลขนี้ให้ที", "สวัสดีจร้าาา", "สบายดีไหม", "ทำอะไรอยู่", "เรียนรู้เรื่องใหม่", "พัฒนาระบบต่อ", "เชื่อมต่อประสานงาน", "วิเคราะห์ข้อมูลดิบ", "แสดงผลกราฟ", "ปรับแต่งค่าพารามิเตอร์", "ตรวจสอบความผิดพลาด", "สำเร็จตามเป้าหมาย", "ความฉลาดระดับโลก", "เทคโนโลยีสมัยใหม่", "การเรียนรู้เชิงลึก", "แมชชีนเลิร์นนิงของจริง", "สมองกลอัจฉริยะ", "โตนัสคือผู้ควบคุม", "ระบบเสถียรมาก", "ความเร็วสูงสุด", "ข้อมูลครบถ้วน"
-    // คุณโตนัสสามารถก๊อปปี้คำจากชุดก่อนหน้ามาเติมใส่ใน List นี้จนครบ 10,000 คำได้เลยครับ
-];
+            if (!message) return;
 
-// --- [2. BIG DATA GUIDELINES (แนวทางการตอบแบบ GEMINI)] ---
-const BIG_DATA_GUIDE = [
-    { key: ["สวัสดี", "คุย"], resp: "สวัสดีครับคุณโตนัส! ยินดีที่ได้คุยกันอีกครั้ง วันนี้คุณอยากให้ผมวิเคราะห์ Big Data ในส่วนไหน หรืออยากชวนคุยเรื่องเทคโนโลยีระดับสูงดีไหมครับ? เย่!" },
-    { key: ["คำนวณ", "กำไร"], resp: "ระบบ Lange กำลังดึง Parameters ทางการเงินมาประมวลผล... กำไรของคุณคือ: " },
-    { key: ["พื้นที่", "สูตร"], resp: "จากการคำนวณผ่านชั้นความรู้ระดับ 5 พื้นที่ที่ได้คือ: " },
-    { key: ["ยกกำลัง"], resp: "ประมวลผลยกกำลังผ่านฟังก์ชันสมการอย่างง่ายเสร็จสิ้น ผลลัพธ์คือ: " }
-];
+            // แสดงข้อความของผู้ใช้
+            appendMessage('User', message, 'bg-blue-600/20 ml-auto rounded-tr-none');
+            input.value = '';
 
-// --- [3. LANGE CORE LOGIC] ---
-let trainingCycles = parseInt(localStorage.getItem('L_CYCLES')) || 0;
-let userFeedback = JSON.parse(localStorage.getItem('L_USER_DATA')) || [];
-
-function authSystem() {
-    const val = document.getElementById('id-input').value.trim();
-    if (val === "โตนัส") {
-        document.getElementById('gatekeeper').style.display = 'none';
-        document.getElementById('admin-menu').classList.remove('hidden');
-    } else {
-        document.getElementById('gatekeeper').style.display = 'none';
-        document.getElementById('main-system').classList.remove('hidden');
-        renderMonolith();
-    }
-}
-
-function launch(mode) {
-    document.getElementById('admin-menu').classList.add('hidden');
-    document.getElementById('main-system').classList.remove('hidden');
-    renderMonolith();
-    if (mode === 1) { // Admin QR Source
-        document.getElementById('overlay').classList.remove('hidden');
-        document.getElementById('qr-target').classList.remove('hidden');
-        document.getElementById('qr-target').innerHTML = "";
-        new QRCode(document.getElementById("qr-target"), "LANGE-SYNC-TOKEN-150");
-    } else if (mode === 2) { // Scanner
-        document.getElementById('overlay').classList.remove('hidden');
-        document.getElementById('cam-target').classList.remove('hidden');
-        const scanner = new Html5Qrcode("reader");
-        scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (txt) => {
-            if(txt === "LANGE-SYNC-TOKEN-150") { scanner.stop(); triggerSync(); closeOverlay(); }
-        });
-    } else if (mode === 3) {
-        // Local Strong Mode
-        document.getElementById('monolith-view').classList.remove('hidden');
-    }
-}
-
-function checkPass(v) {
-    if(v === "1234-4321") triggerSync();
-}
-
-function triggerSync() {
-    document.getElementById('sync-toast').classList.remove('hidden');
-    document.getElementById('cycle-count').innerText = "STATUS: REAL-TIME CONNECTED";
-    setTimeout(() => document.getElementById('sync-toast').classList.add('hidden'), 5000);
-}
-
-function closeOverlay() {
-    document.getElementById('overlay').classList.add('hidden');
-    document.getElementById('qr-target').classList.add('hidden');
-    document.getElementById('cam-target').classList.add('hidden');
-}
-
-// --- [4. SMART TOKENIZER & GENERATION] ---
-async function executeLLM(e) {
-    e.preventDefault();
-    const input = document.getElementById('user-in').value.trim();
-    if(!input) return;
-
-    addMsg(input, 'user');
-    document.getElementById('user-in').value = "";
-
-    // [TOKENIZING LOGIC]
-    const rawTokens = input.split(""); // วิเคราะห์ระดับตัวอักษรเพื่อความละเอียด
-    const wordTokens = input.split(" "); // วิเคราะห์ระดับคำ
-    
-    let trace = "";
-    let isMath = false;
-    let mathResult = null;
-
-    // ระบบเดาคำต่อท้ายอัจฉริยะ (Smart Suffix)
-    wordTokens.forEach((w, i) => {
-        const known = VOCAB.includes(w) || userFeedback.includes(w);
-        if(!known) {
-            // เช็คบริบท (N-Gram Simulation)
-            if(i > 0 && (wordTokens[i-1].includes("สวัสดี") || wordTokens[i-1].includes("คุย"))) {
-                trace += `<div class="text-blue-400">[CONTEXT_FOUND] พบประโยคต่อท้ายที่สมเหตุสมผล: "${w}"</div>`;
-                // ไม่บันทึกเป็นคำแปลก แต่บันทึกเป็น "Contextual Data"
-                if(userFeedback.length < 100) { 
-                    userFeedback.push(w); 
-                    localStorage.setItem('L_USER_DATA', JSON.stringify(userFeedback));
-                }
-            } else {
-                trace += `<div class="text-red-900">[UNKNOWN_TOKEN] ${w}</div>`;
-            }
-        }
-        trace += `<div>Processing: ${w} | Attention: ${(Math.random()*0.99).toFixed(4)}</div>`;
-    });
-    document.getElementById('trace-log').innerHTML = trace;
-
-    // [MATH ENGINE]
-    if(input.includes("ยกกำลัง")) {
-        const d = input.match(/\d+/g); mathResult = Math.pow(d[0], d[1]); isMath = true;
-    } else if(input.includes("กำไร")) {
-        const d = input.match(/\d+/g); mathResult = d[0] - d[1]; isMath = true;
-    } else if(input.includes("พื้นที่")) {
-        const d = input.match(/\d+/g); mathResult = d[0] * d[1]; isMath = true;
-    }
-
-    // [GENERATION]
-    setTimeout(() => {
-        let response = "";
-        
-        // กรองคำจาก Big Data Guide
-        BIG_DATA_GUIDE.forEach(item => {
-            if(item.key.some(k => input.includes(k))) response = item.resp;
-        });
-
-        if(isMath) response = `เย่! คำนวณเสร็จสมบูรณ์ผ่าน Lange Neural Engine ผลลัพธ์คือ: ${mathResult} ครับ`;
-        
-        if(!response) {
-            const defaults = [
-                "รับทราบครับ ผมกำลังประมวลผลข้อมูลส่วนนี้ลงใน Local Strong Memory มีอะไรให้ช่วยเพิ่มไหมครับ?",
-                "เย่! เป็นคำสั่งที่น่าสนใจมาก ระบบกำลังวิเคราะห์น้ำหนักของคำใน 15 Pillars เพื่อตอบสนองครับ",
-                "ข้อมูลนี้ถูกบันทึกและตรวจสอบกับ Monolith แล้ว ถูกต้องแม่นยำครับ"
-            ];
-            response = defaults[Math.floor(Math.random()*defaults.length)];
+            // จำลองการคิดของ AI (ในอนาคตเชื่อมต่อ API Key ที่นี่)
+            setTimeout(() => {
+                appendMessage('AI', "นี่คือการสาธิต UI นะครับ หากต้องการให้ฉลาดแบบเต็มรูปแบบ ต้องนำ API Key จาก Google AI Studio มาใส่ในส่วนของ Fetch Request ครับ", 'bg-slate-700/50 rounded-tl-none');
+            }, 1000);
         }
 
-        addMsg(response.replace("มั้ย", "ไหม"), 'ai');
-        trainingCycles++;
-        localStorage.setItem('L_CYCLES', trainingCycles);
-        document.getElementById('cycle-count').innerText = `CYCLES: ${trainingCycles}`;
-        renderMonolith(); // กระตุ้นการกระพริบของข้อมูล
-    }, 800);
-}
-
-function renderMonolith() {
-    const grid = document.getElementById('monolith-grid');
-    grid.innerHTML = VOCAB.concat(userFeedback).map(w => `<span class="${Math.random() > 0.95 ? 'highlight-word' : ''}">${w}</span>`).join(' ');
-}
-
-function addMsg(t, r) {
-    const f = document.getElementById('chat-flow');
-    const align = r === 'user' ? 'justify-end' : 'justify-start';
-    const bg = r === 'user' ? 'bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.4)]' : 'glass-ui';
-    f.innerHTML += `<div class="flex ${align} animate-fade-in"><div class="p-6 rounded-[35px] max-w-[70%] font-bold text-lg">${t}</div></div>`;
-    f.scrollTop = f.scrollHeight;
-}
-</script>
+        function appendMessage(sender, text, style) {
+            const chatBox = document.getElementById('chatBox');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `flex gap-3 ${sender === 'User' ? 'flex-row-reverse' : ''}`;
+            msgDiv.innerHTML = `
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs ${sender === 'User' ? 'bg-purple-600' : 'bg-blue-600'}">${sender}</div>
+                <div class="${style} p-3 rounded-2xl max-w-[80%] text-sm">
+                    ${text}
+                </div>
+            `;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
 </body>
 </html>

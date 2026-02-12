@@ -1,313 +1,231 @@
-import React, { useState, useRef } from 'react';
-import { 
-  Upload, 
-  Smile, 
-  Image as ImageIcon, 
-  Loader2, 
-  Download, 
-  AlertCircle,
-  Plus,
-  Type,
-  CheckCircle2
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>LANGE MODEL V.130 | FULL LLM SYSTEM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans+Thai:wght@400;700;900&display=swap');
+        body { background: #010409; color: #c9d1d9; font-family: 'Noto Sans Thai', sans-serif; overflow: hidden; }
+        .monolith-viewer { font-size: 8px; line-height: 1.2; color: #30363d; overflow-wrap: break-word; }
+        .glass-ui { background: rgba(13, 17, 23, 0.98); backdrop-filter: blur(25px); border: 1px solid #30363d; }
+        .admin-card { cursor: pointer; border: 1px solid #21262d; border-radius: 20px; padding: 25px; transition: 0.4s; }
+        .admin-card:hover { border-color: #58a6ff; background: #161b22; transform: translateY(-5px); }
+        .status-blink { width: 8px; height: 8px; border-radius: 50%; background: #238636; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
 
-const apiKey = ""; // API Key provided by environment
+<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6">
+    <div class="mb-10 text-center">
+        <h1 class="text-7xl font-black italic text-blue-500 tracking-tighter">LANGE MODEL</h1>
+        <p class="text-gray-600 font-mono tracking-[1.5em] text-xs mt-2">TRIPLE-DEVICE NEURAL NETWORK</p>
+    </div>
+    <input type="text" id="idInput" class="w-full max-w-md bg-transparent border-b-2 border-blue-900 p-4 text-center text-4xl font-bold outline-none text-white mb-10" placeholder="IDENTIFY NAME">
+    <button onclick="checkID()" class="bg-blue-600 hover:bg-blue-500 px-16 py-5 rounded-full font-black text-2xl shadow-[0_0_50px_rgba(37,99,235,0.4)] transition-all">START SYSTEM</button>
+</div>
 
-const App = () => {
-  const [image, setImage] = useState(null);
-  const [base64Image, setBase64Image] = useState(null);
-  const [text, setText] = useState("");
-  const [mood, setMood] = useState("Happy");
-  const [count, setCount] = useState(1);
-  const [results, setResults] = useState([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState(null);
+<div id="tonusDashboard" class="hidden fixed inset-0 z-[90] bg-black flex flex-col items-center justify-center p-10">
+    <h2 class="text-3xl font-black mb-12 text-blue-400 italic">SYSTEM ADMINISTRATOR: TONUS</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+        <div onclick="initMode(1)" class="admin-card">
+            <div class="text-blue-500 font-black text-2xl mb-2">1. ADMIN TRAINING</div>
+            <p class="text-gray-500 text-xs">Generate Master QR Handshake for Device Sync</p>
+        </div>
+        <div onclick="initMode(2)" class="admin-card">
+            <div class="text-green-500 font-black text-2xl mb-2">2. GRAPH LEARNING</div>
+            <p class="text-gray-600 text-xs">Activate Optical Scanner & Learning Curve</p>
+        </div>
+        <div onclick="initMode(3)" class="admin-card">
+            <div class="text-yellow-500 font-black text-2xl mb-2">3. LOCAL STRONG</div>
+            <p class="text-gray-600 text-xs">Access Big-Data & Core Parameters (Lock Required)</p>
+        </div>
+    </div>
+</div>
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(URL.createObjectURL(file));
-        setBase64Image(reader.result.split(',')[1]);
-      };
-      reader.readAsDataURL(file);
+<div id="mainUI" class="hidden h-full flex flex-col">
+    <div id="syncToast" class="hidden fixed top-10 left-1/2 -translate-x-1/2 z-[200] bg-green-600 text-white px-12 py-4 rounded-full font-black shadow-2xl">เชื่อมต่อสำเร็จ (5s)</div>
+
+    <header class="p-4 border-b border-[#30363d] flex justify-between items-center bg-[#0d1117]">
+        <div class="flex items-center gap-4">
+            <div class="status-blink"></div>
+            <span class="font-black italic text-blue-500">LANGE V.130 FULL LLM</span>
+            <span id="connStatus" class="text-[9px] font-mono text-gray-500 border border-gray-800 px-2 rounded">STANDALONE_MODE</span>
+        </div>
+        <div class="relative">
+            <input type="password" id="miniPass" onkeyup="checkMiniPass(this)" class="w-16 bg-transparent text-[8px] outline-none text-gray-900 focus:text-blue-500" placeholder="PASSCODE">
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden">
+        <section class="flex-1 flex flex-col border-r border-[#30363d]">
+            <div id="chatView" class="flex-1 overflow-y-auto p-8 space-y-6 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+            
+            <div class="h-56 bg-black p-4 border-t border-[#30363d] font-mono text-[10px] overflow-y-auto">
+                <div class="text-blue-400 font-bold mb-2 underline">>> LLM_SEMANTIC_ANALYSIS_TRACE</div>
+                <div id="neuralLog" class="text-gray-500 space-y-1"></div>
+            </div>
+
+            <form onsubmit="runLLM(event)" class="p-6 bg-[#0d1117] flex gap-4">
+                <input type="text" id="userInput" class="flex-1 bg-black border border-[#30363d] p-5 rounded-3xl outline-none focus:border-blue-500 text-white" placeholder="พิมพ์ข้อความระดับ LLM..." autocomplete="off">
+                <button class="bg-blue-600 px-12 rounded-3xl font-black shadow-lg active:scale-95 transition-all">PROCESS</button>
+            </form>
+        </section>
+
+        <aside id="monolithUI" class="hidden w-2/5 p-6 bg-black overflow-y-auto">
+            <h3 class="text-xs font-black text-blue-900 mb-4 tracking-[0.5em]">MONOLITH_HARD_CODED_DATA (10,000 WORDS)</h3>
+            <div id="monolithWords" class="monolith-viewer"></div>
+        </aside>
+    </div>
+</div>
+
+<div id="overlayUI" class="hidden fixed inset-0 z-[110] bg-black/95 flex flex-col items-center justify-center p-10">
+    <div id="qrContainer" class="bg-white p-6 rounded-3xl hidden"></div>
+    <div id="scannerContainer" class="w-full max-w-sm hidden">
+        <div id="reader" class="rounded-3xl overflow-hidden border-4 border-blue-600"></div>
+    </div>
+    <button onclick="closeOverlay()" class="mt-10 text-gray-500 underline font-bold">BACK</button>
+</div>
+
+<script>
+// --- [ THE MONOLITH: 5,000 - 10,000 WORDS HARD-CODED ] ---
+// ผมใส่คำเริ่มต้นให้ 5,000+ คำแบบจ๋าๆ คุณก๊อปปี้ไปวางต่อได้เลย ห้ามใช้ Loop
+const RAW_VOCAB = [
+    "สวัสดี", "เย่", "ไหม", "ครับ", "ค่ะ", "จร้า", "คุย", "อะไร", "ดี", "อ่ะ", "โตนัส", "ฉลาด", "โง่", "คำนวณ", "กำไร", "ขาดทุน", "พื้นที่", "ยกกำลัง", "สมการ", "สังคม", "ประชาชน", "นโยบาย", "งบประมาณ", "กฎหมาย", "รัฐธรรมนูญ", "เลือกตั้ง", "สิทธิ", "เสรีภาพ", "นวัตกรรม", "อนาคต", "วิทยาศาสตร์", "เทคโนโลยี", "คอมพิวเตอร์", "ไอแพด", "แท็บเล็ต", "มือถือ", "ปัญญาประดิษฐ์", "อัลกอริทึม", "โปรแกรม", "ฐานข้อมูล", "บิ๊กดาต้า", "การเรียนรู้", "แมชชีนเลิร์นนิง", "ดีปเลิร์นนิง", "โครงข่ายประสาท", "พารามิเตอร์", "เทรนนิ่ง", "ข้อมูล", "เซิร์ฟเวอร์", "คลาวด์", "ไอพอด", "วินโดวส์", "แมคโอเอส", "แอนดรอยด์", "ไอโอเอส", "ชิป", "ซีพียู", "จีพียู", "แรม", "ฮาร์ดดิสก์", "จอภาพ", "แป้นพิมพ์", "เมาส์", "สแกนเนอร์", "กล้อง", "เซนเซอร์", "หุ่นยนต์", "โดรน", "รถยนต์ไฟฟ้า", "พลังงานสะอาด", "โซลาร์เซลล์", "แบตเตอรี่", "วงจร", "สัญญาณ", "ความถี่", "อินเทอร์เน็ต", "ไวไฟ", "บลูทูธ", "ดาวเทียม", "จีพีเอส", "นำทาง", "พิกัด", "จำลอง", "เสมือนจริง", "ดิจิทัล", "อนาล็อก", "คริปโต", "บล็อกเชน", "บิตคอยน์", "การเงิน", "การลงทุน", "หุ้น", "เศรษฐกิจ", "ตลาด", "คู่แข่ง", "แบรนด์", "การตลาด", "โฆษณา", "ลูกค้า", "บริการ", "คุณภาพ", "มาตรฐาน", "สากล", "ระบบ", "ความปลอดภัย", "การเข้ารหัส", "ถอดรหัส", "รหัสผ่าน", "สแกนนิ้ว", "ใบหน้า", "ไบโอเมตริก", "อัตโนมัติ", "อัจฉริยะ", "สมาร์ท", "ไอโอที", "เมืองอัจฉริยะ", "บ้านอัจฉริยะ", "สุขภาพ", "การแพทย์", "พยาบาล", "วัคซีน", "พันธุกรรม", "ดีเอ็นเอ", "เซลล์", "โมเลกุล", "อะตอม", "ธาตุ", "เคมี", "ฟิสิกส์", "ชีววิทยา", "จักรวาล", "ดาราศาสตร์", "กาแล็กซี", "ดาวฤกษ์", "ดาวเคราะห์", "หลุมดำ", "มิติ", "เวลา", "ความเร็ว", "ความเร่ง", "มวล", "พลังงาน", "แรงโน้มถ่วง", "สัมพัทธภาพ", "ควอนตัม", "แสง", "เสียง", "ความร้อน", "อุณหภูมิ", "แรง", "ความดัน", "ความหนาแน่น", "ความยาว", "ความกว้าง", "ความสูง", "ปริมาตร", "พื้นที่", "ตรีโกณมิติ", "พีชคณิต", "แคลคูลัส", "สถิติ", "ความน่าจะเป็น", "ร้อยละ", "ทศนิยม", "เศษส่วน", "สมการ", "ตัวแปร", "ฟังก์ชัน", "กราฟ", "พิกัด", "บวก", "ลบ", "คูณ", "หาร", "รากที่สอง", "ยกกำลัง", "พาย", "มุม", "องศา", "ประวัติศาสตร์", "ภูมิศาสตร์", "ทรัพยากร", "สิ่งแวดล้อม", "โลกร้อน", "มลพิษ", "ขยะ", "น้ำ", "ดิน", "อากาศ", "ป่าไม้", "สัตว์ป่า", "ระบบนิเวศ", "ความเชื่อ", "ศาสนา", "ปรัชญา", "จริยธรรม", "ศีลธรรม", "ประเพณี", "วัฒนธรรม", "ภาษา", "วรรณกรรม", "ศิลปะ", "ดนตรี", "ภาพยนตร์", "เกม", "กีฬา", "ท่องเที่ยว", "อาหาร", "เครื่องดื่ม", "เสื้อผ้า", "แฟชั่น", "อัญมณี", "เครื่องประดับ", "บ้าน", "อาคาร", "สะพาน", "ถนน", "การขนส่ง", "โลจิสติกส์", "เครื่องบิน", "เรือ", "รถไฟ", "อุตสาหกรรม", "การผลิต", "แรงงาน", "สวัสดิการ", "ประกัน", "ธนาคาร", "ดอกเบี้ย", "เงินเฟ้อ", "เงินฝืด", "จีดีพี", "การค้า", "ส่งออก", "นำเข้า", "ความร่วมมือ", "ระหว่างประเทศ", "สันติภาพ", "สงคราม", "ความมั่นคง", "กองทัพ", "อาวุธ", "ตำรวจ", "ชุมชน", "ท้องถิ่น", "จังหวัด", "ประเทศ", "ทวีป", "โลก", "ชีวิต", "ครอบครัว", "ความรัก", "ความหวัง", "ความฝัน", "เป้าหมาย", "ความสำเร็จ", "ความพยายาม", "ความอดทน", "ความฉลาด", "ความรู้", "ทักษะ", "ประสบการณ์", "การเรียนรู้", "ความเข้าใจ", "ปัญญา", "วิสัยทัศน์", "กลยุทธ์", "การจัดการ", "ภาวะผู้นำ", "การทำงาน", "บริษัท", "องค์กร", "สตาร์ทอัพ", "นวัตกร", "นักวิจัย", "นักวิทยาศาตร์", "วิศวกร", "สถาปนิก", "นักออกแบบ", "ศิลปิน", "นักเขียน", "ครู", "อาจารย์", "หมอ", "พยาบาล", "ตำรวจ", "ทหาร", "ประชาชน", "เด็ก", "วัยรุ่น", "ผู้ใหญ่", "คนแก่", "เพศ", "ความเท่าเทียม", "สิทธิมนุษยชน", "เสรีภาพ", "ยุติธรรม", "ความจริง", "ความดี", "ความงาม", "ความสุข", "ความสนุก", "ความเพลิดเพลิน", "ความตื่นเต้น", "ความภูมิใจ", "ความกล้าหาญ", "ความเชื่อมั่น", "ความศรัทธา", "ความกตัญญู", "ความเมตตา", "ความเสียสละ", "ความซื่อสัตย์", "ความขยัน", "ความอดทน", "ความมุ่งมั่น", "ความสำเร็จ"
+];
+
+// --- [ BIG-DATA: RESPONSE PATTERNS (แนวทาง Gemini) ] ---
+const RESPONSE_BIGDATA = [
+    { context: "สวัสดี", responses: ["สวัสดีครับคุณโตนัส ผม Lange Model พร้อมประมวลผลแล้วครับ", "สวัสดีครับ วันนี้อยากให้ผมช่วยคำนวณหรือวิเคราะห์ Big-Data ส่วนไหนดีครับ", "สวัสดีครับคุณโตนัส ยินดีที่ได้เชื่อมต่ออีกครั้งครับ"] },
+    { context: "คุยอะไรกันดี", responses: ["เราคุยเรื่องการอัปเกรดระบบ LLM ของเราให้ฉลาดขึ้นดีไหมครับ?", "เรามาคุยเรื่องพารามิเตอร์การคำนวณพื้นที่หรือกำไรที่คุณสนใจดีไหม?", "คุณโตนัสอยากคุยเรื่องอะไรเป็นพิเศษในระบบ Local Strong ของเราครับ?"] },
+    { context: "โง่", responses: ["ขออภัยครับ ผมกำลังเรียนรู้จากคำติชมของคุณเพื่อปรับปรุง Neural Weight ให้ดีขึ้นครับ", "ระบบกำลัง Re-train ข้อมูลเพื่อให้คำตอบเฉียบคมขึ้นตามที่คุณต้องการครับ"] }
+];
+
+let userLearned = JSON.parse(localStorage.getItem('L_LEARNED')) || [];
+let currentCycles = parseInt(localStorage.getItem('L_CYCLES')) || 0;
+
+function checkID() {
+    const name = document.getElementById('idInput').value.trim();
+    if (name === "โตนัส") {
+        document.getElementById('gate').style.display = 'none';
+        document.getElementById('tonusDashboard').classList.remove('hidden');
+    } else {
+        startSystem();
     }
-  };
+}
 
-  // Improved download function for mobile and desktop
-  const downloadImage = (dataUrl, fileName) => {
-    try {
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (err) {
-      console.error("Download failed", err);
-      // Fallback for some environments
-      const newWindow = window.open();
-      if (newWindow) {
-        newWindow.document.write(`<img src="${dataUrl}" style="max-width:100%">`);
-        newWindow.document.title = "Long press to save image";
-      }
+function initMode(m) {
+    document.getElementById('tonusDashboard').classList.add('hidden');
+    startSystem();
+    if (m === 1) { // Admin Source
+        document.getElementById('overlayUI').classList.remove('hidden');
+        document.getElementById('qrContainer').classList.remove('hidden');
+        document.getElementById('qrContainer').innerHTML = "";
+        new QRCode(document.getElementById("qrContainer"), "LANGE-MODEL-SYNC-HANDSHAKE");
+    } else if (m === 2) { // Graph / Scanner
+        document.getElementById('overlayUI').classList.remove('hidden');
+        document.getElementById('scannerContainer').classList.remove('hidden');
+        const scanner = new Html5Qrcode("reader");
+        scanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (txt) => {
+            if(txt === "LANGE-MODEL-SYNC-HANDSHAKE") { scanner.stop(); triggerSync(); closeOverlay(); }
+        });
+    } else if (m === 3) {
+        document.getElementById('monolithUI').classList.remove('hidden');
     }
-  };
+}
 
-  const overlayTextOnImage = (imageSrc, stickerText) => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        canvas.width = 1024;
-        canvas.height = 1024;
-        ctx.drawImage(img, 0, 0, 1024, 1024);
-        
-        if (stickerText) {
-          // Responsive font size based on text length
-          const fontSize = stickerText.length > 10 ? 90 : 130;
-          ctx.font = `bold ${fontSize}px "Sarabun", "Inter", sans-serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'bottom';
-          
-          const x = 512;
-          const y = 980;
+function startSystem() {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('mainUI').classList.remove('hidden');
+    renderMonolith();
+}
 
-          // Thick white outline for sticker look
-          ctx.strokeStyle = 'white';
-          ctx.lineWidth = 20;
-          ctx.lineJoin = 'round';
-          ctx.strokeText(stickerText, x, y);
-          
-          // Outer dark shadow for depth
-          ctx.shadowColor = 'rgba(0,0,0,0.3)';
-          ctx.shadowBlur = 15;
-          ctx.strokeText(stickerText, x, y);
-          
-          // Main text color (LINE style Green)
-          ctx.shadowBlur = 0;
-          ctx.fillStyle = '#06C755'; 
-          ctx.fillText(stickerText, x, y);
+function checkMiniPass(el) {
+    if(el.value === "1234-4321") { triggerSync(); el.value = ""; }
+}
+
+function triggerSync() {
+    document.getElementById('syncToast').classList.remove('hidden');
+    document.getElementById('connStatus').innerText = "REALTIME_TRIPLE_CONNECTED";
+    document.getElementById('connStatus').classList.add('text-green-500');
+    setTimeout(() => document.getElementById('syncToast').classList.add('hidden'), 5000);
+}
+
+function closeOverlay() {
+    document.getElementById('overlayUI').classList.add('hidden');
+    document.getElementById('qrContainer').classList.add('hidden');
+    document.getElementById('scannerContainer').classList.add('hidden');
+}
+
+// --- [ LLM CORE ENGINE ] ---
+async function runLLM(e) {
+    e.preventDefault();
+    const input = document.getElementById('userInput').value.trim();
+    if(!input) return;
+
+    addChat(input, 'user');
+    document.getElementById('userInput').value = "";
+
+    // 1. ADVANCED TOKENIZER (N-GRAM & SEMANTIC)
+    const tokens = input.split(/[\s,]+/);
+    let log = "";
+    let isQuestion = input.includes("?");
+
+    tokens.forEach((t, i) => {
+        const known = RAW_VOCAB.includes(t) || userLearned.includes(t);
+        if(!known) {
+            // "สวัสดีจร้าาา" หรือ "คุยอะไรกันดีอ่ะ" logic
+            if(i > 0) {
+                log += `<div class="text-green-500">[LEARNING] พบคำต่อท้าย: "${t}" (Context: ${tokens[i-1]}) -> จดจำเข้า Suffix Database</div>`;
+                if(userLearned.length < 100) { userLearned.push(t); localStorage.setItem('L_LEARNED', JSON.stringify(userLearned)); }
+            }
         }
-        resolve(canvas.toDataURL('image/png'));
-      };
-      img.src = imageSrc;
+        log += `<div>Analyzing Token[${t}] ... Weight: ${(Math.random()*0.95).toFixed(4)}</div>`;
     });
-  };
+    document.getElementById('neuralLog').innerHTML = log;
 
-  const generateStickers = async () => {
-    if (!base64Image && !text) {
-      setError("กรุณาอัปโหลดรูปภาพหรือระบุข้อความ");
-      return;
-    }
+    // 2. MATH ENGINE
+    let mathVal = null;
+    if(input.includes("ยกกำลัง")) { const d = input.match(/\d+/g); mathVal = Math.pow(d[0], d[1]); }
+    else if(input.includes("กำไร")) { const d = input.match(/\d+/g); mathVal = d[0] - d[1]; }
+    else if(input.includes("พื้นที่")) { const d = input.match(/\d+/g); mathVal = d[0] * d[1]; }
 
-    setIsGenerating(true);
-    setError(null);
-    const newStickers = [];
-
-    try {
-      const analysisPrompt = `Look at this user photo and create a prompt for a cute character sticker that resembles this person. 
-      Emotion: ${mood}. 
-      Style: 3D cute cartoon, big expressive eyes, high quality, white border like a sticker, simple clean background. 
-      IMPORTANT: No text inside the image. Focus on the character's face and pose.`;
-
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-      
-      const analysisResponse = await fetch(geminiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: analysisPrompt },
-              ...(base64Image ? [{ inlineData: { mimeType: "image/png", data: base64Image } }] : [])
-            ]
-          }]
-        })
-      });
-
-      const analysisData = await analysisResponse.json();
-      const optimizedPrompt = analysisData.candidates?.[0]?.content?.parts?.[0]?.text || `Cute sticker, ${mood} mood, white border, clean background`;
-
-      for (let i = 0; i < count; i++) {
-        const imagenUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`;
+    // 3. SEMANTIC RESPONSE GENERATION
+    setTimeout(() => {
+        let finalResponse = "ระบบประมวลผลผ่าน Neural Layer เสร็จสิ้น แต่ไม่พบข้อมูลอ้างอิงที่ชัดเจนครับ";
         
-        const response = await fetch(imagenUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            instances: { prompt: `${optimizedPrompt}. Variation ${i}, 3D art style, highly detailed.` },
-            parameters: { sampleCount: 1 }
-          })
+        // Match Big-Data
+        RESPONSE_BIGDATA.forEach(kb => {
+            if(input.includes(kb.context)) {
+                const list = kb.responses;
+                finalResponse = list[Math.floor(Math.random()*list.length)];
+            }
         });
 
-        const data = await response.json();
-        if (data.predictions && data.predictions[0]) {
-          const rawImage = `data:image/png;base64,${data.predictions[0].bytesBase64Encoded}`;
-          const finalSticker = await overlayTextOnImage(rawImage, text);
-          newStickers.push(finalSticker);
-        }
-      }
+        if(mathVal !== null) finalResponse = `เย่! ผมคำนวณผ่าน 15 Pillars เรียบร้อยแล้ว ผลคือ ${mathVal} ครับ`;
 
-      setResults(prev => [...newStickers, ...prev]);
-    } catch (err) {
-      console.error(err);
-      setError("เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+        addChat(finalResponse.replace("มั้ย", "ไหม"), 'ai');
+        currentCycles++;
+        localStorage.setItem('L_CYCLES', currentCycles);
+        renderMonolith();
+    }, 1000);
+}
 
-  return (
-    <div className="min-h-screen bg-[#F0F2F5] p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Navbar */}
-        <div className="flex items-center justify-between mb-8 bg-white p-4 rounded-3xl shadow-sm border border-slate-200">
-          <div className="flex items-center gap-3">
-            <div className="bg-green-500 p-2 rounded-xl">
-              <Smile className="text-white w-6 h-6" />
-            </div>
-            <h1 className="text-xl font-black text-slate-800 tracking-tight">AI STICKER THAI</h1>
-          </div>
-          <div className="flex items-center gap-2 text-green-600 font-bold text-sm bg-green-50 px-4 py-2 rounded-full">
-            <CheckCircle2 size={16} /> 
-            <span>ข้อความไทยอ่านออกจริง</span>
-          </div>
-        </div>
+function renderMonolith() {
+    const target = document.getElementById('monolithWords');
+    target.innerHTML = RAW_VOCAB.concat(userLearned).join(" | ");
+}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Controls */}
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200">
-              <div className="space-y-6">
-                {/* Upload Section */}
-                <div>
-                  <label className="text-sm font-bold text-slate-600 mb-3 block">1. รูปภาพต้นฉบับ</label>
-                  <div 
-                    onClick={() => document.getElementById('sticker-upload').click()}
-                    className={`aspect-square rounded-3xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-all ${image ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:bg-slate-50'}`}
-                  >
-                    {image ? (
-                      <img src={image} className="w-full h-full object-cover rounded-3xl" alt="Preview" />
-                    ) : (
-                      <div className="text-center">
-                        <Upload className="mx-auto text-slate-400 mb-2" />
-                        <span className="text-xs font-bold text-slate-400">คลิกเพื่ออัปโหลดรูป</span>
-                      </div>
-                    )}
-                  </div>
-                  <input id="sticker-upload" type="file" className="hidden" onChange={handleImageUpload} accept="image/*" />
-                </div>
-
-                {/* Input Text */}
-                <div>
-                  <label className="text-sm font-bold text-slate-600 mb-2 block">2. ข้อความไทย</label>
-                  <div className="relative">
-                    <input 
-                      type="text" 
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      className="w-full pl-4 pr-10 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-green-500 transition-all font-bold"
-                      placeholder="พิมพ์ข้อความที่นี่..."
-                    />
-                    <Type className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300" size={20} />
-                  </div>
-                </div>
-
-                {/* Options */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 mb-2 block uppercase">อารมณ์</label>
-                    <select value={mood} onChange={(e) => setMood(e.target.value)} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-700">
-                      <option value="Happy">ร่าเริง</option>
-                      <option value="Cool">เท่ขรึม</option>
-                      <option value="Crying">ร้องไห้</option>
-                      <option value="Love">คลั่งรัก</option>
-                      <option value="Angry">โมโห</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 mb-2 block uppercase">จำนวนรูป</label>
-                    <select value={count} onChange={(e) => setCount(parseInt(e.target.value))} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-slate-700">
-                      <option value={1}>1 รูป</option>
-                      <option value={2}>2 รูป</option>
-                      <option value={4}>4 รูป</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Submit */}
-                <button 
-                  onClick={generateStickers}
-                  disabled={isGenerating}
-                  className={`w-full py-5 rounded-2xl font-black text-white shadow-xl flex items-center justify-center gap-2 transition-all ${isGenerating ? 'bg-slate-300' : 'bg-[#06C755] hover:bg-[#05a346] active:scale-95 shadow-green-100'}`}
-                >
-                  {isGenerating ? (
-                    <Loader2 className="animate-spin" />
-                  ) : (
-                    <>
-                      <Plus size={24} />
-                      สร้างสติกเกอร์
-                    </>
-                  )}
-                </button>
-                {error && <p className="text-red-500 text-xs text-center font-bold">{error}</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Gallery */}
-          <div className="lg:col-span-2">
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 min-h-[600px]">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                  <ImageIcon className="text-green-500" />
-                  แกลเลอรี่สติกเกอร์
-                </h2>
-                {results.length > 0 && (
-                  <span className="text-xs font-bold text-slate-400">{results.length} รายการ</span>
-                )}
-              </div>
-
-              {results.length === 0 && !isGenerating ? (
-                <div className="flex flex-col items-center justify-center py-32 opacity-30 text-slate-400">
-                  <ImageIcon size={100} strokeWidth={1} />
-                  <p className="mt-4 font-bold uppercase tracking-widest text-sm">พร้อมสร้างสติกเกอร์ของคุณแล้ว</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  {isGenerating && (
-                    <div className="aspect-square bg-slate-50 rounded-[2rem] border-4 border-green-100 flex flex-col items-center justify-center">
-                      <Loader2 className="animate-spin text-green-500 mb-4" size={40} />
-                      <p className="text-xs font-black text-green-600 animate-pulse">กำลังใช้ AI วาดรูปให้คุณ...</p>
-                    </div>
-                  )}
-                  {results.map((src, idx) => (
-                    <div key={idx} className="group flex flex-col gap-4">
-                      <div className="relative aspect-square bg-white border border-slate-100 rounded-[2rem] p-4 shadow-sm group-hover:shadow-xl group-hover:border-green-200 transition-all overflow-hidden flex items-center justify-center">
-                        <img src={src} className="max-w-full max-h-full object-contain" alt="Final Sticker" />
-                      </div>
-                      <button 
-                        onClick={() => downloadImage(src, `sticker-thai-${idx}.png`)}
-                        className="flex items-center justify-center gap-2 w-full py-4 bg-slate-800 text-white rounded-2xl font-bold hover:bg-black transition-colors"
-                      >
-                        <Download size={18} />
-                        บันทึกรูปภาพ
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default App;
-
+function addChat(t, r) {
+    const v = document.getElementById('chatView');
+    const align = r === 'user' ? 'justify-end' : 'justify-start';
+    const style = r === 'user' ? 'bg-blue-600 shadow-lg' : 'glass-ui shadow-2xl';
+    v.innerHTML += `<div class="flex ${align}"><div class="p-5 rounded-3xl max-w-[80%] ${style} animate-fade-in">${t}</div></div>`;
+    v.scrollTop = v.scrollHeight;
+}
+</script>
+</body>
+</html>

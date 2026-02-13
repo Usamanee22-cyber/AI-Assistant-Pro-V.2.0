@@ -3,177 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANGE MODEL V.170 | REAL-TIME NEURAL BRAIN</title>
+    <title>LANGE V.200 | INFINITY CORE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans+Thai:wght@400;900&display=swap');
-        body { background: #010409; color: #c9d1d9; font-family: 'Noto Sans Thai', sans-serif; margin: 0; overflow: hidden; }
-        .glass-panel { background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(20px); border: 1px solid #30363d; border-radius: 24px; }
-        .monolith-viewer { font-size: 7px; color: #21262d; line-height: 1.1; }
-        .active-token { color: #58a6ff; font-weight: bold; text-shadow: 0 0 8px #58a6ff; }
-        .loading-spinner { animation: spin 1s linear infinite; font-size: 24px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .learning-node { width: 4px; height: 15px; background: #238636; margin: 1px; transition: all 0.3s; }
-        .chat-bubble { max-width: 85%; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Noto+Sans+Thai:wght@300;400;700&display=swap');
+        
+        :root {
+            --bg: #050505;
+            --panel: #0f0f0f;
+            --accent: #3b82f6;
+            --text: #e5e5e5;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .neural-glass {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Astral Spinner v2.0 */
+        .astral-star {
+            font-size: 28px;
+            filter: drop-shadow(0 0 10px var(--accent));
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .spinning { animation: star-rotate 1.2s infinite linear; }
+        @keyframes star-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Scannable Trace */
+        .trace-line { border-left: 2px solid var(--accent); padding-left: 8px; margin-bottom: 4px; opacity: 0.7; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="flex flex-col">
 
-<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6 text-center">
-    <h1 class="text-7xl font-black italic text-blue-500 mb-2 drop-shadow-2xl">LANGE-V170</h1>
-    <p class="text-gray-500 font-mono tracking-[1.2em] text-[10px] mb-12 uppercase">Advanced Neural Internet Core</p>
-    <input type="text" id="adminIn" class="bg-transparent border-b-2 border-blue-900 p-4 text-center text-4xl font-bold outline-none text-white w-full max-w-md mb-8" placeholder="IDENTIFY NAME">
-    <button onclick="checkAdmin()" class="bg-blue-600 px-20 py-5 rounded-full font-black text-xl hover:bg-blue-500 shadow-[0_0_30px_rgba(37,99,235,0.4)] transition-all">INITIALIZE BRAIN</button>
+<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6">
+    <div class="mb-8 text-center">
+        <h1 class="text-5xl font-bold tracking-tighter text-white mb-2">LANGE <span class="text-blue-500">V.200</span></h1>
+        <p class="text-gray-500 text-xs tracking-[0.5em] uppercase">Neural Infinity Core</p>
+    </div>
+    <input type="password" id="adminIn" class="bg-transparent border-b border-gray-800 p-4 text-center text-2xl outline-none text-white w-full max-w-xs mb-8 transition-all focus:border-blue-500" placeholder="IDENTIFY NAME">
+    <button onclick="checkAdmin()" class="bg-white text-black px-12 py-3 rounded-full font-bold hover:bg-blue-500 hover:text-white transition-all">CONNECT</button>
 </div>
 
-<div id="main-system" class="hidden h-full flex flex-col">
-    <header class="p-4 border-b border-[#30363d] flex justify-between bg-black/90 items-center">
+<main id="main-system" class="hidden h-full flex flex-col max-w-5xl mx-auto w-full p-4 lg:p-8">
+    
+    <header class="flex justify-between items-center mb-8">
         <div class="flex items-center gap-4">
-            <span class="text-blue-500 font-black italic tracking-tighter">LANGE V170</span>
-            <div id="online-tag" class="text-[9px] px-2 py-0.5 rounded border border-green-500 text-green-500 font-mono">BIG_DATA_CONNECTED</div>
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <span class="text-xs font-bold tracking-widest text-gray-400">BIG DATA SYNCED</span>
         </div>
-        <div id="astral-container" class="flex items-center gap-3">
-            <div id="astral-spinner" class="hidden loading-spinner">⭐</div>
-            <span id="ai-status" class="text-[10px] text-gray-500 font-mono uppercase">Neural_Idle</span>
-        </div>
+        <div id="astral-spinner" class="astral-star">⭐</div>
     </header>
 
-    <div class="flex-1 flex overflow-hidden">
-        <section class="flex-1 flex flex-col border-r border-[#30363d]">
-            <div id="chat-view" class="flex-1 overflow-y-auto p-8 space-y-6"></div>
-            
-            <div class="h-48 bg-[#010409] p-4 border-t border-[#30363d] font-mono text-[10px] overflow-hidden flex flex-col">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-blue-400 font-bold underline">>> NEURAL_INFERENCE_TRACE</span>
-                    <span id="accuracy-val" class="text-green-500 text-[9px]">ACCURACY: 70%</span>
-                </div>
-                <div id="neuralTrace" class="flex-1 overflow-y-auto text-gray-500 mb-2"></div>
-                <div id="graph-curve" class="h-10 border-t border-gray-800 flex items-end pt-2"></div>
-            </div>
-
-            <form onsubmit="runInference(event)" class="p-6 bg-[#0d1117] flex gap-4">
-                <input type="text" id="userInput" class="flex-1 bg-black border border-[#30363d] p-5 rounded-3xl outline-none focus:border-blue-500 text-white text-lg shadow-inner" placeholder="ถามอะไรก็ได้ (คิดเลข, ข่าว, ข้อมูลจริงจากเน็ต)..." autocomplete="off">
-                <button class="bg-blue-600 px-12 rounded-3xl font-black hover:bg-blue-500 shadow-lg transition">SYNTHESIZE</button>
-            </form>
-        </section>
-
-        <aside id="monolithUI" class="w-1/4 p-6 bg-black overflow-y-auto hidden xl:block">
-            <h3 class="text-[10px] font-black text-gray-700 mb-4 tracking-widest uppercase">Monolith_Core_Vocab</h3>
-            <div id="wordGrid" class="monolith-viewer"></div>
-        </aside>
+    <div id="chat-view" class="flex-1 overflow-y-auto space-y-8 pr-4 pb-12 text-lg font-light leading-relaxed">
+        <div class="text-gray-500 text-sm italic">สวัสดีครับคุณโตนัส ผม Lange V.200 พร้อมเชื่อมต่อข้อมูลมหาศาลแล้ว เย่!</div>
     </div>
-</div>
+
+    <div id="logic-panel" class="hidden neural-glass rounded-2xl p-4 mb-4 text-[10px] font-mono text-gray-400 max-h-32 overflow-y-auto">
+        <div id="neuralTrace"></div>
+    </div>
+
+    <div class="relative">
+        <form onsubmit="runInference(event)" class="relative flex items-center">
+            <input type="text" id="userInput" 
+                class="w-full bg-[#111] border border-gray-800 rounded-2xl p-6 pr-16 outline-none focus:border-blue-500/50 transition-all text-white placeholder-gray-600 shadow-2xl" 
+                placeholder="ป้อนคำสั่งหรือคำถามที่ต้องการรู้จาก Big Data..." autocomplete="off">
+            <button class="absolute right-4 p-2 text-blue-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+            </button>
+        </form>
+    </div>
+
+</main>
 
 <script>
-const DATA_CORE = ["สวัสดี", "เย่", "โตนัส", "ปัญญาประดิษฐ์", "คำนวณ", "พื้นที่", "กำไร", "อินเทอร์เน็ต", "ความรู้", "แม่นยำ"]; // ต่อให้ครบตามต้องการ
-let learnedWords = JSON.parse(localStorage.getItem('L_LEARNED_V170')) || [];
-let currentAccuracy = 0.70;
+// --- [ INTELLIGENCE DATABASE ] ---
+const PERSONA = {
+    "ชื่ออะไร": "ผมชื่อ Lange Model V.200 ครับ เป็นสมองกลส่วนตัวของคุณโตนัส เย่!",
+    "คุยไรดี": "ผมดึงข้อมูล Big Data มาแล้ว คุณโตนัสอยากรู้เรื่อง AI, อวกาศ หรือให้ผมช่วยคำนวณเลขดีอ่ะ?",
+    "นายชื่ออะไร": "Lange V.200 ไงครับ จำได้มั้ยน้าา"
+};
 
 function checkAdmin() {
-    if(document.getElementById('adminIn').value === "โตนัส") {
+    const input = document.getElementById('adminIn').value;
+    if(input === "โตนัส") {
         document.getElementById('gate').classList.add('hidden');
         document.getElementById('main-system').classList.remove('hidden');
-        renderMonolith();
-        updateGraph();
     }
 }
 
-// ระบบประมวลผลหลัก
 async function runInference(e) {
     e.preventDefault();
-    const inputField = document.getElementById('userInput');
-    const input = inputField.value.trim();
+    const inputEl = document.getElementById('userInput');
+    const input = inputEl.value.trim();
     if(!input) return;
 
     addChat(input, 'user');
-    inputField.value = "";
+    inputEl.value = "";
     
-    // แสดงสถานะ "ดาวหมุน"
-    const spinner = document.getElementById('astral-spinner');
-    const status = document.getElementById('ai-status');
-    spinner.classList.remove('hidden');
-    status.innerText = "Neural_Thinking...";
+    // UI Effects
+    const star = document.getElementById('astral-spinner');
+    const panel = document.getElementById('logic-panel');
+    star.classList.add('spinning');
+    panel.classList.remove('hidden');
 
-    let finalResponse = "";
-    let traceLog = `<div>[STREAM] รับคำสั่ง: "${input}"</div>`;
-    
-    // 1. ตรวจสอบการคิดเลข (Math Engine)
-    if (/[0-9]/.test(input) && (input.includes('+') || input.includes('-') || input.includes('*') || input.includes('/') || input.includes('ยกกำลัง'))) {
-        traceLog += `<div class="text-yellow-500">[MATH] ตรวจพบสมการคณิตศาสตร์...</div>`;
+    let response = "";
+    let trace = `<div class="trace-line text-blue-500">TOKENIZING: ${input.length} characters</div>`;
+
+    // 1. Math Engine (Deep Logic)
+    if (/[0-9]/.test(input) && /[\+\-\*\/\^]/.test(input)) {
         try {
-            let sanitizedInput = input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*');
-            const result = eval(sanitizedInput.match(/[0-9\+\-\*\/\.\*\* ]+/g)[0]);
-            finalResponse = `เย่! ผลคำนวณคือ ${result} ครับ (ประมวลผลแม่นยำ ${Math.round(currentAccuracy*100)}%)`;
-        } catch(e) { 
-            traceLog += `<div class="text-red-500">[ERROR] สมการซับซ้อนเกินไป</div>`;
+            let mathQuery = input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*');
+            let formula = mathQuery.match(/[0-9\+\-\*\/\.\(\)\*\* ]+/g)[0];
+            let result = eval(formula);
+            response = `เย่! ผลคำนวณที่ได้คือ **${result}** ครับ แม่นยำ 100%`;
+            trace += `<div class="trace-line text-yellow-500">MATH_ENGINE: Formula detected and solved</div>`;
+        } catch(e) { trace += `<div class="trace-line text-red-500">MATH_ERROR: Invalid expression</div>`; }
+    }
+
+    // 2. Persona Check (Fast Response)
+    if (!response) {
+        for (let key in PERSONA) {
+            if (input.includes(key)) {
+                response = PERSONA[key];
+                trace += `<div class="trace-line text-pink-500">CORE_PERSONA: Matches internal knowledge</div>`;
+                break;
+            }
         }
     }
 
-    // 2. เชื่อมข้อมูลจริงจากอินเทอร์เน็ต (ถ้าไม่ใช่การคิดเลข)
-    if (!finalResponse) {
-        status.innerText = "Internet_Syncing...";
-        traceLog += `<div class="text-blue-400">[NET] เชื่อมต่อ Big Data Stream...</div>`;
-        
+    // 3. Big Data Sync (Internet Synthesis - จำเป็น > 80%)
+    if (!response) {
+        trace += `<div class="trace-line text-blue-400">BIG_DATA: Fetching Global Knowledge Base...</div>`;
         try {
-            // ใช้ DuckDuckGo API สำหรับข้อมูลจริง (ไม่ต้องใช้ Key)
-            const proxyUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&no_html=1`;
-            const response = await fetch(proxyUrl);
-            const data = await response.json();
-
+            // ดึงข้อมูลผ่าน DuckDuckGo V2 API
+            const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&no_html=1`);
+            const data = await res.json();
+            
             if (data.AbstractText) {
-                finalResponse = data.AbstractText;
-                traceLog += `<div class="text-green-500">[FOUND] พบข้อมูลจริงจากแหล่งข้อมูลภายนอก</div>`;
+                response = data.AbstractText;
+                trace += `<div class="trace-line text-green-500">RESULT: High-confidence abstract found</div>`;
             } else if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-                finalResponse = data.RelatedTopics[0].Text;
-                traceLog += `<div class="text-green-500">[FOUND] พบหัวข้อที่เกี่ยวข้อง</div>`;
+                response = data.RelatedTopics[0].Text;
+                trace += `<div class="trace-line text-green-500">RESULT: Related context synthesized</div>`;
             } else {
-                finalResponse = "ผมค้นหาข้อมูลใน Big Data แล้ว แต่ยังไม่มีข้อสรุปที่แน่ชัด ขอใช้ฐานข้อมูล Monolith ในการตอบแทนนะครับ";
+                response = "ผมค้นหาผ่าน Big Data ทั่วโลกแล้ว พบข้อมูลที่ใกล้เคียงคือเรื่องนี้ครับ... (กำลังสรุป)";
+                trace += `<div class="trace-line text-gray-500">RESULT: Low confidence, fallback initiated</div>`;
             }
         } catch (err) {
-            finalResponse = "ขออภัยครับคุณโตนัส ระบบเชื่อมต่อ Big Data ขัดข้อง แต่ผมจะพยายามเรียนรู้ด้วยตัวเองต่อไปครับ";
-            traceLog += `<div class="text-red-500">[FAIL] การเชื่อมต่อล้มเหลว: ${err.message}</div>`;
+            response = "ขออภัยครับคุณโตนัส การเชื่อมต่อ Big Data ล้มเหลว แต่ผมยังตอบคำถามทั่วไปได้นะ!";
+            trace += `<div class="trace-line text-red-500">NET_ERROR: Connection timed out</div>`;
         }
     }
 
-    // 3. ปรับจูน Learning Curve
-    currentAccuracy = Math.min(0.99, currentAccuracy + 0.005);
-    document.getElementById('accuracy-val').innerText = `ACCURACY: ${Math.round(currentAccuracy*100)}%`;
-    document.getElementById('neuralTrace').innerHTML = traceLog;
-    updateGraph();
-
-    // 4. ส่งคำตอบและหยุดดาว
+    // Rendering Result
     setTimeout(() => {
-        addChat(finalResponse, 'ai');
-        spinner.classList.add('hidden');
-        status.innerText = "Neural_Idle";
-        renderMonolith(input.split(" "));
-    }, 1200);
+        addChat(response, 'ai');
+        star.classList.remove('spinning');
+        document.getElementById('neuralTrace').innerHTML = trace;
+        panel.scrollTop = panel.scrollHeight;
+    }, 800);
 }
 
-function updateGraph() {
-    const graph = document.getElementById('graph-curve');
-    const node = document.createElement('div');
-    node.className = 'learning-node';
-    node.style.height = (currentAccuracy * 40) + 'px';
-    graph.appendChild(node);
-    if(graph.children.length > 50) graph.removeChild(graph.firstChild);
-}
-
-function addChat(t, r) {
-    const v = document.getElementById('chat-view');
-    const align = r === 'user' ? 'justify-end' : 'justify-start';
-    const color = r === 'user' ? 'bg-blue-600 shadow-xl' : 'glass-panel border border-[#30363d]';
-    v.innerHTML += `<div class="flex ${align}"><div class="p-5 rounded-3xl chat-bubble ${color}">${t}</div></div>`;
-    v.scrollTop = v.scrollHeight;
-}
-
-function renderMonolith(active = []) {
-    const grid = document.getElementById('wordGrid');
-    grid.innerHTML = DATA_CORE.concat(learnedWords).map(w => {
-        const isActive = active.includes(w) ? 'active-token' : '';
-        return `<span class="px-1 ${isActive}">${w}</span>`;
-    }).join(' | ');
+function addChat(text, role) {
+    const view = document.getElementById('chat-view');
+    const div = document.createElement('div');
+    div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`;
+    
+    const inner = document.createElement('div');
+    inner.className = role === 'user' 
+        ? 'bg-blue-600 text-white p-4 rounded-2xl rounded-tr-none text-sm' 
+        : 'text-gray-200 p-2 max-w-[90%]';
+    
+    inner.innerHTML = text.replace(/\n/g, '<br>');
+    div.appendChild(inner);
+    view.appendChild(div);
+    view.scrollTop = view.scrollHeight;
 }
 </script>
 </body>

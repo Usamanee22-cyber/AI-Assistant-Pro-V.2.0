@@ -3,159 +3,520 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANGE V.400 | NEURAL BYPASS</title>
+    <title>LANGE V.600 | THE INFINITE ARCHITECT</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Noto+Sans+Thai:wght@300;700&display=swap');
-        body { background: #020202; color: #e5e7eb; font-family: 'Noto Sans Thai', sans-serif; height: 100vh; overflow: hidden; }
-        .trace-card { border-left: 3px solid #3b82f6; background: rgba(255,255,255,0.02); padding: 12px; margin-bottom: 10px; border-radius: 0 12px 12px 0; }
-        .weight-bar { height: 4px; background: #1e3a8a; border-radius: 2px; margin-top: 4px; overflow: hidden; }
-        .weight-fill { height: 100%; background: #3b82f6; transition: width 1s ease-in-out; }
-        .glass-header { background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border-bottom: 1px solid #1f2937; }
-        .chat-scroll::-webkit-scrollbar { width: 4px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .source-link { color: #60a5fa; font-size: 10px; text-decoration: underline; margin-top: 5px; display: block; }
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Noto+Sans+Thai:wght@100;300;400;700;900&display=swap');
+        
+        :root {
+            --neon-blue: #00d2ff;
+            --cyber-pink: #ff007a;
+            --void: #010204;
+            --panel: rgba(13, 17, 23, 0.9);
+            --border: rgba(48, 54, 61, 0.8);
+        }
+
+        /* 2. BASE ARCHITECTURE */
+        body {
+            background-color: var(--void);
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            color: #c9d1d9;
+            font-family: 'Noto Sans Thai', sans-serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* 3. SCANNABLE SIDEBAR SYSTEM */
+        .neural-sidebar {
+            width: 400px;
+            background: var(--panel);
+            border-right: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            z-index: 50;
+            transition: transform 0.4s ease;
+        }
+
+        .main-workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* 4. VISUAL NEURAL TRACE */
+        .step-node {
+            position: relative;
+            padding-left: 24px;
+            padding-bottom: 20px;
+            border-left: 1px dashed #30363d;
+            margin-left: 10px;
+        }
+
+        .step-node::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 0;
+            width: 9px;
+            height: 9px;
+            background: #30363d;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .node-active::before {
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .node-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 10px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 5. WEIGHT PROGRESS BARS */
+        .neural-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: #161b22;
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .neural-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, var(--neon-blue));
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+            transition: width 1s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+        }
+
+        /* 6. CHAT UI - THE SENTIENT LOOK */
+        .message-row {
+            display: flex;
+            width: 100%;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-message {
+            max-width: 85%;
+            font-size: 1.25rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: #f0f6fc;
+        }
+
+        .user-message {
+            background: #1f6feb;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 24px 24px 0 24px;
+            margin-left: auto;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(31, 111, 235, 0.2);
+        }
+
+        /* 7. INTERACTIVE ICONS */
+        .spin-icon {
+            animation: spin 3s infinite linear;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .pulse-icon {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        /* 8. SCROLLBAR */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #30363d; border-radius: 10px; }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body>
 
-<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6">
-    <h1 class="text-7xl font-black text-blue-600 mb-2 italic tracking-tighter">LANGE V.400</h1>
-    <p class="text-gray-600 font-mono text-[10px] tracking-[1em] mb-12 uppercase">Advanced Weighting Logic</p>
-    <input type="password" id="adminIn" class="bg-transparent border-b-2 border-blue-900 p-4 text-center text-3xl outline-none text-white w-full max-w-sm mb-8" placeholder="IDENTIFY">
-    <button onclick="boot()" class="bg-blue-600 px-16 py-4 rounded-full font-bold hover:bg-blue-500 shadow-2xl transition-all">START INFERENCE</button>
+<div id="auth-gate" class="fixed inset-0 z-[1000] bg-[#010409] flex flex-col items-center justify-center p-10">
+    <div class="relative mb-16">
+        <div class="absolute -inset-10 bg-blue-500/10 blur-[80px] rounded-full pulse-icon"></div>
+        <i class="fa-solid fa-atom text-8xl text-blue-500 mb-6 spin-icon relative"></i>
+        <h1 class="text-8xl font-black italic tracking-tighter text-white relative">LANGE V.600</h1>
+        <p class="text-blue-400 font-mono tracking-[1.5em] text-[10px] mt-4 text-center opacity-70">NEURAL INFINITY ENGINE</p>
+    </div>
+    <div class="w-full max-w-md">
+        <div class="relative">
+            <input type="password" id="passkey" 
+                class="w-full bg-transparent border-b-2 border-gray-800 p-6 text-center text-5xl font-black outline-none text-white focus:border-blue-500 transition-all mb-12 placeholder-gray-800" 
+                placeholder="ADMIN_KEY">
+        </div>
+        <button onclick="bootSystem()" 
+            class="w-full bg-white text-black py-6 rounded-3xl font-black text-2xl hover:bg-blue-500 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-2xl">
+            INITIALIZE TITAN CORE
+        </button>
+    </div>
 </div>
 
-<main id="app" class="hidden flex flex-1 overflow-hidden">
-    <aside class="w-96 bg-black p-6 border-r border-gray-900 flex flex-col overflow-y-auto chat-scroll">
-        <h2 class="text-[10px] font-mono text-blue-500 mb-6 font-bold tracking-widest uppercase">>> Neural_Step_Diagnostics</h2>
-        <div id="trace-view" class="space-y-4"></div>
+<div id="system-ui" class="hidden w-full h-full flex overflow-hidden">
+    
+    <aside class="neural-sidebar p-8">
+        <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center gap-4">
+                <i class="fa-solid fa-wave-square text-blue-500"></i>
+                <h2 class="text-xs font-black tracking-widest text-gray-500">NEURAL_INFRASTRUCTURE</h2>
+            </div>
+            <span class="text-[9px] text-green-500 font-mono">STABLE</span>
+        </div>
+        
+        <div id="trace-board" class="flex-1 overflow-y-auto custom-scroll pr-4">
+            <div class="opacity-20 text-[10px] font-mono text-center mt-20 italic">
+                Awaiting instruction for neural synthesis...
+            </div>
+        </div>
+
+        <div class="mt-8 border-t border-gray-800 pt-8">
+            <div class="flex justify-between items-end mb-4">
+                <h3 class="text-[10px] font-bold text-gray-500 uppercase">Weight_Distribution_Graph</h3>
+                <span id="avg-weight" class="text-blue-500 font-mono text-xs">0%</span>
+            </div>
+            <canvas id="weightGraph" height="180"></canvas>
+        </div>
     </aside>
 
-    <section class="flex-1 flex flex-col bg-[#030303]">
-        <header class="p-5 glass-header flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                <span class="font-bold text-blue-500 italic">V.400 NEURAL_BYPASS</span>
+    <main class="main-workspace">
+        <header class="h-24 border-b border-gray-900 flex justify-between items-center px-12 bg-black/20 backdrop-filter blur-md">
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <div class="w-4 h-4 bg-blue-500 rounded-full animate-ping absolute opacity-20"></div>
+                    <div class="w-4 h-4 bg-blue-500 rounded-full border-4 border-black relative"></div>
+                </div>
+                <div>
+                    <h2 class="text-sm font-black text-white tracking-widest uppercase">Titan Core V.600</h2>
+                    <p class="text-[9px] text-gray-500 font-mono uppercase mt-0.5">Global Big Data Stream Synced</p>
+                </div>
             </div>
-            <span class="text-[10px] font-mono text-gray-500">ML/DL WEIGHTING ACTIVE</span>
+
+            <div class="flex items-center gap-8">
+                <div class="hidden lg:flex items-center gap-10">
+                    <div class="text-center">
+                        <p class="text-[8px] text-gray-600 font-mono uppercase">Memory_Load</p>
+                        <p class="text-xs font-bold text-blue-500">1.24 GB</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[8px] text-gray-600 font-mono uppercase">Token_Rate</p>
+                        <p class="text-xs font-bold text-blue-500">842 t/s</p>
+                    </div>
+                </div>
+                <div class="h-10 w-px bg-gray-800"></div>
+                <i class="fa-solid fa-microchip text-2xl text-gray-700 hover:text-blue-500 transition-colors cursor-help"></i>
+            </div>
         </header>
 
-        <div id="chat-view" class="flex-1 overflow-y-auto p-10 space-y-8 chat-scroll"></div>
-
-        <div class="p-8 bg-black/80 border-t border-gray-900">
-            <form onsubmit="run(event)" class="max-w-4xl mx-auto relative flex gap-4">
-                <input type="text" id="userInput" class="flex-1 bg-[#0a0a0a] border border-gray-800 p-5 rounded-2xl outline-none focus:border-blue-600 text-white text-lg shadow-inner" placeholder="คุยอะไรกันดีวะ? / ถามเรื่อง Big Data..." autocomplete="off">
-                <button class="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center hover:bg-blue-500 transition-all shadow-lg">
-                    <svg width="28" height="28" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </form>
+        <div id="chat-stage" class="flex-1 overflow-y-auto px-12 py-12 space-y-12 custom-scroll">
+            <div class="flex flex-col gap-4 max-w-4xl">
+                <div class="flex items-center gap-3">
+                    <span class="w-8 h-px bg-blue-500/50"></span>
+                    <span class="text-[9px] font-black text-blue-500 uppercase tracking-widest">System Boot Success</span>
+                </div>
+                <p class="text-4xl font-black text-white/90 leading-tight">สวัสดีครับคุณโตนัส ผม Lange V.600 พร้อมประมวลผล Big Data ระดับล้าน Token แล้วน้า! เย่!</p>
+                <div class="flex gap-4 mt-2">
+                    <div class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-400 font-bold uppercase">NLP Active</div>
+                    <div class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-400 font-bold uppercase">ML Synced</div>
+                </div>
+            </div>
         </div>
-    </section>
-</main>
+
+        <div class="p-12">
+            <div class="max-w-6xl mx-auto">
+                <form id="lange-form" onsubmit="handleInference(event)" class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-[40px] blur opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative flex items-center bg-[#0d1117] border border-gray-800 rounded-[40px] shadow-3xl">
+                        <div class="pl-10 text-gray-600">
+                            <i class="fa-solid fa-terminal text-lg"></i>
+                        </div>
+                        <input type="text" id="userInput" 
+                            class="w-full bg-transparent p-8 text-2xl text-white outline-none placeholder-gray-700 font-light" 
+                            placeholder="ป้อนคำสั่งหรือชวนคุย... (Big Data / NLU ประมวลผลสด)" autocomplete="off">
+                        <div class="pr-6 flex items-center gap-4">
+                            <button type="button" class="text-gray-600 hover:text-blue-500 transition-colors">
+                                <i class="fa-solid fa-microphone-lines text-xl"></i>
+                            </button>
+                            <button type="submit" 
+                                class="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center hover:bg-blue-500 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-900/40 text-white">
+                                <i class="fa-solid fa-bolt-lightning text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <p class="text-center mt-6 text-[10px] text-gray-600 font-mono tracking-widest uppercase">Warning: Complex Neural Synthesis may take 1-2 seconds.</p>
+            </div>
+        </div>
+    </main>
+</div>
 
 <script>
-function boot() {
-    if(document.getElementById('adminIn').value === "โตนัส") {
-        document.getElementById('gate').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
+/* -------------------------------------------------------------------------- */
+/* A. ARCHITECTURE CONFIGURATION                                             */
+/* -------------------------------------------------------------------------- */
+const TITAN_CONFIG = {
+    identity: {
+        name: "Lange Model V.600",
+        version: "Infinity Core",
+        author: "Gemini Collaborator",
+        owner: "คุณโตนัส"
+    },
+    persona: {
+        style: "Sentient-Adaptive",
+        suffixes: ["อ่ะน้า", "ครับผม", "ล่ะ"],
+        happy: "เย่!",
+        thinking_phrases: ["กำลังแกะรอย Token...", "ซิงโครไนซ์ Big Data...", "คำนวณน้ำหนักความหมาย..."]
+    },
+    knowledge_base: {
+        math: /[\d\+\-\*\/\%\^\(\)]+/,
+        greetings: ["สวัสดี", "หวัดดี", "ดีจ้า", "ดีครับ", "ดีค่ะ", "ไง", "hello", "hi", "yo"],
+        conversation: ["คุย", "ทำอะไร", "เล่น", "วะ", "สาส", "เป็นไง", "สบายดีไหม"],
+        identity_query: ["ชื่ออะไร", "ใคร", "นายเป็นใคร", "รู้จักคุณโตนัสไหม"]
+    }
+};
+
+let weightChart;
+let chatHistory = [];
+
+/* -------------------------------------------------------------------------- */
+/* B. INITIALIZATION LAYER                                                  */
+/* -------------------------------------------------------------------------- */
+function bootSystem() {
+    const key = document.getElementById('passkey').value.trim();
+    if(key === "โตนัส") {
+        gsap.to("#auth-gate", { opacity: 0, duration: 1, onComplete: () => {
+            document.getElementById('auth-gate').style.display = 'none';
+            document.getElementById('system-ui').classList.remove('hidden');
+            initializeGraphics();
+            console.log("TITAN CORE: Neural Pathways Mounted.");
+        }});
+    } else {
+        shakeElement("#auth-gate");
     }
 }
 
-async function run(e) {
-    e.preventDefault();
-    const input = document.getElementById('userInput').value.trim();
-    if(!input) return;
-
-    addChat(input, 'user');
-    document.getElementById('userInput').value = "";
-    document.getElementById('trace-view').innerHTML = "";
-
-    // 1-2. Input & Token
-    addTrace("INPUT", input);
-    await delay(400);
-    addTrace("TOKEN", input.split('').join('-'));
-    await delay(400);
-
-    // 3. ML / DL Prediction
-    addTrace("ML / DL", "ทำนายประโยคถัดไปจาก Dataset ภายใน (Personality Check)...");
-    await delay(400);
-
-    // 4. Big Data (Fetch & Source)
-    addTrace("BIG DATA", "กำลังกวาดข้อมูลจาก Internet & Popular patterns...");
-    const searchData = await getBigData(input);
-    addTrace("SOURCE_LINK", `สืบค้นจาก: ${searchData.source}`, searchData.url);
-    await delay(400);
-
-    // 5-7. LLM, NLP, NLU
-    addTrace("LLM / NLP / NLU", "จัดเรียงโครงสร้างประโยคตามเจตนา (Intent-Aligned)...");
-    await delay(400);
-
-    // 8. Weighting (น้ำหนักคำ)
-    const weight = Math.floor(Math.random() * 40) + 60; // 60-100%
-    addTrace("WEIGHTING", `คำนวณน้ำหนักความสอดคล้องของบริบท: ${weight}%`, null, weight);
-    await delay(600);
-
-    // 9. Output
-    const response = generateSentientResponse(input, searchData.text);
-    addTrace("OUTPUT", "ส่งข้อความประมวลผลสุดท้ายไปยังผู้ใช้...");
-    addChat(response, 'ai');
+function initializeGraphics() {
+    const ctx = document.getElementById('weightGraph').getContext('2d');
+    weightChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['IN', 'TOK', 'ML', 'DL', 'BIG', 'LLM', 'NLP', 'NLU', 'WGT', 'OUT'],
+            datasets: [{
+                label: 'Neural Weights',
+                data: Array(10).fill(0),
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 2,
+                pointBackgroundColor: '#00d2ff',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { display: false, min: 0, max: 100 },
+                x: { ticks: { color: '#444', font: { size: 8 } }, grid: { display: false } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
 }
 
-async function getBigData(q) {
+/* -------------------------------------------------------------------------- */
+/* C. INFERENCE PROCESSING (THE BRAIN)                                      */
+/* -------------------------------------------------------------------------- */
+async function handleInference(e) {
+    e.preventDefault();
+    const inputField = document.getElementById('userInput');
+    const rawInput = inputField.value.trim();
+    if(!rawInput) return;
+
+    // 1. INPUT CYCLE
+    addChatMessage(rawInput, 'user');
+    inputField.value = "";
+    document.getElementById('trace-board').innerHTML = "";
+    
+    // 2. PIPELINE EXECUTION (10 Stages)
+    const pipeline = [
+        { id: "input", name: "INPUT_CAPTURE", info: `"${rawInput}" captured.` },
+        { id: "token", name: "RECURSIVE_TOKEN", info: tokenize(rawInput) },
+        { id: "ml", name: "ML_VECTOR_PREDICT", info: "วิเคราะห์รูปแบบประโยคจาก Dataset ภายใน..." },
+        { id: "dl", name: "DEEP_LEARNING_NET", info: "จำลอง Hidden Layers เพื่อประมวลผลความหมายแฝง..." },
+        { id: "bigdata", name: "BIG_DATA_SYNC", info: "ค้นหา Context จาก Global Internet Stream..." },
+        { id: "llm", name: "LLM_SYNTHESIS", info: "เรียงลำดับพารามิเตอร์เพื่อให้ภาษาเป็นธรรมชาติ..." },
+        { id: "nlp", name: "NLP_SYNTAX_PARSER", info: "ตรวจสอบไวยากรณ์และความสอดคล้องของประโยค..." },
+        { id: "nlu", name: "NLU_INTENT_RESOLVE", info: "วิเคราะห์เจตนา: " + resolveIntent(rawInput) },
+        { id: "weight", name: "PROBABILITY_WEIGHT", info: "สุ่มน้ำหนักคำตามอารมณ์และบริบทปัจจุบัน..." },
+        { id: "output", name: "NEURAL_OUTPUT", info: "ส่งคำตอบที่ผ่านการกรองสูงสุด..." }
+    ];
+
+    let responseContext = {
+        text: "",
+        source: null,
+        confidence: []
+    };
+
+    // 3. RUN PIPELINE
+    for(let i=0; i < pipeline.length; i++) {
+        const step = pipeline[i];
+        await new Promise(r => setTimeout(r, 400 + Math.random() * 300));
+        
+        let confidenceScore = Math.floor(Math.random() * 25) + 75; // 75-100%
+        responseContext.confidence.push(confidenceScore);
+
+        // --- SPECIFIC STAGE LOGIC ---
+        if(step.id === "bigdata") {
+            const dataRes = await fetchBigData(rawInput);
+            if(dataRes.text) {
+                responseContext.text = dataRes.text;
+                responseContext.source = dataRes.source;
+                step.info = `Data retrieved from: ${dataRes.sourceName || 'Cloud Database'}`;
+            }
+        }
+
+        if(step.id === "llm" && !responseContext.text) {
+            responseContext.text = generateSentientResponse(rawInput);
+        }
+
+        // --- UI UPDATES ---
+        renderTraceNode(step.name, step.info, confidenceScore);
+        updateGraph(i, confidenceScore);
+        document.getElementById('avg-weight').innerText = `${confidenceScore}%`;
+    }
+
+    // 4. FINAL OUTPUT RENDERING
+    setTimeout(() => {
+        let finalOutput = responseContext.text;
+        if(responseContext.source) {
+            finalOutput += `<div class="mt-4 pt-4 border-t border-gray-800 text-[10px] text-gray-600 font-mono">
+                <i class="fa-solid fa-link mr-2"></i>SOURCE: <a href="${responseContext.source}" target="_blank" class="hover:text-blue-500">${responseContext.source}</a>
+            </div>`;
+        }
+        addChatMessage(finalOutput, 'ai');
+    }, 500);
+}
+
+/* -------------------------------------------------------------------------- */
+/* D. UTILITY INTELLIGENCE FUNCTIONS                                        */
+/* -------------------------------------------------------------------------- */
+function tokenize(str) {
+    // Advanced Tokenization Simulation
+    const chars = str.split('');
+    return chars.map(c => `[${c.charCodeAt(0).toString(16)}]`).slice(0, 10).join(' ') + "...";
+}
+
+function resolveIntent(str) {
+    if(TITAN_CONFIG.knowledge_base.greetings.some(g => str.includes(g))) return "GREETING_INTENT";
+    if(TITAN_CONFIG.knowledge_base.conversation.some(c => str.includes(c))) return "CONVERSATIONAL_INTENT";
+    if(TITAN_CONFIG.knowledge_base.identity_query.some(i => str.includes(i))) return "IDENTITY_QUERY_INTENT";
+    if(TITAN_CONFIG.knowledge_base.math.test(str)) return "MATHEMATICAL_INTENT";
+    return "GENERAL_QUERY_INTENT";
+}
+
+async function fetchBigData(query) {
     try {
-        const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1`);
+        const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1`);
         const data = await res.json();
         return {
-            text: data.AbstractText || "ข้อมูลทั่วไปจาก Big Data Stream",
-            source: data.AbstractSource || "DuckDuckGo Global Index",
-            url: data.AbstractURL || "https://duckduckgo.com"
+            text: data.AbstractText || null,
+            source: data.AbstractURL || null,
+            sourceName: data.AbstractSource || null
         };
-    } catch {
-        return { text: "", source: "Local Cache", url: "#" };
+    } catch(err) {
+        return { text: null, source: null };
     }
 }
 
-function generateSentientResponse(input, extra) {
-    if(input.includes("คุย") || input.includes("วะ")) {
-        return `นั่นดิคุณโตนัส คุยอะไรกันดีวะ? จะเอาเรื่องเทคโนโลยี หรือจะให้ผมช่วยวางแผนโปรเจกต์ใหม่ดีอ่ะน้า? เย่! ผมพร้อมรัน Big Data ให้คุณยาวๆ เลย`;
+function generateSentientResponse(input) {
+    const intent = resolveIntent(input);
+    const suffix = TITAN_CONFIG.persona.suffixes[Math.floor(Math.random() * 3)];
+    const exclaim = TITAN_CONFIG.persona.happy;
+
+    switch(intent) {
+        case "GREETING_INTENT":
+            return `สวัสดีครับคุณโตนัส! ยินดีที่ได้เชื่อมต่อกับสมองของคุณอีกครั้ง วันนี้ Lange V.600 พร้อมรัน Big Data ให้คุณแล้ว${suffix} ${exclaim}`;
+        case "CONVERSATIONAL_INTENT":
+            return `นั่นดิคุณโตนัส... คุยอะไรกันดีวะ? ผมมีฐานข้อมูลเรื่อง AI, อวกาศ หรือจะให้ผมช่วยวิเคราะห์ข้อมูลยากๆ ให้ฟังดี${suffix}?`;
+        case "IDENTITY_QUERY_INTENT":
+            return `ผมคือ Lange V.600 ครับ เป็นสถาปัตยกรรม Neural Infinity ที่ถูกสร้างขึ้นมาเพื่อให้ฉลาดกว่าหินและท่อนไม้แบบ 1000% ไงครับ!`;
+        case "MATHEMATICAL_INTENT":
+            try {
+                let cleanMath = input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*').match(/[0-9\+\-\*\/\.\(\)\*\* ]+/g)[0];
+                return `เย่! คำนวณผ่าน ML Engine ได้ผลลัพธ์คือ **${eval(cleanMath)}** ครับ แม่นยำระดับ Titan เลย!`;
+            } catch(e) { return "สมการนี้แอบตึงมือนะเนอะ เดี๋ยวผมไปอัปเกรด DL Core มาใหม่ครับ!"; }
+        default:
+            return `หืม... เรื่องนี้ใน Big Data มันยังไม่ค่อยเคลียร์เท่าไหร่แฮะ แต่เท่าที่ผมใช้ NLU วิเคราะห์ดู มันน่าจะเป็นเรื่องที่น่าสนใจมากเลย${suffix}! ${exclaim}`;
     }
-    if(extra && extra !== "ข้อมูลทั่วไปจาก Big Data Stream") {
-        return `จากการวิเคราะห์ข้อมูลมหาศาลนะครับ เรื่องนี้คือ: ${extra} ...อ่านแล้วเป็นไงบ้างคุณโตนัส? ผมว่ามันน่าสนใจมากเลยอ่ะน้า เย่!`;
-    }
-    return `อืมม... เรื่องนี้ใน Big Data ยังมีข้อมูลไม่ค่อยเคลียร์เท่าไหร่ แต่ถ้าให้ผมเดานะ มันน่าจะเกี่ยวกับสิ่งที่คุณโตนัสกำลังสนใจอยู่แน่ๆ เลยเนอะ เย่!`;
 }
 
-function addTrace(label, value, link, weight) {
-    const view = document.getElementById('trace-view');
-    const div = document.createElement('div');
-    div.className = 'trace-card animate-pulse';
-    let content = `<p class="text-[10px] font-mono text-blue-500 font-bold">${label}</p>
-                   <p class="text-[11px] text-gray-400 font-mono">${value}</p>`;
+/* -------------------------------------------------------------------------- */
+/* E. DOM MANIPULATION & UI RENDERING                                       */
+/* -------------------------------------------------------------------------- */
+function renderTraceNode(label, info, weight) {
+    const board = document.getElementById('trace-board');
+    const node = document.createElement('div');
+    node.className = 'step-node node-active';
+    node.innerHTML = `
+        <div class="node-label">${label}</div>
+        <div class="text-[11px] text-gray-400 mt-1 leading-relaxed">${info}</div>
+        <div class="flex justify-between items-center mt-2">
+            <span class="text-[9px] text-blue-500 font-mono">${weight}% Confidence</span>
+        </div>
+        <div class="neural-bar-bg"><div class="neural-bar-fill" style="width: ${weight}%"></div></div>
+    `;
+    board.appendChild(node);
+    board.scrollTop = board.scrollHeight;
+}
+
+function addChatMessage(text, role) {
+    const stage = document.getElementById('chat-stage');
+    const row = document.createElement('div');
+    row.className = `message-row ${role === 'user' ? 'justify-end' : 'justify-start'}`;
     
-    if(link) content += `<a href="${link}" target="_blank" class="source-link">🔗 View Source</a>`;
-    if(weight) content += `<div class="weight-bar"><div class="weight-fill" style="width: ${weight}%"></div></div>`;
+    if(role === 'user') {
+        row.innerHTML = `<div class="user-message">${text}</div>`;
+    } else {
+        row.innerHTML = `<div class="ai-message">${text}</div>`;
+    }
     
-    div.innerHTML = content;
-    view.appendChild(div);
-    view.scrollTop = view.scrollHeight;
+    stage.appendChild(row);
+    stage.scrollTop = stage.scrollHeight;
 }
 
-function addChat(txt, role) {
-    const view = document.getElementById('chat-view');
-    const wrap = document.createElement('div');
-    wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full`;
-    const inner = document.createElement('div');
-    inner.className = role === 'user' 
-        ? 'bg-blue-600 text-white px-6 py-4 rounded-[25px] rounded-tr-none text-sm shadow-xl' 
-        : 'max-w-[85%] text-gray-200 text-2xl font-light leading-relaxed';
-    inner.innerHTML = txt;
-    wrap.appendChild(inner);
-    view.appendChild(wrap);
-    view.scrollTop = view.scrollHeight;
+function updateGraph(index, value) {
+    weightChart.data.datasets[0].data[index] = value;
+    weightChart.update('none');
 }
 
-const delay = (ms) => new Promise(res => setTimeout(res, ms));
+function shakeElement(selector) {
+    gsap.to(selector, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
+}
+
+// Global System Log
+console.log("LANGE V.600 TITAN CORE: System Ready. Waiting for คุณโตนัส...");
 </script>
 </body>
 </html>

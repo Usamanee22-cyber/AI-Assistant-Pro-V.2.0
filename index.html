@@ -3,180 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANGE V.250 | NEURAL ARCHITECT</title>
+    <title>LANGE V.300 | NEURAL TRACE SYSTEM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Noto+Sans+Thai:wght@300;700&display=swap');
-        :root { --cobalt: #3b82f6; --void: #020202; --panel: #0a0a0a; }
-        body { background: var(--void); color: #cecece; font-family: 'Noto Sans Thai', sans-serif; overflow: hidden; }
-        .neural-grid { background-image: radial-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px); background-size: 30px 30px; }
-        .glass { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .token-chip { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.1); color: var(--cobalt); }
-        
-        /* Astral Star v3.0 */
-        #star-core { font-size: 32px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 0 15px var(--cobalt)); }
-        .processing { animation: pulse-rotate 1s infinite alternate; filter: drop-shadow(0 0 25px #fff) !important; }
-        @keyframes pulse-rotate { from { transform: rotate(0deg) scale(1); } to { transform: rotate(180deg) scale(1.3); } }
-
-        .chat-scroll::-webkit-scrollbar { width: 3px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+        body { background: #020202; color: #d1d5db; font-family: 'Noto Sans Thai', sans-serif; height: 100vh; overflow: hidden; }
+        .neural-path { border-left: 2px solid #3b82f6; padding-left: 15px; margin-bottom: 10px; position: relative; }
+        .neural-path::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 10px #3b82f6; }
+        .glass-ui { background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .chat-scroll::-webkit-scrollbar { width: 4px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .step-label { font-size: 10px; font-family: 'Fira Code', monospace; color: #60a5fa; font-weight: bold; text-transform: uppercase; }
+        @keyframes flow { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
+        .animate-flow { animation: flow 0.4s ease-out forwards; }
     </style>
 </head>
-<body class="h-screen flex flex-col neural-grid">
+<body class="flex flex-col">
 
-<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6">
-    <div class="relative mb-12">
-        <div class="absolute -inset-4 bg-blue-500/20 blur-xl rounded-full animate-pulse"></div>
-        <h1 class="text-6xl font-bold tracking-tighter text-white relative">LANGE V.250</h1>
-    </div>
-    <input type="password" id="adminIn" class="bg-transparent border-b border-blue-900/50 p-4 text-center text-3xl outline-none text-white w-full max-w-sm mb-10 focus:border-blue-500 transition-all" placeholder="NEURAL_KEY">
-    <button onclick="bootSystem()" class="group relative px-16 py-4 overflow-hidden rounded-full bg-blue-600 font-bold text-white transition-all">
-        <span class="relative z-10">INITIALIZE DL/ML CORE</span>
-        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform"></div>
-    </button>
+<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6 text-center">
+    <h1 class="text-6xl font-black text-blue-500 mb-4 italic">LANGE V.300</h1>
+    <p class="text-gray-600 font-mono text-[10px] tracking-[0.8em] mb-12 uppercase">Deep Inference Architecture</p>
+    <input type="text" id="adminIn" class="bg-transparent border-b-2 border-blue-900 p-4 text-center text-4xl font-bold outline-none text-white w-full max-w-md mb-8" placeholder="ENTER IDENTIFIER">
+    <button onclick="boot()" class="bg-blue-600 px-20 py-4 rounded-full font-bold hover:bg-blue-400 transition-all shadow-[0_0_40px_rgba(37,99,235,0.3)]">BOOT NEURAL SYSTEM</button>
 </div>
 
-<main id="app" class="hidden h-full flex flex-col max-w-6xl mx-auto w-full p-4 lg:p-6">
-    <header class="flex justify-between items-center mb-6 px-4">
-        <div class="flex flex-col">
-            <span class="text-[10px] tracking-[0.3em] text-blue-500 font-bold">LANGE ARCHITECT SYSTEM</span>
-            <div class="flex items-center gap-2 mt-1">
-                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                <span class="text-[9px] font-mono text-gray-500 uppercase">Status: Global_Net_Synced</span>
-            </div>
+<main id="main" class="hidden h-full flex flex-row overflow-hidden">
+    <aside class="w-1/3 bg-black border-r border-gray-900 p-6 flex flex-col">
+        <h2 class="text-xs font-mono text-blue-500 font-bold mb-6 tracking-widest">>> NEURAL_INFERENCE_STEP_BY_STEP</h2>
+        <div id="trace-container" class="flex-1 overflow-y-auto chat-scroll space-y-4">
+            <div class="text-gray-700 text-[10px] font-mono italic">Waiting for input to trace neural path...</div>
         </div>
-        <div id="star-core">⭐</div>
-    </header>
+    </aside>
 
-    <div id="chat-view" class="flex-1 overflow-y-auto chat-scroll space-y-10 px-4 pb-10"></div>
+    <section class="flex-1 flex flex-col bg-[#050505]">
+        <header class="p-4 border-b border-gray-900 flex justify-between items-center glass-ui">
+            <span class="text-blue-500 font-bold italic">LANGE V.300 ONLINE</span>
+            <div id="status" class="text-[9px] font-mono text-green-500 animate-pulse">BIG_DATA_SYNCED</div>
+        </header>
 
-    <div id="diagnostics" class="hidden mb-4 p-4 glass rounded-3xl font-mono text-[9px] grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div><p class="text-blue-500">NLP_ENGINE</p><span id="diag-nlp">-</span></div>
-        <div><p class="text-blue-500">NLU_INTENT</p><span id="diag-intent">-</span></div>
-        <div><p class="text-blue-500">VECTORS</p><div id="diag-tokens" class="flex flex-wrap gap-1 mt-1"></div></div>
-        <div><p class="text-blue-500">SOURCE</p><span id="diag-source">-</span></div>
-    </div>
+        <div id="chat-view" class="flex-1 overflow-y-auto p-10 space-y-8 chat-scroll"></div>
 
-    <div class="glass rounded-[40px] p-2 flex items-center shadow-2xl">
-        <form onsubmit="handleQuery(event)" class="w-full flex items-center">
-            <input type="text" id="userInput" class="flex-1 bg-transparent p-5 pl-8 outline-none text-lg text-white placeholder-gray-600" placeholder="คุยกับ Lange... (ถามความรู้/คณิต/ทักทาย)" autocomplete="off">
-            <button class="bg-blue-600 h-14 w-14 rounded-full flex items-center justify-center hover:bg-blue-400 transition-all mr-1 shadow-lg">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
-        </form>
-    </div>
+        <div class="p-6 bg-black/50">
+            <form onsubmit="ask(event)" class="relative flex items-center">
+                <input type="text" id="userInput" class="w-full bg-[#0a0a0a] border border-gray-800 p-5 pr-16 rounded-3xl outline-none focus:border-blue-500 text-white shadow-2xl transition-all" placeholder="คุยอะไรกันดีวะ? / ถามข้อมูล Big Data..." autocomplete="off">
+                <button class="absolute right-4 p-2 text-blue-500 hover:scale-110 transition-transform">
+                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </form>
+        </div>
+    </section>
 </main>
 
 <script>
-// --- [ GLOBAL KNOWLEDGE & PERSONA ] ---
-const PERSONA_CONFIG = {
-    greetings: ["สวัสดี", "หวัดดี", "ดีจ้า", "ดีครับ", "ดีค่ะ", "hi", "hello", "ไง"],
-    identity: ["ชื่ออะไร", "ใคร", "นายเป็น"],
-    emotive: ["กวน", "โง่", "ฉลาด", "ขำ", "ตลก"],
-    style: { suffix: "อ่ะน้า", exclaim: "เย่!" }
-};
-
-function bootSystem() {
+function boot() {
     if(document.getElementById('adminIn').value === "โตนัส") {
         document.getElementById('gate').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
+        document.getElementById('main').classList.remove('hidden');
     }
 }
 
-// --- [ NEURAL INFERENCE ENGINE ] ---
-async function handleQuery(e) {
+async function ask(e) {
     e.preventDefault();
-    const inputField = document.getElementById('userInput');
-    const rawInput = inputField.value.trim();
-    if(!rawInput) return;
+    const input = document.getElementById('userInput').value.trim();
+    if(!input) return;
 
-    // UI Feedback
-    addChat(rawInput, 'user');
-    inputField.value = "";
-    const star = document.getElementById('star-core');
-    const diag = document.getElementById('diagnostics');
-    star.classList.add('processing');
-    diag.classList.remove('hidden');
+    addChat(input, 'user');
+    document.getElementById('userInput').value = "";
+    document.getElementById('trace-container').innerHTML = "";
 
-    // 1. NLP & Tokenization (Pre-processing)
-    const tokens = rawInput.toLowerCase().split(/[\s,?!. ]+/);
-    updateDiag('diag-tokens', tokens.map(t => `<span class="token-chip">${t}</span>`).join(''));
-    updateDiag('diag-nlp', 'Deep_Parsing...');
+    const steps = [
+        { label: "INPUT", value: input },
+        { label: "TOKEN", value: input.split('').join('-') },
+        { label: "ML / DL", value: "Predicting next sequence based on dataset..." },
+        { label: "BIG DATA", value: "Searching internet sources & popular patterns..." },
+        { label: "LLM", value: "Structuring intent-aligned response..." },
+        { label: "NLP", value: "Processing human language syntax..." },
+        { label: "NLU", value: "Context verification (Natural flow check)..." },
+        { label: "OUTPUT", value: "Generating final response..." }
+    ];
 
-    let response = "";
-    let source = "Memory_Core";
-    let intent = "Unknown";
-
-    // 2. NLU: Intent Classification (Deep Routing)
-    // A. Greeting Logic (Symmetry check)
-    if (PERSONA_CONFIG.greetings.some(g => rawInput.includes(g))) {
-        intent = "Greeting";
-        response = `สวัสดีครับคุณโตนัส! Lange V.250 พร้อมประมวลผล Big Data ให้แล้ววันนี้คุยไรดี${PERSONA_CONFIG.style.suffix} ${PERSONA_CONFIG.style.exclaim}`;
-    } 
-    // B. Identity Check
-    else if (PERSONA_CONFIG.identity.some(i => rawInput.includes(i))) {
-        intent = "Identity_Check";
-        response = `ผมคือ Lange Model V.250 สถาปัตยกรรม Neural Architect ที่คุณโตนัสสร้างขึ้นไงครับ ไม่ใช่แค่ Chatbot ธรรมดานะ!`;
-    }
-    // C. Math Logic (ML/DL Computation)
-    else if (/[0-9]/.test(rawInput) && /[\+\-\*\/\^]/.test(rawInput)) {
-        intent = "Math_Execution";
-        try {
-            let clean = rawInput.replace(/ยกกำลัง/g, '**').replace(/x/g, '*').match(/[0-9\+\-\*\/\.\(\)\*\* ]+/g)[0];
-            response = `${PERSONA_CONFIG.style.exclaim} คำนวณผ่าน ML Engine ได้ผลลัพธ์คือ ${eval(clean)} ครับ`;
-            source = "Math_Kernel";
-        } catch(e) { response = "สมการซับซ้อนไปนิด ผมขอจูนพารามิเตอร์แป๊บน้า"; }
-    }
-
-    // 3. Global Big Data Synthesis (หาก Logic ภายในไม่พบคำตอบ)
-    if (!response) {
-        intent = "Deep_Research";
-        updateDiag('diag-nlp', 'BigData_Syncing...');
-        try {
-            const fetchRes = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawInput)}&format=json&no_html=1`);
-            const data = await fetchRes.json();
-            
-            if (data.AbstractText) {
-                response = `จากการวิเคราะห์ Big Data: ${data.AbstractText}`;
-                source = "Global_Cloud";
-            } else if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-                response = `ผมไปเจอสิ่งที่เกี่ยวข้องมาครับ: ${data.RelatedTopics[0].Text}`;
-                source = "Semantic_Link";
+    let finalResponse = "";
+    
+    // Simulate thinking process through steps
+    for(let i=0; i < steps.length; i++) {
+        await new Promise(r => setTimeout(r, 450));
+        addTrace(steps[i].label, steps[i].value);
+        
+        // Logic Routing
+        if(i === 3) { // At Big Data Step
+            if(input.includes("คุย") || input.includes("วะ")) {
+                finalResponse = "นั่นดิคุณโตนัส คุยเรื่องเทคโนโลยี หรือจะให้ผมช่วยคิดโปรเจกต์ใหม่ดีอ่ะน้า? เย่! ผมพร้อมรัน Big Data ให้คุณเสมอเลย";
+            } else if (/[0-9\+\-\*\/\^]/.test(input)) {
+                try {
+                    let calc = eval(input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*'));
+                    finalResponse = `เย่! คำนวณให้แล้วนะ ผลคือ ${calc} ครับ สบายมาก`;
+                } catch(e) { finalResponse = "สมการนี้แอบงงนะเนี่ย แต่ผมจะพยายามเรียนรู้ต่อนะ!"; }
             } else {
-                // ระบบแก้ตัว (Fallback Strategy)
-                response = `เรื่องนี้ในฐานข้อมูล Big Data ยังมีความหนาแน่นของ Token ต่ำเกินไป แต่ผมจะจดจำไว้เทรนต่อแน่นอน${PERSONA_CONFIG.style.suffix}!`;
-                source = "Logic_Fallback";
+                try {
+                    const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&no_html=1`);
+                    const data = await res.json();
+                    finalResponse = data.AbstractText || "เรื่องนี้ใน Big Data ยังมีข้อมูลไม่พอ แต่ผมว่ามันน่าสนใจมากเลยอ่ะน้า!";
+                } catch(e) { finalResponse = "เน็ตหลุดนิดหน่อย แต่ผมยังจำคุณได้นะ เย่!"; }
             }
-        } catch(err) {
-            response = "ระบบอินเทอร์เน็ตขัดข้อง แต่ผมยังใช้ NLU ประมวลผลเบื้องต้นให้ได้นะ!";
-            source = "Local_Cache";
         }
     }
 
-    // Update Diagnostics Final
-    updateDiag('diag-intent', intent);
-    updateDiag('diag-source', source);
-
-    // Render AI Output
-    setTimeout(() => {
-        addChat(response, 'ai');
-        star.classList.remove('processing');
-    }, 1200);
+    addChat(finalResponse, 'ai');
 }
 
-function updateDiag(id, val) { document.getElementById(id).innerHTML = val; }
+function addTrace(label, value) {
+    const container = document.getElementById('trace-container');
+    const div = document.createElement('div');
+    div.className = 'neural-path animate-flow';
+    div.innerHTML = `<p class="step-label">${label}</p><p class="text-[11px] text-gray-400 font-mono">${value}</p>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
 
 function addChat(txt, role) {
     const view = document.getElementById('chat-view');
     const wrap = document.createElement('div');
-    wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full animate-in fade-in slide-in-from-bottom-2 duration-500`;
-    
+    wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full animate-flow`;
     const inner = document.createElement('div');
     inner.className = role === 'user' 
-        ? 'bg-blue-600 text-white px-6 py-3 rounded-[28px] rounded-tr-none text-sm shadow-xl shadow-blue-900/20' 
-        : 'max-w-[85%] text-gray-200 text-lg font-light leading-relaxed';
-    
-    inner.innerHTML = txt.replace(/\n/g, '<br>');
+        ? 'bg-blue-600 text-white px-6 py-3 rounded-[30px] rounded-tr-none text-sm' 
+        : 'max-w-[85%] text-gray-200 text-xl font-light leading-relaxed';
+    inner.innerHTML = txt;
     wrap.appendChild(inner);
     view.appendChild(wrap);
     view.scrollTop = view.scrollHeight;

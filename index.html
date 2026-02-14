@@ -3,78 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANGE V.300 | NEURAL SYNTHESIS</title>
+    <title>LANGE V.250 | NEURAL ARCHITECT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code&family=Noto+Sans+Thai:wght@300;700;900&display=swap');
-        :root { --accent: #3b82f6; --bg: #030303; }
-        body { background: var(--bg); color: #e5e5e5; font-family: 'Noto Sans Thai', sans-serif; overflow: hidden; height: 100vh; }
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Noto+Sans+Thai:wght@300;700&display=swap');
+        :root { --cobalt: #3b82f6; --void: #020202; --panel: #0a0a0a; }
+        body { background: var(--void); color: #cecece; font-family: 'Noto Sans Thai', sans-serif; overflow: hidden; }
+        .neural-grid { background-image: radial-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px); background-size: 30px 30px; }
+        .glass { background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .token-chip { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(59, 130, 246, 0.1); color: var(--cobalt); }
         
-        .monolith-bg { background: radial-gradient(circle at 50% 50%, #111 0%, #030303 100%); }
-        .neural-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        
-        /* Astral Star Animation */
-        .star-box { font-size: 32px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .processing { animation: pulse-spin 1.5s infinite linear; filter: drop-shadow(0 0 15px var(--accent)); }
-        @keyframes pulse-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
+        /* Astral Star v3.0 */
+        #star-core { font-size: 32px; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 0 15px var(--cobalt)); }
+        .processing { animation: pulse-rotate 1s infinite alternate; filter: drop-shadow(0 0 25px #fff) !important; }
+        @keyframes pulse-rotate { from { transform: rotate(0deg) scale(1); } to { transform: rotate(180deg) scale(1.3); } }
 
-        .chat-stream::-webkit-scrollbar { width: 3px; }
-        .chat-stream::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        
-        .ai-bubble { border-left: 3px solid var(--accent); background: rgba(59, 130, 246, 0.05); }
-        .trace-text { font-family: 'Fira Code', monospace; font-size: 10px; color: #555; }
+        .chat-scroll::-webkit-scrollbar { width: 3px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
     </style>
 </head>
-<body class="monolith-bg flex flex-col items-center justify-center p-4">
+<body class="h-screen flex flex-col neural-grid">
 
-<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center text-center">
-    <div class="mb-10">
-        <h1 class="text-6xl font-black italic tracking-tighter text-white">LANGE <span class="text-blue-500">V.300</span></h1>
-        <p class="text-[10px] tracking-[0.8em] text-gray-500 mt-2 uppercase">Internet Integrated Neural Engine</p>
+<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6">
+    <div class="relative mb-12">
+        <div class="absolute -inset-4 bg-blue-500/20 blur-xl rounded-full animate-pulse"></div>
+        <h1 class="text-6xl font-bold tracking-tighter text-white relative">LANGE V.250</h1>
     </div>
-    <input type="text" id="adminIn" class="bg-transparent border-b-2 border-blue-900 p-4 text-3xl font-bold text-center outline-none text-white w-64 mb-8" placeholder="IDENTIFY">
-    <button onclick="bootSystem()" class="bg-blue-600 hover:bg-blue-500 text-white px-12 py-3 rounded-full font-bold transition-all active:scale-95 shadow-2xl">SYNC NEURAL</button>
+    <input type="password" id="adminIn" class="bg-transparent border-b border-blue-900/50 p-4 text-center text-3xl outline-none text-white w-full max-w-sm mb-10 focus:border-blue-500 transition-all" placeholder="NEURAL_KEY">
+    <button onclick="bootSystem()" class="group relative px-16 py-4 overflow-hidden rounded-full bg-blue-600 font-bold text-white transition-all">
+        <span class="relative z-10">INITIALIZE DL/ML CORE</span>
+        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform"></div>
+    </button>
 </div>
 
-<div id="app" class="hidden w-full max-w-4xl h-[90vh] flex flex-col neural-card rounded-[40px] p-6 lg:p-10 shadow-2xl">
-    
-    <header class="flex justify-between items-center mb-6">
-        <div class="flex items-center gap-3">
-            <div class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_#22c55e]"></div>
-            <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase">Deep Learning Active</span>
+<main id="app" class="hidden h-full flex flex-col max-w-6xl mx-auto w-full p-4 lg:p-6">
+    <header class="flex justify-between items-center mb-6 px-4">
+        <div class="flex flex-col">
+            <span class="text-[10px] tracking-[0.3em] text-blue-500 font-bold">LANGE ARCHITECT SYSTEM</span>
+            <div class="flex items-center gap-2 mt-1">
+                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                <span class="text-[9px] font-mono text-gray-500 uppercase">Status: Global_Net_Synced</span>
+            </div>
         </div>
-        <div id="astral" class="star-box">⭐</div>
+        <div id="star-core">⭐</div>
     </header>
 
-    <div id="chat-stream" class="flex-1 overflow-y-auto space-y-8 mb-6 pr-2 chat-stream">
-        <div class="ai-bubble p-6 rounded-2xl">
-            <p class="text-lg leading-relaxed">
-                ระบบเชื่อมต่อกับ <span class="text-blue-500 font-bold">Big-Data-in-to-the-Internet</span> เรียบร้อยแล้วครับคุณโตนัส 
-                วันนี้อยากให้ผมวิเคราะห์ข้อมูลอะไร หรือจะคุยเล่นกันดีอ่ะน้า? เย่!
-            </p>
-        </div>
+    <div id="chat-view" class="flex-1 overflow-y-auto chat-scroll space-y-10 px-4 pb-10"></div>
+
+    <div id="diagnostics" class="hidden mb-4 p-4 glass rounded-3xl font-mono text-[9px] grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div><p class="text-blue-500">NLP_ENGINE</p><span id="diag-nlp">-</span></div>
+        <div><p class="text-blue-500">NLU_INTENT</p><span id="diag-intent">-</span></div>
+        <div><p class="text-blue-500">VECTORS</p><div id="diag-tokens" class="flex flex-wrap gap-1 mt-1"></div></div>
+        <div><p class="text-blue-500">SOURCE</p><span id="diag-source">-</span></div>
     </div>
 
-    <div id="trace-panel" class="mb-4 h-12 overflow-hidden opacity-50">
-        <div id="trace-log" class="trace-text"></div>
+    <div class="glass rounded-[40px] p-2 flex items-center shadow-2xl">
+        <form onsubmit="handleQuery(event)" class="w-full flex items-center">
+            <input type="text" id="userInput" class="flex-1 bg-transparent p-5 pl-8 outline-none text-lg text-white placeholder-gray-600" placeholder="คุยกับ Lange... (ถามความรู้/คณิต/ทักทาย)" autocomplete="off">
+            <button class="bg-blue-600 h-14 w-14 rounded-full flex items-center justify-center hover:bg-blue-400 transition-all mr-1 shadow-lg">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </form>
     </div>
-
-    <form onsubmit="processRequest(event)" class="relative">
-        <input type="text" id="userInput" autocomplete="off"
-            class="w-full bg-white/5 border border-white/10 p-6 pr-20 rounded-3xl outline-none focus:border-blue-500/50 transition-all text-white shadow-inner"
-            placeholder="คุยกับ AI (ลองถามข่าว หรือคิดเลขยากๆ ดูครับ)...">
-        <button class="absolute right-4 top-1/2 -translate-y-1/2 bg-blue-600 p-3 rounded-2xl hover:bg-blue-500 transition-all">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-        </button>
-    </form>
-</div>
+</main>
 
 <script>
 // --- [ GLOBAL KNOWLEDGE & PERSONA ] ---
-const INTERNAL_MEMORY = {
-    greetings: ["สวัสดี", "หวัดดี", "ดีจ้า", "ดีครับ", "ดีจ๊ะ"],
-    identity: ["ชื่ออะไร", "ใครสร้าง", "เป็นใคร"],
-    style: { suffix: "อ่ะน้า", exclamation: "เย่!" }
+const PERSONA_CONFIG = {
+    greetings: ["สวัสดี", "หวัดดี", "ดีจ้า", "ดีครับ", "ดีค่ะ", "hi", "hello", "ไง"],
+    identity: ["ชื่ออะไร", "ใคร", "นายเป็น"],
+    emotive: ["กวน", "โง่", "ฉลาด", "ขำ", "ตลก"],
+    style: { suffix: "อ่ะน้า", exclaim: "เย่!" }
 };
 
 function bootSystem() {
@@ -84,96 +83,103 @@ function bootSystem() {
     }
 }
 
-async function processRequest(e) {
+// --- [ NEURAL INFERENCE ENGINE ] ---
+async function handleQuery(e) {
     e.preventDefault();
-    const input = document.getElementById('userInput').value.trim();
-    if(!input) return;
+    const inputField = document.getElementById('userInput');
+    const rawInput = inputField.value.trim();
+    if(!rawInput) return;
 
-    addChat(input, 'user');
-    document.getElementById('userInput').value = "";
-    
-    // UI Feedback: Start Thinking
-    const star = document.getElementById('astral');
+    // UI Feedback
+    addChat(rawInput, 'user');
+    inputField.value = "";
+    const star = document.getElementById('star-core');
+    const diag = document.getElementById('diagnostics');
     star.classList.add('processing');
-    logTrace(`START_INFERENCE: "${input}"`);
+    diag.classList.remove('hidden');
 
-    let finalResponse = "";
+    // 1. NLP & Tokenization (Pre-processing)
+    const tokens = rawInput.toLowerCase().split(/[\s,?!. ]+/);
+    updateDiag('diag-tokens', tokens.map(t => `<span class="token-chip">${t}</span>`).join(''));
+    updateDiag('diag-nlp', 'Deep_Parsing...');
 
-    // 1. NEURAL PREDICTION LAYER (ภาษาพูด & เจตนา)
-    const isGreeting = INTERNAL_MEMORY.greetings.some(g => input.includes(g));
-    const isIdentity = INTERNAL_MEMORY.identity.some(i => input.includes(i));
+    let response = "";
+    let source = "Memory_Core";
+    let intent = "Unknown";
 
-    if (isGreeting) {
-        finalResponse = `สวัสดีครับคุณโตนัส มีอะไรให้ผมรับใช้ในระบบ Big Data วันนี้ไหมอ่ะน้า? ${INTERNAL_MEMORY.style.exclamation}`;
-        logTrace("INTENT_MATCH: GREETING_PROC");
+    // 2. NLU: Intent Classification (Deep Routing)
+    // A. Greeting Logic (Symmetry check)
+    if (PERSONA_CONFIG.greetings.some(g => rawInput.includes(g))) {
+        intent = "Greeting";
+        response = `สวัสดีครับคุณโตนัส! Lange V.250 พร้อมประมวลผล Big Data ให้แล้ววันนี้คุยไรดี${PERSONA_CONFIG.style.suffix} ${PERSONA_CONFIG.style.exclaim}`;
     } 
-    else if (isIdentity) {
-        finalResponse = `ผมคือ Lange Model V.300 ระบบ AI ที่คุณโตนัสสร้างขึ้นให้ฉลาดที่สุดในอินเทอร์เน็ตไงครับ!`;
-        logTrace("INTENT_MATCH: IDENTITY_PROC");
+    // B. Identity Check
+    else if (PERSONA_CONFIG.identity.some(i => rawInput.includes(i))) {
+        intent = "Identity_Check";
+        response = `ผมคือ Lange Model V.250 สถาปัตยกรรม Neural Architect ที่คุณโตนัสสร้างขึ้นไงครับ ไม่ใช่แค่ Chatbot ธรรมดานะ!`;
+    }
+    // C. Math Logic (ML/DL Computation)
+    else if (/[0-9]/.test(rawInput) && /[\+\-\*\/\^]/.test(rawInput)) {
+        intent = "Math_Execution";
+        try {
+            let clean = rawInput.replace(/ยกกำลัง/g, '**').replace(/x/g, '*').match(/[0-9\+\-\*\/\.\(\)\*\* ]+/g)[0];
+            response = `${PERSONA_CONFIG.style.exclaim} คำนวณผ่าน ML Engine ได้ผลลัพธ์คือ ${eval(clean)} ครับ`;
+            source = "Math_Kernel";
+        } catch(e) { response = "สมการซับซ้อนไปนิด ผมขอจูนพารามิเตอร์แป๊บน้า"; }
     }
 
-    // 2. DEEP LOGIC LAYER (Math & Algorithms)
-    if (!finalResponse && /[0-9]/.test(input)) {
+    // 3. Global Big Data Synthesis (หาก Logic ภายในไม่พบคำตอบ)
+    if (!response) {
+        intent = "Deep_Research";
+        updateDiag('diag-nlp', 'BigData_Syncing...');
         try {
-            logTrace("ML_CALC: EVALUATING_MATHEMATICAL_STRUCTURE");
-            let mathQuery = input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*');
-            let result = eval(mathQuery.match(/[0-9\+\-\*\/\.\(\)\*\* ]+/g)[0]);
-            finalResponse = `จากการประมวลผลผ่าน Deep Logic คำตอบคือ ${result} ครับ แม่นยำระดับ Supercomputer เลยอ่ะน้า!`;
-        } catch(e) { logTrace("ML_CALC_ERROR: FALLBACK_TO_BIG_DATA"); }
-    }
-
-    // 3. BIG-DATA-IN-TO-THE-INTERNET LAYER (Global Search Scraper)
-    if (!finalResponse) {
-        logTrace("BIG_DATA_FETCH: ACCESSING_GLOBAL_INTERNET_NODES");
-        try {
-            // ดึงข้อมูลจริงจาก DuckDuckGo Zero-click API
-            const response = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&no_html=1`);
-            const data = await response.json();
+            const fetchRes = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(rawInput)}&format=json&no_html=1`);
+            const data = await fetchRes.json();
             
             if (data.AbstractText) {
-                finalResponse = data.AbstractText;
-                logTrace("BIG_DATA_SUCCESS: DATA_SYNTHESIZED");
+                response = `จากการวิเคราะห์ Big Data: ${data.AbstractText}`;
+                source = "Global_Cloud";
             } else if (data.RelatedTopics && data.RelatedTopics.length > 0) {
-                finalResponse = `ผมพบข้อมูลที่เกี่ยวข้องดังนี้ครับ: ${data.RelatedTopics[0].Text}`;
-                logTrace("BIG_DATA_SUCCESS: RELATED_CONTEXT_FOUND");
+                response = `ผมไปเจอสิ่งที่เกี่ยวข้องมาครับ: ${data.RelatedTopics[0].Text}`;
+                source = "Semantic_Link";
             } else {
-                // ระบบตอบแบบแก้ตัวเผื่อไม่เข้าใจจริง [cite: 2026-01-21]
-                finalResponse = "ข้อมูลส่วนนี้ใน Big Data ยังกระจัดกระจายอยู่ แต่เท่าที่ผมวิเคราะห์คือมันน่าสนใจมากครับ คุณโตนัสอยากให้ผมลองเจาะลึกส่วนไหนเพิ่มไหมอ่ะน้า?";
-                logTrace("BIG_DATA_EMPTY: HEURISTIC_FALLBACK");
+                // ระบบแก้ตัว (Fallback Strategy)
+                response = `เรื่องนี้ในฐานข้อมูล Big Data ยังมีความหนาแน่นของ Token ต่ำเกินไป แต่ผมจะจดจำไว้เทรนต่อแน่นอน${PERSONA_CONFIG.style.suffix}!`;
+                source = "Logic_Fallback";
             }
-        } catch (err) {
-            finalResponse = "ขออภัยครับคุณโตนัส ระบบเชื่อมต่ออินเทอร์เน็ตขัดข้อง แต่ผมยังรอคำสั่งอื่นอยู่นะ!";
-            logTrace("NET_ERROR: CONNECTION_REFUSED");
+        } catch(err) {
+            response = "ระบบอินเทอร์เน็ตขัดข้อง แต่ผมยังใช้ NLU ประมวลผลเบื้องต้นให้ได้นะ!";
+            source = "Local_Cache";
         }
     }
 
-    // Display Result
+    // Update Diagnostics Final
+    updateDiag('diag-intent', intent);
+    updateDiag('diag-source', source);
+
+    // Render AI Output
     setTimeout(() => {
-        addChat(finalResponse, 'ai');
+        addChat(response, 'ai');
         star.classList.remove('processing');
-        logTrace("IDLE: WAITING_FOR_INPUT");
-    }, 1000);
+    }, 1200);
 }
 
-function addChat(text, role) {
-    const stream = document.getElementById('chat-stream');
-    const div = document.createElement('div');
-    div.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} animate-all duration-500`;
-    
-    const content = document.createElement('div');
-    content.className = role === 'user' 
-        ? 'bg-blue-600 text-white p-4 px-6 rounded-3xl rounded-tr-none max-w-[80%] shadow-lg' 
-        : 'ai-bubble p-6 rounded-3xl rounded-tl-none max-w-[90%] text-gray-200';
-    
-    content.innerHTML = text;
-    div.appendChild(content);
-    stream.appendChild(div);
-    stream.scrollTop = stream.scrollHeight;
-}
+function updateDiag(id, val) { document.getElementById(id).innerHTML = val; }
 
-function logTrace(msg) {
-    const el = document.getElementById('trace-log');
-    el.innerHTML = `> ${msg}<br>` + el.innerHTML;
+function addChat(txt, role) {
+    const view = document.getElementById('chat-view');
+    const wrap = document.createElement('div');
+    wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full animate-in fade-in slide-in-from-bottom-2 duration-500`;
+    
+    const inner = document.createElement('div');
+    inner.className = role === 'user' 
+        ? 'bg-blue-600 text-white px-6 py-3 rounded-[28px] rounded-tr-none text-sm shadow-xl shadow-blue-900/20' 
+        : 'max-w-[85%] text-gray-200 text-lg font-light leading-relaxed';
+    
+    inner.innerHTML = txt.replace(/\n/g, '<br>');
+    wrap.appendChild(inner);
+    view.appendChild(wrap);
+    view.scrollTop = view.scrollHeight;
 }
 </script>
 </body>

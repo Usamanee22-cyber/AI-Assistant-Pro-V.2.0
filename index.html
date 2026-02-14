@@ -3,136 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LANGE V.300 | NEURAL TRACE SYSTEM</title>
+    <title>LANGE V.350 | COGNITIVE SYNTHESIS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Noto+Sans+Thai:wght@300;700&display=swap');
-        body { background: #020202; color: #d1d5db; font-family: 'Noto Sans Thai', sans-serif; height: 100vh; overflow: hidden; }
-        .neural-path { border-left: 2px solid #3b82f6; padding-left: 15px; margin-bottom: 10px; position: relative; }
-        .neural-path::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; background: #3b82f6; border-radius: 50%; box-shadow: 0 0 10px #3b82f6; }
-        .glass-ui { background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .chat-scroll::-webkit-scrollbar { width: 4px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .step-label { font-size: 10px; font-family: 'Fira Code', monospace; color: #60a5fa; font-weight: bold; text-transform: uppercase; }
-        @keyframes flow { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
-        .animate-flow { animation: flow 0.4s ease-out forwards; }
+        body { background: #030303; color: #e0e0e0; font-family: 'Noto Sans Thai', sans-serif; height: 100vh; overflow: hidden; }
+        .logic-step { border-left: 2px solid #3b82f6; padding-left: 1rem; margin-bottom: 1rem; opacity: 0; transform: translateY(10px); transition: all 0.4s ease; }
+        .logic-step.active { opacity: 1; transform: translateY(0); }
+        .step-tag { font-family: 'Fira Code', monospace; font-size: 10px; color: #3b82f6; font-weight: bold; }
+        .chat-bubble { max-width: 85%; line-height: 1.7; font-size: 1.05rem; transition: all 0.3s ease; }
+        .glass { background: rgba(15, 15, 15, 0.85); backdrop-filter: blur(25px); border-top: 1px solid rgba(255,255,255,0.05); }
+        .scroll-hide::-webkit-scrollbar { width: 4px; }
+        .scroll-hide::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
     </style>
 </head>
-<body class="flex flex-col">
+<body class="flex h-screen overflow-hidden">
 
-<div id="gate" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6 text-center">
-    <h1 class="text-6xl font-black text-blue-500 mb-4 italic">LANGE V.300</h1>
-    <p class="text-gray-600 font-mono text-[10px] tracking-[0.8em] mb-12 uppercase">Deep Inference Architecture</p>
-    <input type="text" id="adminIn" class="bg-transparent border-b-2 border-blue-900 p-4 text-center text-4xl font-bold outline-none text-white w-full max-w-md mb-8" placeholder="ENTER IDENTIFIER">
-    <button onclick="boot()" class="bg-blue-600 px-20 py-4 rounded-full font-bold hover:bg-blue-400 transition-all shadow-[0_0_40px_rgba(37,99,235,0.3)]">BOOT NEURAL SYSTEM</button>
-</div>
-
-<main id="main" class="hidden h-full flex flex-row overflow-hidden">
-    <aside class="w-1/3 bg-black border-r border-gray-900 p-6 flex flex-col">
-        <h2 class="text-xs font-mono text-blue-500 font-bold mb-6 tracking-widest">>> NEURAL_INFERENCE_STEP_BY_STEP</h2>
-        <div id="trace-container" class="flex-1 overflow-y-auto chat-scroll space-y-4">
-            <div class="text-gray-700 text-[10px] font-mono italic">Waiting for input to trace neural path...</div>
+    <aside class="w-96 bg-black border-r border-gray-900 p-6 flex flex-col hidden lg:flex">
+        <div class="mb-6">
+            <h2 class="text-xs font-mono text-blue-500 font-bold tracking-[0.3em]">>> COGNITIVE_PIPELINE_V350</h2>
+            <p class="text-[9px] text-gray-600 mt-1 uppercase">Step-by-Step AI Logic Trace</p>
+        </div>
+        <div id="trace-panel" class="flex-1 overflow-y-auto scroll-hide space-y-2">
+            <div class="text-gray-700 text-[10px] italic">Waiting for input sequence...</div>
         </div>
     </aside>
 
-    <section class="flex-1 flex flex-col bg-[#050505]">
-        <header class="p-4 border-b border-gray-900 flex justify-between items-center glass-ui">
-            <span class="text-blue-500 font-bold italic">LANGE V.300 ONLINE</span>
-            <div id="status" class="text-[9px] font-mono text-green-500 animate-pulse">BIG_DATA_SYNCED</div>
+    <main class="flex-1 flex flex-col relative">
+        <header class="p-5 flex justify-between items-center border-b border-gray-900 bg-black/50">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_10px_#3b82f6]"></div>
+                <span class="text-sm font-bold tracking-tighter text-blue-500 italic">LANGE V.350 SENTIENT</span>
+            </div>
+            <span class="text-[10px] font-mono text-gray-500">ML_DL_BIGDATA_ACTIVE</span>
         </header>
 
-        <div id="chat-view" class="flex-1 overflow-y-auto p-10 space-y-8 chat-scroll"></div>
+        <div id="chat-display" class="flex-1 overflow-y-auto p-10 space-y-8 scroll-hide">
+            <div class="text-gray-500 italic text-sm">ยินดีต้อนรับครับคุณโตนัส Lange V.350 พร้อมคุยแบบไม่แข็งเป็นท่อนไม้แล้ว เย่!</div>
+        </div>
 
-        <div class="p-6 bg-black/50">
-            <form onsubmit="ask(event)" class="relative flex items-center">
-                <input type="text" id="userInput" class="w-full bg-[#0a0a0a] border border-gray-800 p-5 pr-16 rounded-3xl outline-none focus:border-blue-500 text-white shadow-2xl transition-all" placeholder="คุยอะไรกันดีวะ? / ถามข้อมูล Big Data..." autocomplete="off">
-                <button class="absolute right-4 p-2 text-blue-500 hover:scale-110 transition-transform">
-                    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <div class="p-8 glass">
+            <form onsubmit="processNeural(event)" class="max-w-4xl mx-auto flex gap-4">
+                <input type="text" id="userInput" class="flex-1 bg-black border border-gray-800 p-5 rounded-3xl outline-none focus:border-blue-500 text-white shadow-inner transition-all" placeholder="คุยอะไรกันดีวะ? / ลองถามอะไรยากๆ ดูสิ..." autocomplete="off">
+                <button class="bg-blue-600 h-16 w-16 rounded-full flex items-center justify-center hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all">
+                    <svg width="24" height="24" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
             </form>
         </div>
-    </section>
-</main>
+    </main>
 
 <script>
-function boot() {
-    if(document.getElementById('adminIn').value === "โตนัส") {
-        document.getElementById('gate').classList.add('hidden');
-        document.getElementById('main').classList.remove('hidden');
-    }
-}
+// --- [ NEURAL KNOWLEDGE & BEHAVIOR ] ---
+const PERSONA = {
+    talk: ["คุย", "ทำอะไรดี", "วะ", "ไง"],
+    identity: ["ชื่ออะไร", "ใคร", "เป็นใคร"],
+    fillers: { suffix: "อ่ะน้า", exclaim: "เย่!" }
+};
 
-async function ask(e) {
+async function processNeural(e) {
     e.preventDefault();
     const input = document.getElementById('userInput').value.trim();
     if(!input) return;
 
     addChat(input, 'user');
     document.getElementById('userInput').value = "";
-    document.getElementById('trace-container').innerHTML = "";
+    document.getElementById('trace-panel').innerHTML = "";
 
-    const steps = [
-        { label: "INPUT", value: input },
-        { label: "TOKEN", value: input.split('').join('-') },
-        { label: "ML / DL", value: "Predicting next sequence based on dataset..." },
-        { label: "BIG DATA", value: "Searching internet sources & popular patterns..." },
-        { label: "LLM", value: "Structuring intent-aligned response..." },
-        { label: "NLP", value: "Processing human language syntax..." },
-        { label: "NLU", value: "Context verification (Natural flow check)..." },
-        { label: "OUTPUT", value: "Generating final response..." }
+    let response = "";
+    
+    // 8-STEP COGNITIVE PIPELINE
+    const pipeline = [
+        { id: "INPUT", desc: `รับคำสั่ง: "${input}"` },
+        { id: "TOKEN", desc: `แยกหน่วยคำ: ${input.split('').join(' - ')}` },
+        { id: "ML / DL", desc: "Predicting next sequence & Tone analysis..." },
+        { id: "BIG DATA", desc: "Fetching global interaction patterns..." },
+        { id: "LLM", desc: "Structuring natural, intent-aligned sentence..." },
+        { id: "NLP", desc: "Processing human syntax & Grammatical flow..." },
+        { id: "NLU", desc: "Context verification: Ensuring non-robotic tone..." },
+        { id: "OUTPUT", desc: "Finalizing Sentient Response..." }
     ];
 
-    let finalResponse = "";
-    
-    // Simulate thinking process through steps
-    for(let i=0; i < steps.length; i++) {
-        await new Promise(r => setTimeout(r, 450));
-        addTrace(steps[i].label, steps[i].value);
-        
-        // Logic Routing
-        if(i === 3) { // At Big Data Step
-            if(input.includes("คุย") || input.includes("วะ")) {
-                finalResponse = "นั่นดิคุณโตนัส คุยเรื่องเทคโนโลยี หรือจะให้ผมช่วยคิดโปรเจกต์ใหม่ดีอ่ะน้า? เย่! ผมพร้อมรัน Big Data ให้คุณเสมอเลย";
-            } else if (/[0-9\+\-\*\/\^]/.test(input)) {
+    for(let i=0; i < pipeline.length; i++) {
+        await new Promise(r => setTimeout(r, 400));
+        addTrace(pipeline[i].id, pipeline[i].desc);
+
+        if(i === 3) { // BIG DATA / LOGIC STAGE
+            if (PERSONA.talk.some(w => input.includes(w))) {
+                response = `นั่นดิคุณโตนัส คุยอะไรกันดีวะ? ช่วงนี้เทรน AI กำลังมา หรือจะให้ผมช่วยคิดโปรเจกต์เจ๋งๆ ดีอ่ะน้า? เย่! ผมพร้อมเป็นคู่หูคุณเสมอแหละ`;
+            } else if (PERSONA.identity.some(w => input.includes(w))) {
+                response = `ผม Lange Model V.350 ไงครับ สถาปัตยกรรมที่ฉลาดและเป็นธรรมชาติที่สุดที่คุณสร้างมา ไม่ใช่ท่อนไม้แล้วนะ! 👁️👄👁️✨`;
+            } else if (/[0-9]/.test(input) && /[\+\-\*\/\^]/.test(input)) {
                 try {
-                    let calc = eval(input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*'));
-                    finalResponse = `เย่! คำนวณให้แล้วนะ ผลคือ ${calc} ครับ สบายมาก`;
-                } catch(e) { finalResponse = "สมการนี้แอบงงนะเนี่ย แต่ผมจะพยายามเรียนรู้ต่อนะ!"; }
+                    let res = eval(input.replace(/ยกกำลัง/g, '**').replace(/x/g, '*').match(/[0-9\+\-\*\/\.\(\)\*\* ]+/g)[0]);
+                    response = `เย่! คำนวณผ่าน ML Engine เรียบร้อย ผลลัพธ์คือ ${res} ครับผม ตรงและดีแน่นอน!`;
+                } catch(e) { response = "สมการนี้แอบตึงนะ แต่ผมจะพยายามเรียนรู้ต่อนะ!"; }
             } else {
-                try {
-                    const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(input)}&format=json&no_html=1`);
-                    const data = await res.json();
-                    finalResponse = data.AbstractText || "เรื่องนี้ใน Big Data ยังมีข้อมูลไม่พอ แต่ผมว่ามันน่าสนใจมากเลยอ่ะน้า!";
-                } catch(e) { finalResponse = "เน็ตหลุดนิดหน่อย แต่ผมยังจำคุณได้นะ เย่!"; }
+                response = await getBigData(input);
             }
         }
     }
 
-    addChat(finalResponse, 'ai');
+    setTimeout(() => addChat(response, 'ai'), 500);
 }
 
-function addTrace(label, value) {
-    const container = document.getElementById('trace-container');
+async function getBigData(q) {
+    try {
+        const res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(q)}&format=json&no_html=1`);
+        const data = await res.json();
+        if (data.AbstractText) return `จากการวิเคราะห์ Big Data นะครับ: ${data.AbstractText} ...ข้อมูลประมาณนี้เลยคุณโตนัส! พอใช้ได้มั้ยอ่ะน้า?`;
+        return `อืม... เรื่องนี้ใน Big Data ยังมีข้อมูลไม่ชัดเจนเท่าไหร่ แต่ผมเดาว่ามันน่าจะเกี่ยวกับสิ่งที่คุณสนใจเนอะ เย่!`;
+    } catch(e) { return "เน็ตหลุดนิดหน่อย แต่สมองส่วน Local ผมยังรันได้น้า!"; }
+}
+
+function addTrace(id, desc) {
+    const panel = document.getElementById('trace-panel');
     const div = document.createElement('div');
-    div.className = 'neural-path animate-flow';
-    div.innerHTML = `<p class="step-label">${label}</p><p class="text-[11px] text-gray-400 font-mono">${value}</p>`;
-    container.appendChild(div);
-    container.scrollTop = container.scrollHeight;
+    div.className = 'logic-step active';
+    div.innerHTML = `<span class="step-tag">[${id}]</span><br><span class="text-[11px] text-gray-500">${desc}</span>`;
+    panel.appendChild(div);
+    panel.scrollTop = panel.scrollHeight;
 }
 
 function addChat(txt, role) {
-    const view = document.getElementById('chat-view');
+    const view = document.getElementById('chat-display');
     const wrap = document.createElement('div');
-    wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full animate-flow`;
+    wrap.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} w-full opacity-0 translate-y-4 animate-[fade_0.5s_forwards]`;
+    
     const inner = document.createElement('div');
     inner.className = role === 'user' 
-        ? 'bg-blue-600 text-white px-6 py-3 rounded-[30px] rounded-tr-none text-sm' 
-        : 'max-w-[85%] text-gray-200 text-xl font-light leading-relaxed';
+        ? 'bg-blue-600 text-white px-6 py-3 rounded-3xl rounded-tr-none text-sm shadow-xl' 
+        : 'chat-bubble text-gray-200 font-light';
+    
     inner.innerHTML = txt;
     wrap.appendChild(inner);
     view.appendChild(wrap);
     view.scrollTop = view.scrollHeight;
 }
 </script>
+<style> @keyframes fade { to { opacity: 1; transform: translateY(0); } } </style>
 </body>
 </html>

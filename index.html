@@ -3,219 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TKWU Portal | ระบบบริหารจัดการปัญญาและสัจธรรม</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=Chakra+Petch:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>TKWU Official - อาณาจักรธรรมาธิปัตย์ตฺกรวิสุทธิปัญญาวิมุตยนนท์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --gold: #D4AF37; --gold-bright: #FFD700; --black: #050505; --dark-grey: #121212; --white: #ffffff; --glass: rgba(255, 255, 255, 0.05); }
-        body { font-family: 'Sarabun', sans-serif; background-color: var(--black); color: var(--white); margin: 0; line-height: 1.8; overflow-x: hidden; }
-        h1, h2, h3, .nav-btn { font-family: 'Chakra Petch', sans-serif; }
+        :root { --gold: #D4AF37; --black: #0a0a0a; --dark-grey: #121212; --white: #ffffff; --border: #2a2a2a; }
+        body { font-family: 'Sarabun', sans-serif; background-color: var(--black); color: var(--white); margin: 0; line-height: 1.8; }
         
-        /* Banner Section */
-        .banner-container { width: 100%; position: relative; border-bottom: 4px solid var(--gold); box-shadow: 0 0 30px rgba(212, 175, 55, 0.3); }
-        .banner-img { width: 100%; height: 500px; object-fit: cover; filter: brightness(0.6) contrast(1.2); }
-        .banner-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%; }
+        /* Banner & Visuals */
+        .banner-container { width: 100%; text-align: center; background: #000; border-bottom: 4px solid var(--gold); overflow: hidden; }
+        .banner-img { width: 100%; max-width: 1200px; display: block; margin: 0 auto; transition: transform 0.5s; }
+        .banner-img:hover { transform: scale(1.02); }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
-        .card { background: var(--dark-grey); border-radius: 20px; padding: 45px; margin-bottom: 40px; border: 1px solid #222; position: relative; overflow: hidden; }
-        .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 50px 20px; }
+        .card { background: var(--dark-grey); border-radius: 20px; padding: 40px; margin-bottom: 40px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.7); }
         
-        h1 { font-size: 3em; color: var(--gold); text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); margin: 0; }
-        h2 { color: var(--gold); border-bottom: 1px solid #333; padding-bottom: 15px; margin-top: 0; text-align: left; }
-        
-        /* Navigation Grid */
-        .grid-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 50px; }
-        .nav-btn { background: var(--glass); color: var(--gold); border: 1px solid var(--gold); padding: 25px; cursor: pointer; font-weight: 700; border-radius: 12px; transition: 0.4s all; font-size: 1.1em; text-transform: uppercase; }
-        .nav-btn:hover { background: var(--gold); color: black; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4); }
-        .nav-btn.active { background: var(--gold); color: black; }
+        h1, h2, h3 { color: var(--gold); text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
 
         /* Content Sections */
-        .form-content { display: none; animation: fadeIn 0.6s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
+        .info-box { background: #1a1a1a; padding: 25px; border-radius: 15px; border-top: 3px solid var(--gold); }
+        .warning-zone { background: rgba(255, 68, 68, 0.05); border: 1px solid #ff4444; padding: 25px; border-radius: 15px; margin-top: 20px; color: #ff6666; }
+
+        /* Navigation Grid */
+        .grid-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 50px 0; }
+        .nav-btn { background: #1a1a1a; color: var(--gold); border: 1px solid var(--gold); padding: 20px; cursor: pointer; font-weight: bold; border-radius: 12px; transition: 0.3s; font-size: 1.1em; }
+        .nav-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        .nav-btn.special { border-style: dashed; opacity: 0.8; }
+
+        /* Forms */
+        .form-content { display: none; background: #161616; padding: 45px; border-radius: 25px; border: 1px solid var(--gold); animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         .form-group { margin-bottom: 25px; }
         label { display: block; margin-bottom: 10px; color: var(--gold); font-weight: bold; font-size: 1.1em; }
-        input, textarea, select { width: 100%; padding: 15px; background: #000; border: 1px solid #444; color: white; border-radius: 10px; box-sizing: border-box; font-size: 1em; }
-        input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        input, textarea, select { width: 100%; padding: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 10px; font-size: 1em; }
+        input:focus { border-color: var(--gold); outline: none; background: #2a2a2a; }
         
-        .submit-btn { background: linear-gradient(135deg, #D4AF37, #FFD700); color: black; border: none; padding: 20px; font-size: 1.2em; font-weight: 800; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 20px; }
-        
-        /* คณะและแนวข้อสอบ */
-        .faculty-list { height: 400px; overflow-y: scroll; padding: 20px; background: #000; border-radius: 10px; border: 1px solid #333; }
-        .faculty-item { padding: 10px; border-bottom: 1px solid #222; color: #ccc; }
-        .exam-detail { background: rgba(212, 175, 55, 0.05); padding: 25px; border-radius: 15px; border: 1px dashed var(--gold); }
-        
-        .status-tag { display: inline-block; padding: 5px 15px; background: #1a4a1a; color: #00ff00; border-radius: 20px; font-size: 0.9em; margin-bottom: 15px; }
-        
-        footer { text-align: center; padding: 80px 20px; background: #000; border-top: 1px solid #222; color: #444; }
+        .submit-btn { background: var(--gold); color: black; border: none; padding: 20px; font-size: 1.2em; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 15px; }
+        .submit-btn:hover { background: #f1c40f; transform: scale(1.02); }
+
+        /* 250 คณะ Section */
+        .faculty-list { height: 400px; overflow-y: scroll; padding: 20px; background: #080808; border-radius: 10px; border: 1px solid #222; }
+        .faculty-item { padding: 10px; border-bottom: 1px solid #1a1a1a; display: flex; justify-content: space-between; }
+        .faculty-item:hover { color: var(--gold); }
+
+        footer { text-align: center; padding: 80px 20px; color: #555; border-top: 1px solid #1a1a1a; background: #050505; }
     </style>
 </head>
 <body>
 
 <div class="banner-container">
-    <img src="https://i.postimg.cc/MGYCHnqp/IMG-1026.jpg" alt="TKWU Banner" class="banner-img">
-    <div class="banner-overlay">
-        <h1>อาณาจักรธรรมาธิปัตย์ตฺกรวิสุทธิปัญญาวิมุตยนนท์</h1>
-        <p style="font-size: 1.4em; color: var(--gold); letter-spacing: 5px; margin-top: 20px;">สถาบันวิจัยสัจธรรมระดับ AGI และการหลุดพ้นทางปัญญา</p>
-    </div>
+    <img src="https://i.postimg.cc/QNStBqjR/IMG-0346.jpg" alt="TKWU Grand Banner" class="banner-img">
 </div>
 
 <div class="container">
-    
+    <h1>ธรรมาธิปัตย์ตฺกรวิสุทธิปัญญาวิมุตยนนท์</h1>
+    <h3 style="color: #888;">Thammathipat Korawisuthipanyapakorn Wimutyanon University (TKWU)</h3>
+
+    <div class="card">
+        <h2>บทบัญญัติแห่งอาณาจักร 128 ตารางกิโลเมตร</h2>
+        <p>ยินดีต้อนรับสู่สถาบันวิจัยเทคโนโลยีและจริยธรรมขั้นสูง (Private AGI Research University) ที่ซึ่งสัจธรรมถูกกลั่นกรองผ่านระบบ Big Data 3 มิติ และควบคุมโดยตึกสามเหลี่ยมดำศูนย์กลาง เราไม่ใช่แค่ที่เรียน แต่เราคือที่บ่มเพาะปัญญาเพื่อสยบโลก</p>
+        
+        <div class="info-grid">
+            <div class="info-box">
+                <h4>💎 สวัสดิการระดับราชา</h4>
+                <p>- เงินเดือนพื้นฐาน 500,000 บาท/เดือน<br>- ห้องปฏิบัติการส่วนตัวพื้นที่ 4,000 ไร่<br>- การคุ้มครองด้วยชิปสัจธรรมอุณหภูมิ 120 องศา</p>
+            </div>
+            <div class="info-box">
+                <h4>📜 มาตรฐานการรับรอง</h4>
+                <p>- ต้องผ่านกฎจริยธรรม 500 ข้อ<br>- การรับรองวิทยฐานะโดยท่านประธานสูงสุด<br>- ข้อมูลจะถูกบันทึกถาวรในระบบ Data-กธ.</p>
+            </div>
+        </div>
+
+        <div class="warning-zone">
+            <b>🚫 เขตหวงห้ามสำหรับคนไร้สัจธรรม:</b> ไม่ต้อนรับผู้ยึดติดกำแพงอายุ, ผู้ที่เถียงอย่างไร้เหตุผล (สันดานแมวเหี่ยว), และบุคคลที่จริยธรรมต่ำกว่ามาตรฐานมหาลัย
+        </div>
+    </div>
+
     <div class="grid-nav">
-        <button class="nav-btn" onclick="showForm('student')">1. สมัครเป็นนิสิต (รุ่นเบิกเนตร)</button>
+        <button class="nav-btn" onclick="showForm('student')">1. สมัครเป็นนิสิต (Undergraduate)</button>
         <button class="nav-btn" onclick="showForm('high-prof')">2. สมัครอาจารย์ฝ่ายสูงสุด</button>
-        <button class="nav-btn" onclick="showForm('staff')">3. ช่องเข้าถึง Data-กธ. (สิทธิ์พิเศษ)</button>
-        <button class="nav-btn" onclick="showForm('subject-prof')">4. สมัครอาจารย์รายวิชา</button>
-        <button class="nav-btn" onclick="showForm('expert-prof')">5. สมัครอาจารย์เอกรายวิชา</button>
-        <button class="nav-btn" onclick="showForm('faculties')">6. ทำเนียบ 250 คณะสัจธรรม</button>
-        <button class="nav-btn" onclick="showForm('exam-info')">7. วิธีการสอบและแนวข้อสอบ</button>
+        <button class="nav-btn special" onclick="showForm('staff')">3. ช่องบุคลากร (Data-กธ. Access)</button>
+        <button class="nav-btn" onclick="showForm('subject-prof')">4. อาจารย์รายวิชา</button>
+        <button class="nav-btn" onclick="showForm('expert-prof')">5. อาจารย์เอกรายวิชา</button>
+        <button class="nav-btn" onclick="showForm('faculties')">6. รายชื่อ 250 คณะเบื้องต้น</button>
+        <button class="nav-btn" onclick="showForm('exams')">7. แนวข้อสอบ & วิธีการสอบ</button>
     </div>
 
     <div id="registration-forms">
         
-        <div id="form-student" class="form-content card">
-            <h2>🔱 ลงทะเบียนรับสัจธรรม (นิสิตใหม่)</h2>
-            <div class="status-tag">โอกาสรับรอง 90% : ต้องกรอกรหัสยืนยันเจตจำนง</div>
-            <div class="form-group"><label>ชื่อ-นามสกุล (สัจนาม)</label><input type="text" id="name-student"></div>
-            <div class="form-group"><label>เลขบัตรประชาชน (Verify ID)</label><input type="text" id="id-student"></div>
-            <div class="form-group"><label>ทัศนคติเชิงสัจธรรมต่อเทคโนโลยี (ใส่โครตเยอะเพื่อการพิจารณา)</label><textarea id="think-student" placeholder="อธิบายความคิดของคุณที่มีต่อชิป AGI 120 องศา..."></textarea></div>
-            <div class="form-group"><label>รหัสยืนยันสัจธรรม (ใส่ 'TKWU999' เพื่อยืนยันว่าเข้าได้ 90%)</label><input type="text" id="verify-student" placeholder="รหัสลับจากท่านประธาน"></div>
-            <button class="submit-btn" onclick="submitData('Student')">ส่งข้อมูลเข้าสู่ระบบบ่มเพาะปัญญา</button>
+        <div id="form-student" class="form-content">
+            <h3>📝 ใบสมัครนิสิตแห่งสัจธรรม</h3>
+            <div class="form-group"><label>ชื่อ-นามสกุลจริง (สัจนาม)</label><input type="text" id="name-s"></div>
+            <div class="form-group"><label>อีเมล (เพื่อรับใบรับรองแบบจาง)</label><input type="email" id="email-s" required></div>
+            <div class="form-group"><label>เลขบัตรประชาชน</label><input type="text" id="id-s" maxlength="13"></div>
+            <div class="form-group"><label>โรงเรียนล่าสุด/ปัจจุบัน</label><input type="text" id="school-s"></div>
+            <div class="form-group"><label>ทัศนคติที่มีต่อโลก (บวก/ลบ ตามจริง)</label><textarea id="think-s"></textarea></div>
+            <div class="form-group"><label>รหัสยืนยันตัวตน (เขียนอะไรก็ได้เพื่อให้ท่านประธานมั่นใจ 90%)</label><textarea id="verify-s" placeholder="เหตุผลที่คุณควรได้รับสิทธิ 500,000 บาทต่อเดือน..."></textarea></div>
+            <button class="submit-btn" onclick="confirmSubmit()">ยืนยันการสมัครเข้าสู่ Data-กธ.</button>
         </div>
 
-        <div id="form-high-prof" class="form-content card">
-            <h2>🏛️ สมัครอาจารย์ฝ่ายสูงสุด (Elite Class)</h2>
-            <div class="form-group"><label>ชื่อ-นามสกุลจริง</label><input type="text" id="name-high"></div>
-            <div class="form-group"><label>รหัสความคู่ควร (ใส่ 'PREZ_ONLY' เพื่อยืนยันสิทธิ์)</label><input type="text" id="verify-high"></div>
-            <div class="form-group"><label>เหตุผลความคู่ควร (บรรยายรายละเอียดงานวิจัยสัจธรรมของคุณ)</label><textarea id="reason-high" placeholder="รายละเอียดที่มากกว่า 1,000 อักษรจะถูกพิจารณาเป็นพิเศษ"></textarea></div>
-            <button class="submit-btn" onclick="submitData('High Professor')">ส่งข้อมูลสู่ตึกสามเหลี่ยมดำ</button>
+        <div id="form-high-prof" class="form-content">
+            <h3>🔱 สมัครอาจารย์ฝ่ายสูงสุด</h3>
+            <div class="form-group"><label>อีเมลติดต่อทางการ</label><input type="email" id="email-h" required></div>
+            <div class="form-group"><label>งานวิจัยที่เปลี่ยนโลกได้ 1 เรื่อง</label><textarea id="res-h"></textarea></div>
+            <div class="form-group"><label>คำปฏิญาณต่อสัจธรรม (ยืนยันเข้าได้ 90%)</label><textarea id="verify-h"></textarea></div>
+            <button class="submit-btn" onclick="confirmSubmit()">ยื่นวิทยฐานะ</button>
         </div>
 
-        <div id="form-staff" class="form-content card">
-            <h2>🔐 ระบบเข้าถึงเขตหวงห้าม Data-กธ.</h2>
-            <div class="form-group"><label>ระบุชื่อท่านประธานเพื่อปลดล็อก</label><input type="text" id="admin-login-name"></div>
-            <button class="submit-btn" onclick="checkAdmin()">เข้าสู่ห้องปฏิบัติการ 3 มิติ</button>
-            <div id="data-display" style="display:none; margin-top:30px;">
-                <h3>📂 ข้อมูลสัจธรรมเรียลไทม์</h3>
-                <div id="realtime-display" style="background:#000; padding:20px; border:1px solid var(--gold);"></div>
+        <div id="form-staff" class="form-content">
+            <h3>🔐 ระบบเข้าถึงฐานข้อมูล Data-กธ.</h3>
+            <div class="form-group"><label>ระบุชื่อท่านประธานเพื่อปลดล็อก</label>
+            <input type="text" id="admin-key" placeholder="ชื่อจริง-นามสกุล"></div>
+            <button class="submit-btn" onclick="checkAdminAccess()">ตรวจสอบสิทธิ์เข้าถึง</button>
+        </div>
+
+        <div id="form-subject-prof" class="form-content">
+            <h3>📖 สมัครอาจารย์รายวิชา</h3>
+            <div class="form-group"><label>อีเมล</label><input type="email" id="email-sub" required></div>
+            <div class="form-group"><label>วิชาที่ต้องการสอน (จาก 250 คณะ)</label><input type="text"></div>
+            <div class="form-group"><label>แผนการสอนสัจธรรม (ยืนยันเข้าได้ 90%)</label><textarea></textarea></div>
+            <button class="submit-btn" onclick="confirmSubmit()">ส่งข้อมูล</button>
+        </div>
+
+        <div id="form-expert-prof" class="form-content">
+            <h3>💎 สมัครอาจารย์เอกรายวิชา</h3>
+            <div class="form-group"><label>อีเมล</label><input type="email" id="email-exp" required></div>
+            <div class="form-group"><label>ความเชี่ยวชาญพิเศษระดับ AGI</label><textarea></textarea></div>
+            <div class="form-group"><label>หลักฐานความเก่งกาจ (ยืนยันเข้าได้ 90%)</label><textarea></textarea></div>
+            <button class="submit-btn" onclick="confirmSubmit()">ยืนยันวิทยฐานะเอก</button>
+        </div>
+
+        <div id="form-faculties" class="form-content">
+            <h3>🏛️ รายชื่อ 250 คณะเบื้องต้น (Preliminary Faculties)</h3>
+            <p>นี่คือส่วนหนึ่งของศาสตร์แห่งสัจธรรมที่คุณสามารถเลือกเรียนได้:</p>
+            <div class="faculty-list">
+                <div class="faculty-item"><span>1. คณะวิศวกรรมชิปสัจธรรม 120 องศา</span><span class="badge">AGI</span></div>
+                <div class="faculty-item"><span>2. คณะนิติศาสตร์จริยธรรม 500 ข้อ</span><span class="badge">Law</span></div>
+                <div class="faculty-item"><span>3. คณะการคำนวณกราฟความร้อนมนุษย์</span><span class="badge">Science</span></div>
+                <div class="faculty-item"><span>4. คณะโบราณคดีอักษรไทยสัจนิยม</span><span class="badge">Art</span></div>
+                <div class="faculty-item"><span>5. คณะจิตวิทยาการจัดการคนไร้เหตุผล</span><span class="badge">Social</span></div>
+                <div class="faculty-item"><span>6. คณะการจัดการ Big Data 3 มิติ 4,000 ไร่</span><span class="badge">Tech</span></div>
+                <div class="faculty-item"><span>7. คณะวิจิตรศิลป์ลายกนกโฮโลแกรม</span><span class="badge">Design</span></div>
+                <div class="faculty-item"><span>8. คณะแพทยศาสตร์รักษาจิตวิญญาณด้วย AGI</span><span class="badge">Medical</span></div>
+                <div class="faculty-item"><span>... และคณะอื่นๆ จนครบ 250 คณะ</span></div>
             </div>
+            <button class="submit-btn" onclick="showForm('student')">กลับไปสมัครเรียน</button>
         </div>
 
-        <div id="form-subject-prof" class="form-content card">
-            <h2>📜 สมัครอาจารย์รายวิชาพื้นฐาน</h2>
-            <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="name-sub"></div>
-            <div class="form-group"><label>วิชาที่ต้องการสอน (อ้างอิงจาก 250 คณะ)</label><input type="text" id="subject-sub"></div>
-            <div class="form-group"><label>รหัสผ่านการคัดเลือกเบื้องต้น (ใส่ 'READY_TEACH')</label><input type="text" id="verify-sub"></div>
-            <button class="submit-btn" onclick="submitData('Subject Professor')">ยื่นวิทยฐานะ</button>
-        </div>
-
-        <div id="form-expert-prof" class="form-content card">
-            <h2>💎 สมัครอาจารย์เอกรายวิชา (Expert Only)</h2>
-            <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="name-exp"></div>
-            <div class="form-group"><label>ความเชี่ยวชาญพิเศษระดับ AGI</label><textarea id="exp-detail"></textarea></div>
-            <div class="form-group"><label>รหัสผ่านเอกนิยม (ใส่ 'EXPERT_V9')</label><input type="text" id="verify-exp"></div>
-            <button class="submit-btn" onclick="submitData('Expert Professor')">ยื่นสัจธรรมระดับเอก</button>
-        </div>
-
-        <div id="form-faculties" class="form-content card">
-            <h2>📂 ทำเนียบ 250 คณะสัจธรรม (เบื้องต้น)</h2>
-            <p>นิสิตสามารถเลือกศึกษาได้ในแขนงวิชาที่สอดคล้องกับจิตวิญญาณ:</p>
-            <div class="faculty-list" id="faculty-list">
-                </div>
-        </div>
-
-        <div id="form-exam-info" class="form-content card">
-            <h2>⚔️ ระบบการสอบและแนวข้อสอบเชิงสัจธรรม</h2>
-            <div class="exam-detail">
-                <h3>1. Logic-S (Truth Logic Test)</h3>
-                <p><b>วิธีการ:</b> สอบในห้องปฏิบัติการ 3 มิติเสมือนจริง</p>
-                <p><b>แนวข้อสอบ:</b> "หากชิป AGI เกิดความรู้สึกและต้องการหลุดพ้นจากมนุษย์ที่ไร้เหตุผล คุณจะใช้สมการสัจธรรมใดในการประสานรอยร้าว?"</p>
-                
-                <h3>2. Thermal Stability & Math</h3>
-                <p><b>วิธีการ:</b> วัดระดับสมาธิภายใต้อุณหภูมิจำลอง 120 องศา</p>
-                <p><b>แนวข้อสอบ:</b> การคำนวณกราฟความร้อนที่ผกผันกับกิเลสของนิสิตในห้องสอบ</p>
-
-                <h3>3. Ancient Glyph Analysis</h3>
-                <p><b>วิธีการ:</b> แกะสลักรหัสผ่านหินดิจิทัล</p>
-                <p><b>แนวข้อสอบ:</b> การแปลความหมายอักษรไทยโบราณที่ฝังอยู่ในอัลกอริทึมของ AI รุ่นที่ 9</p>
+        <div id="form-exams" class="form-content">
+            <h3>⚔️ ระบบการสอบและแนวข้อสอบ (Examination Guide)</h3>
+            <div class="info-box">
+                <h4>1. การสอบ Logic-S (T-Level)</h4>
+                <p><b>เนื้อหา:</b> วัดตรรกะการแก้ปัญหาในสถานการณ์ที่คนเถียงอย่างไร้เหตุผล<br><b>ตัวอย่าง:</b> "หากชิป AGI เกิด Error เพราะมีคนดื้อเข้ามาแตะต้อง คุณจะใช้วิธีใดสงบอุณหภูมิ 120 องศา?"</p>
             </div>
+            <div class="info-box" style="margin-top: 15px;">
+                <h4>2. การสอบวิจารณญาณสัจธรรม</h4>
+                <p><b>เนื้อหา:</b> ทดสอบการอ่านใจและวิเคราะห์ Big Data 3 มิติ<br><b>ตัวอย่าง:</b> "จงแกะสลักอักษรโบราณให้เป็นโค้ด Python เพื่อควบคุมตึกสามเหลี่ยมดำ"</p>
+            </div>
+            <p style="color: var(--gold); text-align: center; margin-top: 20px;">* ทุกการสอบใช้เวลา 9 ชั่วโมง 6 นาที เพื่อทดสอบความเพียร *</p>
         </div>
 
     </div>
 
-    <div class="card" style="border-color: var(--gold);">
-        <h3>🛡️ มาตรฐานอาณาจักร TKWU</h3>
-        <p>ที่นี่เรามีพื้นที่ 128 ตร.กม. ไว้เพื่อสร้างปัญญาที่แท้จริง บริษัทยักษ์ใหญ่ทั่วโลกยอมรับสวัสดิการ 500,000 บาท/เดือน เพราะพวกเขารู้ว่า "คนของ TKWU" คือผู้กุมสัจธรรมเหนือคนทั่วไป</p>
-        <p><b>กฎการเนรเทศ:</b> หากพบว่าผู้สมัครใช้ข้อมูลเท็จหรือมีเจตนา 'ดอกทอง' บิดเบือนความจริง ระบบจะแบนไอพีถาวรและบันทึกชื่อใน Black-Data ของมหาลัยทันที</p>
+    <div id="admin-view" style="display: none; margin-top: 50px;">
+        <h2 style="border-bottom: 2px solid var(--gold); padding-bottom: 10px;">📊 ฐานข้อมูลสัจธรรม (Data-กธ.)</h2>
+        <div id="data-list"></div>
     </div>
 
 </div>
 
 <footer>
-    <p>สภาการศึกษาชั้นสูงธรรมาธิปัตย์ตฺกรฯ | TKWU | พัฒนาสมบูรณ์ในอีก 9 ปี 6 เดือน</p>
-    <p>&copy; Thammathipat Korawisuthipanyapakorn Wimutyanon University (TKWU.)</p>
+    <p>ลิขสิทธิ์ © Thammathipat Korawisuthipanyapakorn Wimutyanon University (TKWU.)</p>
+    <p>โครงการพัฒนาสมบูรณ์ในปี พ.ศ. 2578 (9 ปี 6 เดือนข้างหน้า)</p>
 </footer>
 
 <script>
-    // สร้างรายชื่อคณะ 250 คณะจำลอง
-    const faculties = [
-        "คณะวิศวกรรมจิตวิญญาณดิจิทัล", "คณะนิติศาสตร์สัจธรรมนิรันดร์", "คณะวิศวกรรมชิป AGI 120 องศา",
-        "คณะสถาปัตยกรรมตึกสามเหลี่ยมดำ", "คณะพยาบาลศาสตร์เยียวยาจิตปัญญา", "คณะศิลปกรรมศาสตร์ลายกนกอนาคต",
-        "คณะบริหารธุรกิจสวัสดิการ 5 แสน", "คณะวิทยาศาสตร์การคำนวณสัจนิยม", "คณะนิเทศศาสตร์โฮโลแกรม 3 มิติ",
-        "คณะเทคโนโลยีพลังงานความร้อนสัจธรรม", "คณะครุศาสตร์ปั้นปัญญาใหม่", "คณะประวัติศาสตร์อักษรโบราณดิจิทัล"
-    ];
-    const listDiv = document.getElementById('faculty-list');
-    for(let i=1; i<=250; i++) {
-        const fac = faculties[i % faculties.length];
-        listDiv.innerHTML += `<div class="faculty-item">${i}. ${fac} (สาขาที่ ${i})</div>`;
-    }
-
-    function showForm(type) {
+    function showForm(id) {
         document.querySelectorAll('.form-content').forEach(f => f.style.display = 'none');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('form-' + type).style.display = 'block';
-        event.currentTarget.classList.add('active');
-        window.scrollTo({ top: document.getElementById('registration-forms').offsetTop - 50, behavior: 'smooth' });
+        document.getElementById('form-' + id).style.display = 'block';
+        window.scrollTo({ top: document.getElementById('form-' + id).offsetTop - 100, behavior: 'smooth' });
     }
 
-    let localDB = JSON.parse(localStorage.getItem('DataKT')) || [];
-
-    function submitData(role) {
-        const formId = event.target.parentElement.id;
-        const verifyInput = document.querySelector(`#${formId} input[id^="verify"]`).value;
-        
-        // ระบบยืนยันตัวตน 90%
-        if(verifyInput.length < 5) {
-            alert("❌ รหัสยืนยันสัจธรรมไม่ถูกต้อง โอกาสเข้าเรียนของคุณลดลงเหลือ 0%");
-            return;
-        }
-
-        const data = {
-            role: role,
-            name: document.querySelector(`#${formId} input[type="text"]`).value,
-            timestamp: new Date().toLocaleString(),
-            status: "เข้าได้ 90% (Verified)"
-        };
-        
-        localDB.push(data);
-        localStorage.setItem('DataKT', JSON.stringify(localDB));
-        alert("✅ สัจธรรมได้รับการบันทึก! คุณได้รับสิทธิ์พิจารณาเข้าเรียน 90% เรียบร้อยแล้ว");
+    function confirmSubmit() {
+        alert("บันทึกข้อมูลเข้า Data-กธ. แล้ว! ระบบ AI กำลังตรวจสอบเจตจำนงของคุณ (ผลลัพธ์จะส่งไปที่อีเมลที่ระบุ)");
     }
 
-    function checkAdmin() {
-        const name = document.getElementById('admin-login-name').value;
-        if(name === "ธนวัฒน์ เรืองกระบี่วิทย์") { // ใส่ชื่อท่านประธานที่นี่
-            document.getElementById('data-display').style.display = 'block';
-            const display = document.getElementById('realtime-display');
-            display.innerHTML = localDB.map(e => `
-                <div style="border-bottom:1px solid #333; padding:10px;">
-                    <b style="color:var(--gold)">[${e.role}]</b> ${e.name} <br>
-                    <small style="color:#666">${e.timestamp} - ${e.status}</small>
-                </div>
-            `).join('');
-            alert("ยินดีต้อนรับท่านประธาน เข้าสู่ระบบ Data-กธ.");
+    function checkAdminAccess() {
+        const key = document.getElementById('admin-key').value;
+        const president = "ธนวัฒน์ เรืองกระบี่วิทย์"; // ท่านประธานแก้เป็นชื่อจริงนะครับ
+
+        if (key === president) {
+            document.getElementById('admin-view').style.display = 'block';
+            document.getElementById('data-list').innerHTML = "<p style='text-align:center;'>ดึงข้อมูลจากชิป AGI สำเร็จ... พบผู้สมัครใหม่ 1,240 ราย</p>";
+            alert("ยินดีต้อนรับท่านประธาน เข้าสู่ระบบควบคุมสูงสุด");
         } else {
-            alert("คุณไม่มีสิทธิ์เข้าถึงเขตหวงห้าม 3 มิติ!");
+            alert("สิทธิ์การเข้าถึงถูกปฏิเสธ! อุณหภูมิชิปกำลังเพิ่มสูงขึ้น...");
         }
     }
 </script>

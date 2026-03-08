@@ -1,332 +1,189 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultra-Motion AI Video Engine</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: #050508;
-            color: #ffffff;
-            font-family: 'Prompt', sans-serif;
-            overflow-x: hidden;
-        }
-
-        .video-viewport {
-            position: relative;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 210, 255, 0.1);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            margin: auto;
-        }
-
-        /* Aspect Ratio Classes */
-        .landscape { width: 800px; height: 450px; } /* 16:9 */
-        .portrait { width: 360px; height: 640px; }  /* 9:16 */
-
-        #renderCanvas {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .ui-card {
-            background: rgba(15, 15, 25, 0.8);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-        }
-
-        .loading-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .countdown-number {
-            font-size: 5rem;
-            font-weight: 800;
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(180deg, #fff, #444);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .shimmer-btn {
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
-            background-size: 200% auto;
-            animation: shine 3s linear infinite;
-        }
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
-
-        .status-pill {
-            background: rgba(0, 210, 255, 0.1);
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            color: #00d2ff;
-            padding: 2px 10px;
-            border-radius: 999px;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-    </style>
-</head>
-<body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
-
-    <header class="text-center mb-8">
-        <h1 class="text-3xl font-bold tracking-tighter text-white mb-2">NEURAL MOTION ENGINE <span class="text-blue-500">v3.0</span></h1>
-        <p class="text-gray-500 text-sm">สร้างวิดีโอ 10 วินาที @12FPS พร้อมความเคลื่อนไหวจริงแบบ Semi-real</p>
-    </header>
-
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Control Side -->
-        <div class="lg:col-span-4 space-y-4">
-            <div class="ui-card p-6 shadow-xl">
-                <label class="block text-sm font-medium text-gray-400 mb-3">ทิศทางของวิดีโอ</label>
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <button onclick="setOrientation('landscape')" id="btnLandscape" class="py-2 rounded-lg border border-blue-500 bg-blue-500/20 text-blue-400 text-xs font-bold transition-all">แนวนอน (16:9)</button>
-                    <button onclick="setOrientation('portrait')" id="btnPortrait" class="py-2 rounded-lg border border-white/10 bg-white/5 text-gray-500 text-xs font-bold transition-all">แนวตั้ง (9:16)</button>
-                </div>
-
-                <label class="block text-sm font-medium text-gray-400 mb-3">จินตนาการของคุณ</label>
-                <textarea id="promptInput" rows="5" class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="เช่น หญิงสาวกะพริบตาแล้วยิ้มท่ามกลางหิมะ..."></textarea>
-                
-                <div class="mt-4 flex flex-wrap gap-2">
-                    <span onclick="setPrompt('Beautiful cyberpunk woman blinking and smiling, neon rain falling, realistic hair movement')" class="px-2 py-1 bg-white/5 rounded text-[10px] cursor-pointer hover:bg-blue-500/20 transition-all">CYBER BLINK</span>
-                    <span onclick="setPrompt('Space nebula expanding, astronaut moving hand, cosmic dust swirling, cinematic')" class="px-2 py-1 bg-white/5 rounded text-[10px] cursor-pointer hover:bg-blue-500/20 transition-all">COSMIC MOTION</span>
-                </div>
-
-                <button id="genBtn" onclick="startGeneration()" class="w-full mt-6 py-4 shimmer-btn rounded-xl font-bold text-black uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-95 transition-all">
-                    Generate True Video
-                </button>
-            </div>
-
-            <div class="ui-card p-5 space-y-3">
-                <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest">Specifications</h3>
-                <div class="flex justify-between text-[11px]">
-                    <span class="text-gray-500">Duration</span>
-                    <span>10.0 Seconds</span>
-                </div>
-                <div class="flex justify-between text-[11px]">
-                    <span class="text-gray-500">Frame Rate</span>
-                    <span>12 FPS (120 Frames Total)</span>
-                </div>
-                <div class="flex justify-between text-[11px]">
-                    <span class="text-gray-500">AI Logic</span>
-                    <span>Recursive Frame Synthesis</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Viewport Side -->
-        <div class="lg:col-span-8 flex flex-col items-center">
-            <div id="viewport" class="video-viewport landscape">
-                <canvas id="renderCanvas"></canvas>
-                
-                <!-- Loading & Countdown -->
-                <div id="loader" class="loading-overlay">
-                    <div class="countdown-number" id="countdown">30</div>
-                    <p class="text-blue-400 text-xs font-bold uppercase tracking-[0.4em] mt-4" id="loadStatus">Synthesizing Frames...</p>
-                    <div class="w-48 h-1 bg-white/10 rounded-full mt-6 overflow-hidden">
-                        <div id="progressBar" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <div id="watermark" class="absolute top-4 right-4 status-pill hidden">AI Real-time Rendering</div>
-                <div id="timeCounter" class="absolute bottom-4 left-4 text-[10px] font-mono text-white/50 hidden">00:00:00</div>
-            </div>
-
-            <div id="postGenInfo" class="mt-4 text-center hidden">
-                <p class="text-xs text-gray-500">Video Rendered Successfully. Playing in loop at 12fps.</p>
-            </div>
-        </div>
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Generator - สสนช. x ทปอ.</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&amp;family=Cinzel:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Sarabun', sans-serif; }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    
+    .certificate-bg {
+      background: linear-gradient(135deg, #fefefe 0%, #fcfaf5 50%, #fefefe 100%);
+    }
+    
+    .gold-gradient {
+      background: linear-gradient(135deg, #d4af37 0%, #f4e5a1 25%, #d4af37 50%, #b8941f 75%, #d4af37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .border-ornament {
+      border: 4px solid #6b21a8;
+      position: relative;
+    }
+    
+    .border-ornament::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 2px solid #d4af37;
+      pointer-events: none;
+    }
+    
+    .corner-ornament {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      z-index: 10;
+    }
+    
+    .corner-tl { top: 10px; left: 10px; }
+    .corner-tr { top: 10px; right: 10px; transform: rotate(90deg); }
+    .corner-bl { bottom: 10px; left: 10px; transform: rotate(-90deg); }
+    .corner-br { bottom: 10px; right: 10px; transform: rotate(180deg); }
+    
+    .ribbon {
+      background: linear-gradient(90deg, #4c1d95 0%, #6b21a8 50%, #4c1d95 100%);
+      clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
+    }
+    
+    .seal {
+      background: radial-gradient(circle, #d4af37 0%, #b8941f 50%, #8b6914 100%);
+      box-shadow: 0 4px 20px rgba(180, 148, 31, 0.4);
+    }
+    
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; padding: 0 !important; }
+      .certificate-container { 
+        box-shadow: none !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+  </style>
+ </head>
+ <body class="h-full bg-slate-900 overflow-auto">
+  <div class="min-h-full w-full p-4 md:p-8">
+   <div class="no-print max-w-2xl mx-auto mb-8 bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
+    <div class="flex items-center gap-4 mb-8">
+     <div class="w-14 h-14 rounded-2xl seal flex items-center justify-center rotate-12">
+      <svg class="w-8 h-8 text-purple-900" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2L13.09 8.26L19 6.5L15.5 11.5L21 14L14.5 15L16 22L12 17.5L8 22L9.5 15L3 14L8.5 11.5L5 6.5L10.91 8.26L12 2Z" /></svg>
+     </div>
+     <div>
+      <h1 class="text-3xl font-bold bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">S-Audit Certificate</h1>
+      <p class="text-slate-400 text-sm">สถาบัน สสนช. ร่วมกับ ทปอ.</p>
+     </div>
     </div>
+    
+    <div class="grid gap-5">
+     <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">ชื่อ-นามสกุล</label> <input type="text" id="recipientName" placeholder="ระบุชื่อผู้รับ..." class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all"></div>
+     <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">กิจกรรม/โครงการ</label> <input type="text" id="activityName" placeholder="ระบุชื่อโครงการ..." class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all"></div>
+     
+     <div class="grid grid-cols-2 gap-4">
+      <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">วันที่</label> <input type="text" id="eventDate" placeholder="วันที่จัดงาน..." class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all"></div>
+      <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">ประเภท</label> <select id="participationType" class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 transition-all"> <option value="ผู้เข้าร่วม">ผู้เข้าร่วม</option> <option value="ผู้ผ่านการทดสอบ">ผู้ผ่านการทดสอบ</option> <option value="คณะกรรมการ">คณะกรรมการ</option> <option value="รางวัลดีเด่น">รางวัลดีเด่น</option> </select></div>
+     </div>
 
-    <script>
-        const apiKey = ""; // API Key จากระบบ
-        let orientation = 'landscape';
-        let frames = [];
-        let isGenerating = false;
-        let animationId = null;
-        let countdownInterval = null;
+     <div class="flex gap-4 mt-6">
+      <button onclick="generateCertificate()" class="flex-[2] py-4 px-8 rounded-2xl bg-amber-500 text-purple-950 font-black text-lg hover:bg-amber-400 transition-all transform hover:scale-[1.02] shadow-xl shadow-amber-500/20"> ✨ ออกเกียรติบัตร </button>
+      <button onclick="downloadCertificate()" class="flex-1 py-4 px-8 rounded-2xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all border border-white/10"> 📥 พิมพ์/PDF </button>
+     </div>
+    </div>
+   </div>
 
-        function setOrientation(type) {
-            orientation = type;
-            const viewport = document.getElementById('viewport');
-            const btnL = document.getElementById('btnLandscape');
-            const btnP = document.getElementById('btnPortrait');
-            
-            if (type === 'landscape') {
-                viewport.className = 'video-viewport landscape';
-                btnL.classList.add('bg-blue-500/20', 'border-blue-500', 'text-blue-400');
-                btnP.classList.remove('bg-blue-500/20', 'border-blue-500', 'text-blue-400');
-            } else {
-                viewport.className = 'video-viewport portrait';
-                btnP.classList.add('bg-blue-500/20', 'border-blue-500', 'text-blue-400');
-                btnL.classList.remove('bg-blue-500/20', 'border-blue-500', 'text-blue-400');
-            }
-        }
+   <div class="max-w-5xl mx-auto mb-20">
+    <div id="certificate" class="certificate-container certificate-bg border-ornament p-12 md:p-16 relative shadow-[0_0_80px_rgba(0,0,0,0.5)] overflow-hidden" style="aspect-ratio: 1.414/1;">
+     <svg class="corner-ornament corner-tl text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
+     <svg class="corner-ornament corner-tr text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
+     <svg class="corner-ornament corner-bl text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
+     <svg class="corner-ornament corner-br text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
 
-        function setPrompt(val) {
-            document.getElementById('promptInput').value = val;
-        }
+     <div class="h-full flex flex-col items-center justify-between text-center border-2 border-amber-200/20 p-4">
+      <div class="w-full">
+       <div class="flex justify-center gap-8 items-center mb-6">
+        <div class="w-20 h-20 seal rounded-full flex items-center justify-center">
+         <div class="text-purple-900 text-center leading-none">
+          <svg class="w-10 h-10 mx-auto mb-1" fill="currentColor" viewbox="0 0 24 24"><path d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L21 10.09V17H23V9L12 3ZM18.82 9L12 12.72L5.18 9L12 5.28L18.82 9ZM17 16L12 18.72L7 16V12.27L12 15L17 12.27V16Z" /></svg>
+          <span class="text-[10px] font-black uppercase tracking-tighter">สสนช.</span>
+         </div>
+        </div>
+        <div class="h-12 w-px bg-amber-400/50"></div>
+        <div class="text-left">
+          <p class="text-purple-900 font-black text-lg leading-tight">สถาบันร่วม</p>
+          <p class="text-purple-700 font-bold text-sm tracking-tighter italic">ที่ประชุมอธิการบดีแห่งประเทศไทย (ทปอ.)</p>
+          <p class="text-amber-600 font-bold text-xs">คัดกรองมาตรฐานระบบ TCAS</p>
+        </div>
+       </div>
+       
+       <p class="text-purple-800 text-sm md:text-base font-bold tracking-widest uppercase mb-1" id="certOrgName">สถาบันส่งเสริมและพัฒนาศักยภาพนิสิตนักศึกษาแห่งชาติ (สสนช.)</p>
+       <p class="text-purple-500 text-[10px] mb-4">ร่วมกับ ที่ประชุมอธิการบดีแห่งประเทศไทย (ทปอ.) / สถาบันร่วม TCAS</p>
+       
+       <div class="ribbon py-3 px-16 mx-auto inline-block shadow-xl">
+        <h1 class="text-2xl md:text-3xl font-black text-amber-300 tracking-[0.2em] uppercase" id="certTitle">เกียรติบัตร</h1>
+       </div>
+      </div>
 
-        async function startGeneration() {
-            const prompt = document.getElementById('promptInput').value.trim();
-            if (!prompt || isGenerating) return;
+      <div class="flex-1 flex flex-col items-center justify-center py-4">
+       <p class="text-purple-800/70 text-lg italic mb-2">ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</p>
+       <div class="my-4">
+        <p class="text-3xl md:text-5xl font-black text-purple-900 px-12 pb-2 relative inline-block" id="certRecipient">
+          นายสมชาย ใจดี
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></span>
+        </p>
+       </div>
+       <p class="text-purple-700 text-lg mt-4">ได้เข้าร่วมในฐานะ <span class="font-black text-purple-900 underline decoration-amber-500 underline-offset-4" id="certParticipation">ผู้เข้าร่วม</span></p>
+       <p class="text-purple-950 text-xl md:text-2xl font-bold max-w-2xl mt-4 leading-relaxed" id="certActivity">โครงการพัฒนาศักยภาพผู้นำนิสิตนักศึกษา รุ่นที่ 1</p>
+       <p class="text-amber-700 font-bold text-sm md:text-base mt-4 uppercase tracking-widest">ให้ไว้ ณ วันที่ <span id="certDate" class="text-purple-900">1-3 มกราคม 2568</span></p>
+      </div>
 
-            isGenerating = true;
-            frames = [];
-            stopPlayback();
-            
-            const loader = document.getElementById('loader');
-            const countdownEl = document.getElementById('countdown');
-            const progressEl = document.getElementById('progressBar');
-            loader.style.display = 'flex';
-            
-            let timeLeft = 30;
-            countdownEl.innerText = timeLeft;
-            
-            // Countdown Timer
-            countdownInterval = setInterval(() => {
-                timeLeft--;
-                countdownEl.innerText = timeLeft > 0 ? timeLeft : "1";
-                progressEl.style.width = ((30 - timeLeft) / 30 * 100) + "%";
-                if (timeLeft <= 0) clearInterval(countdownInterval);
-            }, 1000);
+      <div class="w-full flex justify-between items-end px-12">
+       <div class="text-left opacity-30">
+          <p class="text-[8px] text-purple-900">VERIFIED BY S-AUDIT SYSTEM</p>
+          <p class="text-[8px] text-purple-900">ID: SSA-2026-XXXXX</p>
+       </div>
+       
+       <div class="flex flex-col items-center">
+        <div class="w-48 border-b border-purple-300 mb-3 opacity-50"></div>
+        <p class="text-purple-900 font-black text-base" id="certSigner">ศาสตราจารย์ ดร.สมศักดิ์ รักการศึกษา</p>
+        <p class="text-purple-700 text-[10px] font-bold uppercase tracking-tight max-w-[250px]" id="certSignerPos">ผู้อำนวยการสถาบันส่งเสริมและพัฒนาศักยภาพนิสิตนักศึกษาแห่งชาติ</p>
+        <p class="text-amber-600 text-[9px] font-black mt-1">และคณะกรรมการร่วมวิชาการ ทปอ.</p>
+       </div>
 
-            try {
-                // STEP 1: Generate Master Keyframe (High Quality)
-                updateStatus("Generating Master Frame...");
-                const masterImageB64 = await generateImage(prompt, orientation);
-                frames.push(masterImageB64);
+       <div class="w-16 h-16 rounded-full border-4 border-amber-200/50 flex items-center justify-center opacity-40">
+          <span class="text-[8px] font-black text-purple-900 rotate-12 uppercase">OFFICIAL SEAL</span>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
 
-                // STEP 2: Generate Sequences (TRUE MOTION LOGIC)
-                // เราจะเจน Keyframes หลักๆ 10 เฟรม แล้วที่เหลือใช้ Frame Interpolation เพื่อความรวดเร็วและสมูท
-                updateStatus("Simulating Neural Motion...");
-                
-                const motionPrompt = `Based on the provided image, generate the next frame in a video sequence where the ${prompt} has significant and realistic motion. Characters should move naturally (blinking, smiling, turning head), and environments should be dynamic. Maintain 100% character and background consistency. Semi-realistic style.`;
+  <script>
+    function generateCertificate() {
+      const recipientName = document.getElementById('recipientName').value || 'นายสมชาย ใจดี';
+      const activityName = document.getElementById('activityName').value || 'โครงการพัฒนาศักยภาพผู้นำนิสิตนักศึกษา รุ่นที่ 1';
+      const eventDate = document.getElementById('eventDate').value || '1-3 มกราคม 2568';
+      const participationType = document.getElementById('participationType').value;
 
-                // Generate 4-5 core motion keyframes recursively
-                let lastFrame = masterImageB64;
-                for (let i = 0; i < 4; i++) {
-                    const nextFrame = await generateMotionFrame(motionPrompt, lastFrame.split(',')[1]);
-                    frames.push(nextFrame);
-                    lastFrame = nextFrame;
-                }
+      document.getElementById('certRecipient').textContent = recipientName;
+      document.getElementById('certActivity').textContent = activityName;
+      document.getElementById('certDate').textContent = eventDate;
+      document.getElementById('certParticipation').textContent = participationType;
 
-                // สิ้นสุดการเจนเฟรม (ในระบบพรีวิวนี้เราจะลูป 5 เฟรมหลักนี้ด้วยความเร็ว 12fps และใช้การ Fade ระหว่างกัน)
-                clearInterval(countdownInterval);
-                loader.style.display = 'none';
-                startPlayback();
-                
-                document.getElementById('postGenInfo').classList.remove('hidden');
-                document.getElementById('watermark').classList.remove('hidden');
-            } catch (error) {
-                console.error(error);
-                alert("Generation failed. Check console for details.");
-                clearInterval(countdownInterval);
-                loader.style.display = 'none';
-            } finally {
-                isGenerating = false;
-            }
-        }
+      const cert = document.getElementById('certificate');
+      cert.classList.add('scale-[1.01]');
+      setTimeout(() => cert.classList.remove('scale-[1.01]'), 200);
+    }
 
-        async function generateImage(prompt, orientation) {
-            const ratio = orientation === 'landscape' ? "16:9" : "9:16";
-            const fullPrompt = `A stunning semi-realistic cinematic 8k video frame of ${prompt}. Masterpiece lighting, highly detailed textures. Aspect ratio ${ratio}. No distortion.`;
-            
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    instances: [{ prompt: fullPrompt }],
-                    parameters: { sampleCount: 1 }
-                })
-            });
-            const result = await resp.json();
-            return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-        }
-
-        async function generateMotionFrame(prompt, prevImageB64) {
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [
-                            { text: prompt },
-                            { inlineData: { mimeType: "image/png", data: prevImageB64 } }
-                        ]
-                    }],
-                    generationConfig: { responseModalities: ['IMAGE'] }
-                })
-            });
-            const result = await resp.json();
-            const b64 = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-            return `data:image/png;base64,${b64}`;
-        }
-
-        function updateStatus(text) {
-            document.getElementById('loadStatus').innerText = text;
-        }
-
-        function stopPlayback() {
-            if (animationId) cancelAnimationFrame(animationId);
-        }
-
-        function startPlayback() {
-            const canvas = document.getElementById('renderCanvas');
-            const ctx = canvas.getContext('2d');
-            const timeEl = document.getElementById('timeCounter');
-            timeEl.classList.remove('hidden');
-
-            let currentIdx = 0;
-            let lastUpdate = 0;
-            const fpsInterval = 1000 / 12; // 12 FPS
-
-            const imgElements = frames.map(src => {
-                const img = new Image();
-                img.src = src;
-                return img;
-            });
-
-            function play(timestamp) {
-                if (timestamp - lastUpdate > fpsInterval) {
-                    canvas.width = imgElements[0].width;
-                    canvas.height = imgElements[0].height;
-
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Smooth Interpolation Draw
-                    const nextIdx = (currentIdx + 1) % imgElements.length;
-                    const frameImg = imgElements[currentIdx];
-                    
-                    ctx.drawImage(frameImg, 0, 0);
-                    
-                    // Update Time
-                    const sec = (currentIdx / 12).toFixed(2);
-                    timeEl.innerText = `00:00:${sec.padStart(5, '0')}`;
-
-                    currentIdx = nextIdx;
-                    lastUpdate = timestamp;
-                }
-                animationId = requestAnimationFrame(play);
-            }
-            animationId = requestAnimationFrame(play);
-        }
-    </script>
-</body>
+    function downloadCertificate() {
+      window.print();
+    }
+  </script>
+ </body>
 </html>
-

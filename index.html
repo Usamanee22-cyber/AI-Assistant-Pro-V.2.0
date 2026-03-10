@@ -1,188 +1,197 @@
-<!doctype html>
-<html lang="th" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificate Generator - สสนช. x ทปอ.</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&amp;family=Cinzel:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Sarabun', sans-serif; }
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    
-    .certificate-bg {
-      background: linear-gradient(135deg, #fefefe 0%, #fcfaf5 50%, #fefefe 100%);
-    }
-    
-    .gold-gradient {
-      background: linear-gradient(135deg, #d4af37 0%, #f4e5a1 25%, #d4af37 50%, #b8941f 75%, #d4af37 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .border-ornament {
-      border: 4px solid #6b21a8;
-      position: relative;
-    }
-    
-    .border-ornament::before {
-      content: '';
-      position: absolute;
-      inset: 6px;
-      border: 2px solid #d4af37;
-      pointer-events: none;
-    }
-    
-    .corner-ornament {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      z-index: 10;
-    }
-    
-    .corner-tl { top: 10px; left: 10px; }
-    .corner-tr { top: 10px; right: 10px; transform: rotate(90deg); }
-    .corner-bl { bottom: 10px; left: 10px; transform: rotate(-90deg); }
-    .corner-br { bottom: 10px; right: 10px; transform: rotate(180deg); }
-    
-    .ribbon {
-      background: linear-gradient(90deg, #4c1d95 0%, #6b21a8 50%, #4c1d95 100%);
-      clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
-    }
-    
-    .seal {
-      background: radial-gradient(circle, #d4af37 0%, #b8941f 50%, #8b6914 100%);
-      box-shadow: 0 4px 20px rgba(180, 148, 31, 0.4);
-    }
-    
-    @media print {
-      .no-print { display: none !important; }
-      body { background: white !important; padding: 0 !important; }
-      .certificate-container { 
-        box-shadow: none !important;
-        margin: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-      }
-    }
-  </style>
- </head>
- <body class="h-full bg-slate-900 overflow-auto">
-  <div class="min-h-full w-full p-4 md:p-8">
-   <div class="no-print max-w-2xl mx-auto mb-8 bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
-    <div class="flex items-center gap-4 mb-8">
-     <div class="w-14 h-14 rounded-2xl seal flex items-center justify-center rotate-12">
-      <svg class="w-8 h-8 text-purple-900" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2L13.09 8.26L19 6.5L15.5 11.5L21 14L14.5 15L16 22L12 17.5L8 22L9.5 15L3 14L8.5 11.5L5 6.5L10.91 8.26L12 2Z" /></svg>
-     </div>
-     <div>
-      <h1 class="text-3xl font-bold bg-gradient-to-r from-amber-200 to-amber-500 bg-clip-text text-transparent">S-Audit Certificate</h1>
-      <p class="text-slate-400 text-sm">สถาบัน สสนช. ร่วมกับ ทปอ.</p>
-     </div>
-    </div>
-    
-    <div class="grid gap-5">
-     <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">ชื่อ-นามสกุล</label> <input type="text" id="recipientName" placeholder="ระบุชื่อผู้รับ..." class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all"></div>
-     <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">กิจกรรม/โครงการ</label> <input type="text" id="activityName" placeholder="ระบุชื่อโครงการ..." class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all"></div>
-     
-     <div class="grid grid-cols-2 gap-4">
-      <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">วันที่</label> <input type="text" id="eventDate" placeholder="วันที่จัดงาน..." class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/10 transition-all"></div>
-      <div><label class="block text-amber-200/80 text-xs font-bold uppercase tracking-widest mb-2 ml-1">ประเภท</label> <select id="participationType" class="w-full px-5 py-4 rounded-2xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-amber-400 transition-all"> <option value="ผู้เข้าร่วม">ผู้เข้าร่วม</option> <option value="ผู้ผ่านการทดสอบ">ผู้ผ่านการทดสอบ</option> <option value="คณะกรรมการ">คณะกรรมการ</option> <option value="รางวัลดีเด่น">รางวัลดีเด่น</option> </select></div>
-     </div>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบวิทยาศาสตร์กายภาพ (เคมี)</title>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: white;
+            width: 100%;
+            max-width: 700px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h1 { text-align: center; color: #2c3e50; }
+        .question { margin-bottom: 25px; display: none; }
+        .question.active { display: block; }
+        .question-text { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
+        .options { list-style: none; padding: 0; }
+        .option {
+            background: #eef2f3;
+            margin: 10px 0;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .option:hover { background: #d1d8e0; }
+        .option.selected { background: #3498db; color: white; }
+        .controls { display: flex; justify-content: space-between; margin-top: 20px; }
+        button {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            background: #27ae60;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:disabled { background: #bdc3c7; }
+        #result-area { text-align: center; display: none; }
+    </style>
+</head>
+<body>
 
-     <div class="flex gap-4 mt-6">
-      <button onclick="generateCertificate()" class="flex-[2] py-4 px-8 rounded-2xl bg-amber-500 text-purple-950 font-black text-lg hover:bg-amber-400 transition-all transform hover:scale-[1.02] shadow-xl shadow-amber-500/20"> ✨ ออกเกียรติบัตร </button>
-      <button onclick="downloadCertificate()" class="flex-1 py-4 px-8 rounded-2xl bg-white/5 text-white font-bold hover:bg-white/10 transition-all border border-white/10"> 📥 พิมพ์/PDF </button>
-     </div>
-    </div>
-   </div>
-
-   <div class="max-w-5xl mx-auto mb-20">
-    <div id="certificate" class="certificate-container certificate-bg border-ornament p-12 md:p-16 relative shadow-[0_0_80px_rgba(0,0,0,0.5)] overflow-hidden" style="aspect-ratio: 1.414/1;">
-     <svg class="corner-ornament corner-tl text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
-     <svg class="corner-ornament corner-tr text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
-     <svg class="corner-ornament corner-bl text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
-     <svg class="corner-ornament corner-br text-amber-600/30" viewbox="0 0 60 60" fill="currentColor"><path d="M0 0 L60 0 L60 8 L8 8 L8 60 L0 60 Z" /></svg>
-
-     <div class="h-full flex flex-col items-center justify-between text-center border-2 border-amber-200/20 p-4">
-      <div class="w-full">
-       <div class="flex justify-center gap-8 items-center mb-6">
-        <div class="w-20 h-20 seal rounded-full flex items-center justify-center">
-         <div class="text-purple-900 text-center leading-none">
-          <svg class="w-10 h-10 mx-auto mb-1" fill="currentColor" viewbox="0 0 24 24"><path d="M12 3L1 9L5 11.18V17.18L12 21L19 17.18V11.18L21 10.09V17H23V9L12 3ZM18.82 9L12 12.72L5.18 9L12 5.28L18.82 9ZM17 16L12 18.72L7 16V12.27L12 15L17 12.27V16Z" /></svg>
-          <span class="text-[10px] font-black uppercase tracking-tighter">สสนช.</span>
-         </div>
+<div class="quiz-container">
+    <h1>🧬 วิทยาศาสตร์กายภาพ (เคมี)</h1>
+    <hr>
+    <div id="quiz-area">
         </div>
-        <div class="h-12 w-px bg-amber-400/50"></div>
-        <div class="text-left">
-          <p class="text-purple-900 font-black text-lg leading-tight">สถาบันร่วม</p>
-          <p class="text-purple-700 font-bold text-sm tracking-tighter italic">ที่ประชุมอธิการบดีแห่งประเทศไทย (ทปอ.)</p>
-          <p class="text-amber-600 font-bold text-xs">คัดกรองมาตรฐานระบบ TCAS</p>
-        </div>
-       </div>
-       
-       <p class="text-purple-800 text-sm md:text-base font-bold tracking-widest uppercase mb-1" id="certOrgName">สถาบันส่งเสริมและพัฒนาศักยภาพนิสิตนักศึกษาแห่งชาติ (สสนช.)</p>
-       <p class="text-purple-500 text-[10px] mb-4">ร่วมกับ ที่ประชุมอธิการบดีแห่งประเทศไทย (ทปอ.) / สถาบันร่วม TCAS</p>
-       
-       <div class="ribbon py-3 px-16 mx-auto inline-block shadow-xl">
-        <h1 class="text-2xl md:text-3xl font-black text-amber-300 tracking-[0.2em] uppercase" id="certTitle">เกียรติบัตร</h1>
-       </div>
-      </div>
 
-      <div class="flex-1 flex flex-col items-center justify-center py-4">
-       <p class="text-purple-800/70 text-lg italic mb-2">ขอมอบเกียรติบัตรฉบับนี้เพื่อแสดงว่า</p>
-       <div class="my-4">
-        <p class="text-3xl md:text-5xl font-black text-purple-900 px-12 pb-2 relative inline-block" id="certRecipient">
-          นายสมชาย ใจดี
-          <span class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></span>
-        </p>
-       </div>
-       <p class="text-purple-700 text-lg mt-4">ได้เข้าร่วมในฐานะ <span class="font-black text-purple-900 underline decoration-amber-500 underline-offset-4" id="certParticipation">ผู้เข้าร่วม</span></p>
-       <p class="text-purple-950 text-xl md:text-2xl font-bold max-w-2xl mt-4 leading-relaxed" id="certActivity">โครงการพัฒนาศักยภาพผู้นำนิสิตนักศึกษา รุ่นที่ 1</p>
-       <p class="text-amber-700 font-bold text-sm md:text-base mt-4 uppercase tracking-widest">ให้ไว้ ณ วันที่ <span id="certDate" class="text-purple-900">1-3 มกราคม 2568</span></p>
-      </div>
-
-      <div class="w-full flex justify-between items-end px-12">
-       <div class="text-left opacity-30">
-          <p class="text-[8px] text-purple-900">VERIFIED BY S-AUDIT SYSTEM</p>
-          <p class="text-[8px] text-purple-900">ID: SSA-2026-XXXXX</p>
-       </div>
-       
-       <div class="flex flex-col items-center">
-        <div class="w-48 border-b border-purple-300 mb-3 opacity-50"></div>
-        <p class="text-purple-700 text-[10px] font-bold uppercase tracking-tight max-w-[250px]" id="certSignerPos">ผู้อำนวยการสถาบันส่งเสริมและพัฒนาศักยภาพนิสิตนักศึกษาแห่งชาติ</p>
-        <p class="text-amber-600 text-[9px] font-black mt-1">และคณะกรรมการร่วมวิชาการ ทปอ.</p>
-       </div>
-
-       <div class="w-16 h-16 rounded-full border-4 border-amber-200/50 flex items-center justify-center opacity-40">
-          <span class="text-[8px] font-black text-purple-900 rotate-12 uppercase">OFFICIAL SEAL</span>
-       </div>
-      </div>
-     </div>
+    <div class="controls">
+        <button id="prev-btn" onclick="changeQuestion(-1)" disabled>ก่อนหน้า</button>
+        <button id="next-btn" onclick="changeQuestion(1)">ถัดไป</button>
     </div>
-   </div>
-  </div>
 
-  <script>
-    function generateCertificate() {
-      const recipientName = document.getElementById('recipientName').value || 'นายสมชาย ใจดี';
-      const activityName = document.getElementById('activityName').value || 'โครงการพัฒนาศักยภาพผู้นำนิสิตนักศึกษา รุ่นที่ 1';
-      const eventDate = document.getElementById('eventDate').value || '1-3 มกราคม 2568';
-      const participationType = document.getElementById('participationType').value;
+    <div id="result-area">
+        <h2>สรุปคะแนนของคุณ</h2>
+        <p id="score-text" style="font-size: 2rem; font-weight: bold; color: #2ecc71;"></p>
+        <button onclick="location.reload()">ทำแบบทดสอบใหม่</button>
+    </div>
+</div>
 
-      document.getElementById('certRecipient').textContent = recipientName;
-      document.getElementById('certActivity').textContent = activityName;
-      document.getElementById('certDate').textContent = eventDate;
-      document.getElementById('certParticipation').textContent = participationType;
+<script>
+    const questions = [
+        {
+            q: "1. การทดสอบสารอาหารชนิดใดที่เมื่อหยดสารละลายไอโอดีนแล้วจะเปลี่ยนจากสีน้ำตาลแกมเหลืองเป็นสีน้ำเงินเข้ม?",
+            options: ["โปรตีน", "ไขมัน", "แป้ง", "น้ำตาลโมเลกุลเดี่ยว"],
+            ans: 2
+        },
+        {
+            q: "2. ข้อใดกล่าวถูกต้องเกี่ยวกับพอลิเมอร์แบบกิ่ง (Branched Polymer)?",
+            options: ["มีความหนาแน่นสูงและแข็งมาก", "ทนความร้อนได้สูงกว่าแบบร่างแห", "มีความยืดหยุ่นและจุดหลอมเหลวต่ำกว่าแบบเส้น", "เป็นโครงสร้างของเมลามีน"],
+            ans: 2
+        },
+        {
+            q: "3. แก๊สชนิดใดที่เป็นสาเหตุหลักของการเกิด 'ฝนกรด' (Acid Rain)?",
+            options: ["CO2 และ CH4", "SO2 และ NOx", "CFCs", "O3"],
+            ans: 1
+        },
+        {
+            q: "4. สารทำความสะอาดชนิดใดที่มีสมบัติกำจัดคราบไขมันได้ดีทั้งในน้ำอ่อนและน้ำกระด้าง?",
+            options: ["สบู่", "ผงซักฟอก (Detergent)", "น้ำปูนใส", "สารละลายโซดาไฟ"],
+            ans: 1
+        },
+        {
+            q: "5. พลาสติกประเภท PET (Polyethylene Terephthalate) มักนำไปใช้ทำผลิตภัณฑ์ใด?",
+            options: ["ถุงหูหิ้ว", "ท่อน้ำประปา", "ขวดน้ำดื่มใส", "กล่องโฟมบรรจุอาหาร"],
+            ans: 2
+        },
+        {
+            q: "6. ปฏิกิริยาการเผาไหม้แบบสมบูรณ์ของเชื้อเพลิงฟอสซิล จะได้ผลิตภัณฑ์เป็นสารใด?",
+            options: ["CO และ H2O", "CO2 และ H2O", "CO2 และเขม่า", "SO2 และ O2"],
+            ans: 1
+        },
+        {
+            q: "7. สารละลายเบเนดิกต์ (Benedict's solution) ใช้ทดสอบน้ำตาลชนิดใดแล้ว 'ไม่' เกิดตะกอนสีแดงอิฐ?",
+            options: ["กลูโคส", "ฟรักโทส", "มอลโทส", "ซูโครส"],
+            ans: 3
+        },
+        {
+            q: "8. (ระดับยาก) ข้อใดอธิบายกลไกการทำงานของสบู่ในการกำจัดคราบไขมันได้ถูกต้องที่สุด?",
+            options: ["ส่วนมีขั้วจับกับน้ำ และส่วนไม่มีขั้วจับกับไขมัน", "ส่วนไม่มีขั้วจับกับน้ำ และส่วนมีขั้วจับกับไขมัน", "สบู่ทำปฏิกิริยาเปลี่ยนไขมันเป็นน้ำ", "สบู่ลดอุณหภูมิของน้ำทำให้ไขมันหลุดออก"],
+            ans: 0
+        },
+        {
+            q: "9. (ระดับยาก) เมื่อพลาสติกประเภทเทอร์โมเซต (Thermosetting plastic) ได้รับความร้อนสูงจะเกิดผลอย่างไร?",
+            options: ["อ่อนตัวและหลอมเหลวเพื่อนำกลับมาหล่อใหม่ได้", "ไม่อ่อนตัวแต่จะแตกหักหรือไหม้เกรียมหากความร้อนสูงเกินไป", "เปลี่ยนรูปร่างเป็นเส้นใย", "หดตัวกลายเป็นเม็ดพลาสติกขนาดเล็ก"],
+            ans: 1
+        },
+        {
+            q: "10. (ระดับยาก) ข้อใดคือผลกระทบโดยตรงของปรากฏการณ์ 'หมอกควัน' (Smog) ที่เกิดจากปฏิกิริยาเคมีในบรรยากาศ?",
+            options: ["การเพิ่มขึ้นของระดับน้ำทะเล", "การทำลายชั้นโอโซนในบรรยากาศชั้นบน", "การระคายเคืองระบบทางเดินหายใจและทัศนวิสัยลดลง", "การทำให้ดินมีสภาพเป็นเบส"],
+            ans: 2
+        }
+    ];
 
-      const cert = document.getElementById('certificate');
-      cert.classList.add('scale-[1.01]');
-      setTimeout(() => cert.classList.remove('scale-[1.01]'), 200);
+    let currentIdx = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+
+    function displayQuestion() {
+        const quizArea = document.getElementById('quiz-area');
+        quizArea.innerHTML = '';
+        
+        const qData = questions[currentIdx];
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question active';
+        
+        const qText = document.createElement('div');
+        qText.className = 'question-text';
+        qText.innerText = qData.q;
+        qDiv.appendChild(qText);
+
+        const optionsUl = document.createElement('ul');
+        optionsUl.className = 'options';
+        
+        qData.options.forEach((opt, index) => {
+            const li = document.createElement('li');
+            li.className = 'option' + (userAnswers[currentIdx] === index ? ' selected' : '');
+            li.innerText = opt;
+            li.onclick = () => selectOption(index);
+            optionsUl.appendChild(li);
+        });
+        
+        qDiv.appendChild(optionsUl);
+        quizArea.appendChild(qDiv);
+
+        document.getElementById('prev-btn').disabled = currentIdx === 0;
+        document.getElementById('next-btn').innerText = currentIdx === questions.length - 1 ? 'ส่งคำตอบ' : 'ถัดไป';
     }
 
-    function downloadCertificate() {
-      window.print();
+    function selectOption(idx) {
+        userAnswers[currentIdx] = idx;
+        displayQuestion();
     }
-  </script>
- </body>
+
+    function changeQuestion(step) {
+        if (step === 1 && userAnswers[currentIdx] === null) {
+            alert('กรุณาเลือกคำตอบก่อนไปข้อถัดไป');
+            return;
+        }
+
+        if (currentIdx === questions.length - 1 && step === 1) {
+            showResult();
+            return;
+        }
+
+        currentIdx += step;
+        displayQuestion();
+    }
+
+    function showResult() {
+        let score = 0;
+        questions.forEach((q, i) => {
+            if (userAnswers[i] === q.ans) score++;
+        });
+
+        document.getElementById('quiz-area').style.display = 'none';
+        document.querySelector('.controls').style.display = 'none';
+        const resultArea = document.getElementById('result-area');
+        resultArea.style.display = 'block';
+        document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+    }
+
+    displayQuestion();
+</script>
+
+</body>
 </html>

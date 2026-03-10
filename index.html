@@ -3,194 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบทดสอบวิทยาศาสตร์กายภาพ (เคมี)</title>
+    <title>แบบทดสอบ A-Level วิทยาศาสตร์กายภาพ (เคมี)</title>
     <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
-        .quiz-container {
-            background-color: white;
-            width: 100%;
-            max-width: 700px;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        .quiz-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; color: #2c3e50; }
-        .question { margin-bottom: 25px; display: none; }
-        .question.active { display: block; }
-        .question-text { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
-        .options { list-style: none; padding: 0; }
-        .option {
-            background: #eef2f3;
-            margin: 10px 0;
-            padding: 12px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .option:hover { background: #d1d8e0; }
-        .option.selected { background: #3498db; color: white; }
-        .controls { display: flex; justify-content: space-between; margin-top: 20px; }
-        button {
-            padding: 10px 25px;
-            border: none;
-            border-radius: 5px;
-            background: #27ae60;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        button:disabled { background: #bdc3c7; }
-        #result-area { text-align: center; display: none; }
+        .question { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #eee; }
+        .question-text { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
+        .options { display: grid; gap: 10px; }
+        button { padding: 10px 15px; border: 1px solid #ddd; border-radius: 5px; background: white; cursor: pointer; text-align: left; transition: 0.3s; }
+        button:hover { background-color: #e9ecef; }
+        .correct { background-color: #d4edda !important; border-color: #c3e6cb !important; color: #155724; font-weight: bold; }
+        .incorrect { background-color: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; }
+        .explanation { display: none; margin-top: 10px; padding: 10px; background-color: #e2f3ff; border-left: 5px solid #2196F3; font-size: 0.9em; }
+        #result-summary { text-align: center; font-size: 1.2em; font-weight: bold; margin-top: 20px; color: #2c3e50; }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
-    <h1>🧬 วิทยาศาสตร์กายภาพ (เคมี)</h1>
-    <hr>
-    <div id="quiz-area">
+    <h1>แบบทดสอบ A-Level วิทยาศาสตร์กายภาพ (เคมี)</h1>
+    <p style="text-align: center;">แนวข้อสอบ: สารอาหาร, พอลิเมอร์, สารทำความสะอาด และปฏิกิริยาเคมี</p>
+    
+    <div id="quiz">
         </div>
-
-    <div class="controls">
-        <button id="prev-btn" onclick="changeQuestion(-1)" disabled>ก่อนหน้า</button>
-        <button id="next-btn" onclick="changeQuestion(1)">ถัดไป</button>
-    </div>
-
-    <div id="result-area">
-        <h2>สรุปคะแนนของคุณ</h2>
-        <p id="score-text" style="font-size: 2rem; font-weight: bold; color: #2ecc71;"></p>
-        <button onclick="location.reload()">ทำแบบทดสอบใหม่</button>
-    </div>
+    
+    <div id="result-summary"></div>
 </div>
 
 <script>
-    const questions = [
+    const quizData = [
         {
-            q: "1. การทดสอบสารอาหารชนิดใดที่เมื่อหยดสารละลายไอโอดีนแล้วจะเปลี่ยนจากสีน้ำตาลแกมเหลืองเป็นสีน้ำเงินเข้ม?",
-            options: ["โปรตีน", "ไขมัน", "แป้ง", "น้ำตาลโมเลกุลเดี่ยว"],
-            ans: 2
+            q: "1. การทดสอบสารอาหารข้อใดให้ผล 'ถูกต้อง' เกี่ยวกับสารอาหารประเภทโปรตีน?",
+            options: ["สารละลายเบเนดิกต์ - เปลี่ยนจากสีฟ้าเป็นตะกอนสีแดงอิฐ", "สารละลายไอโอดีน - เปลี่ยนจากสีน้ำตาลแกมเหลืองเป็นสีน้ำเงินเข้ม", "สารละลายคอปเปอร์(II)ซัลเฟตในสารละลายเบส - เปลี่ยนเป็นสีม่วง", "การถูบนกระดาษขาว - กระดาษโปร่งแสง"],
+            correct: 2,
+            ref: "การทดสอบโปรตีนใช้ปฏิกิริยาไบยูเรต (คอปเปอร์(II)ซัลเฟตในเบส) ซึ่งจะเปลี่ยนเป็นสีม่วง ส่วนเบเนดิกต์ใช้ทดสอบน้ำตาลรีดิวซ์ และไอโอดีนใช้ทดสอบแป้ง"
         },
         {
-            q: "2. ข้อใดกล่าวถูกต้องเกี่ยวกับพอลิเมอร์แบบกิ่ง (Branched Polymer)?",
-            options: ["มีความหนาแน่นสูงและแข็งมาก", "ทนความร้อนได้สูงกว่าแบบร่างแห", "มีความยืดหยุ่นและจุดหลอมเหลวต่ำกว่าแบบเส้น", "เป็นโครงสร้างของเมลามีน"],
-            ans: 2
+            q: "2. ข้อใดจัดเป็น 'พอลิเมอร์ธรรมชาติ' ทั้งหมด?",
+            options: ["แป้ง, เซลลูโลส, ยางพารา", "โปรตีน, พลาสติก, ไนลอน", "ยางสังเคราะห์, ไขมัน, แป้ง", "พีวีซี, ใยไหม, ขนสัตว์"],
+            correct: 0,
+            ref: "แป้ง เซลลูโลส และยางพารา พบได้ในธรรมชาติ ส่วนพลาสติก ไนลอน และพีวีซี เป็นพอลิเมอร์สังเคราะห์"
         },
         {
-            q: "3. แก๊สชนิดใดที่เป็นสาเหตุหลักของการเกิด 'ฝนกรด' (Acid Rain)?",
-            options: ["CO2 และ CH4", "SO2 และ NOx", "CFCs", "O3"],
-            ans: 1
+            q: "3. พลาสติกชนิดใดที่มีโครงสร้างแบบ 'ร่างแห' ซึ่งเมื่อได้รับความร้อนสูงจะไม่หลอมเหลวแต่จะแข็งตัวและแตกหัก?",
+            options: ["พอลิเอทิลีน (PE)", "พอลิโพรพิลีน (PP)", "เมลามีน", "พอลิไวนิลคลอไรด์ (PVC)"],
+            correct: 2,
+            ref: "เมลามีนเป็นพลาสติกเทอร์โมเซต (Thermosetting) มีโครงสร้างแบบร่างแห แข็งแรง ทนความร้อนได้สูงกว่าแบบอื่นและไม่หลอมเหลวซ้ำ"
         },
         {
-            q: "4. สารทำความสะอาดชนิดใดที่มีสมบัติกำจัดคราบไขมันได้ดีทั้งในน้ำอ่อนและน้ำกระด้าง?",
-            options: ["สบู่", "ผงซักฟอก (Detergent)", "น้ำปูนใส", "สารละลายโซดาไฟ"],
-            ans: 1
+            q: "4. สารทำความสะอาดชนิดใดที่สามารถใช้งานได้ดีแม้ใน 'น้ำกระด้าง' (น้ำที่มี Mg2+ หรือ Ca2+ สูง)?",
+            options: ["สบู่", "ผงซักฟอก", "น้ำส้มสายชู", "แอลกอฮอล์"],
+            correct: 1,
+            ref: "ผงซักฟอกถูกออกแบบมาให้ไม่ทำปฏิกิริยากับไอออนในน้ำกระด้างจนเกิดไคลสบู่ เหมือนที่เกิดกับสบู่"
         },
         {
-            q: "5. พลาสติกประเภท PET (Polyethylene Terephthalate) มักนำไปใช้ทำผลิตภัณฑ์ใด?",
-            options: ["ถุงหูหิ้ว", "ท่อน้ำประปา", "ขวดน้ำดื่มใส", "กล่องโฟมบรรจุอาหาร"],
-            ans: 2
+            q: "5. จากสมการ: 2SO2 + O2 → 2SO3 หากก๊าซนี้รวมตัวกับน้ำในอากาศ จะส่งผลให้เกิดปรากฏการณ์ใด?",
+            options: ["ปรากฏการณ์เรือนกระจก", "ฝนกรด", "การลดลงของโอโซน", "หมอกควันสีน้ำตาล"],
+            correct: 1,
+            ref: "SO3 เมื่อรวมกับน้ำจะกลายเป็นกรดซัลฟิวริก (H2SO4) ซึ่งเป็นสาเหตุหลักของฝนกรด"
         },
         {
-            q: "6. ปฏิกิริยาการเผาไหม้แบบสมบูรณ์ของเชื้อเพลิงฟอสซิล จะได้ผลิตภัณฑ์เป็นสารใด?",
-            options: ["CO และ H2O", "CO2 และ H2O", "CO2 และเขม่า", "SO2 และ O2"],
-            ans: 1
+            q: "6. (ระดับปานกลาง) ข้อใดอธิบายการเกิด 'ยางวัลคาไนซ์' ได้ถูกต้อง?",
+            options: ["การเติมซัลเฟอร์เพื่อสร้างพันธะเชื่อมขวางระหว่างสายโซ่พอลิเมอร์", "การทำให้ยางร้อนจัดเพื่อให้อ่อนตัว", "การผสมยางกับพลาสติกเพื่อให้ยืดหยุ่นขึ้น", "การเติมกรดฟอร์มิกเพื่อให้ยางจับตัวเป็นก้อน"],
+            correct: 0,
+            ref: "กระบวนการวัลคาไนเซชันคือการเติมกำมะถัน (ซัลเฟอร์) เพื่อสร้างสะพานเชื่อมระหว่างสายโซ่ยาง ทำให้ยางคงรูปและยืดหยุ่นดีขึ้น"
         },
         {
-            q: "7. สารละลายเบเนดิกต์ (Benedict's solution) ใช้ทดสอบน้ำตาลชนิดใดแล้ว 'ไม่' เกิดตะกอนสีแดงอิฐ?",
-            options: ["กลูโคส", "ฟรักโทส", "มอลโทส", "ซูโครส"],
-            ans: 3
+            q: "7. (ระดับปานกลาง) ปฏิกิริยาการเผาไหม้เชื้อเพลิงฟอสซิลในรถยนต์ที่ 'ไม่สมบูรณ์' จะส่งก๊าซพิษชนิดใดออกมามากที่สุด?",
+            options: ["CO2", "CO", "CH4", "SO2"],
+            correct: 1,
+            ref: "การเผาไหม้ไม่สมบูรณ์เนื่องจากออกซิเจนไม่เพียงพอ จะทำให้เกิดก๊าซคาร์บอนมอนอกไซด์ (CO) ซึ่งเป็นก๊าซพิษไม่มีสีไม่มีกลิ่น"
         },
         {
-            q: "8. (ระดับยาก) ข้อใดอธิบายกลไกการทำงานของสบู่ในการกำจัดคราบไขมันได้ถูกต้องที่สุด?",
-            options: ["ส่วนมีขั้วจับกับน้ำ และส่วนไม่มีขั้วจับกับไขมัน", "ส่วนไม่มีขั้วจับกับน้ำ และส่วนมีขั้วจับกับไขมัน", "สบู่ทำปฏิกิริยาเปลี่ยนไขมันเป็นน้ำ", "สบู่ลดอุณหภูมิของน้ำทำให้ไขมันหลุดออก"],
-            ans: 0
+            q: "8. (ระดับยาก) สาร A เมื่อทดสอบด้วยสารละลายเบเนดิกต์ให้ตะกอนสีแดงอิฐ และเมื่อนำไปต้มกับกรดจะพบว่าไม่เปลี่ยนสีกับไอโอดีน สาร A คืออะไร?",
+            options: ["แป้ง", "เซลลูโลส", "น้ำตาลกลูโคส", "น้ำตาลทราย (ซูโครส)"],
+            correct: 2,
+            ref: "กลูโคสเป็นน้ำตาลโมเลกุลเดี่ยวที่เป็นน้ำตาลรีดิวซ์ ให้ผลบวกกับเบเนดิกต์ทันที ส่วนแป้งให้ผลกับไอโอดีน และน้ำตาลทรายต้องต้มกับกรดก่อนถึงจะให้ผลกับเบเนดิกต์"
         },
         {
-            q: "9. (ระดับยาก) เมื่อพลาสติกประเภทเทอร์โมเซต (Thermosetting plastic) ได้รับความร้อนสูงจะเกิดผลอย่างไร?",
-            options: ["อ่อนตัวและหลอมเหลวเพื่อนำกลับมาหล่อใหม่ได้", "ไม่อ่อนตัวแต่จะแตกหักหรือไหม้เกรียมหากความร้อนสูงเกินไป", "เปลี่ยนรูปร่างเป็นเส้นใย", "หดตัวกลายเป็นเม็ดพลาสติกขนาดเล็ก"],
-            ans: 1
+            q: "9. (ระดับยาก) การนำพลาสติกประเภทพอลิเอทิลีนเทเรฟทาเลต (PET) มาหลอมเหลวและขึ้นรูปใหม่ จัดเป็นกระบวนการใดและเป็นพลาสติกประเภทใด?",
+            options: ["Reuse, พลาสติกเทอร์โมเซต", "Recycle, พลาสติกเทอร์โมเซต", "Recycle, พลาสติกเทอร์โมพลาสติก", "Reduce, พลาสติกเทอร์โมพลาสติก"],
+            correct: 2,
+            ref: "PET เป็นเทอร์โมพลาสติก (โซ่ตรง/กิ่ง) ที่หลอมซ้ำได้ กระบวนการเปลี่ยนรูปขยะให้เป็นผลิตภัณฑ์ใหม่เรียกว่า Recycle"
         },
         {
-            q: "10. (ระดับยาก) ข้อใดคือผลกระทบโดยตรงของปรากฏการณ์ 'หมอกควัน' (Smog) ที่เกิดจากปฏิกิริยาเคมีในบรรยากาศ?",
-            options: ["การเพิ่มขึ้นของระดับน้ำทะเล", "การทำลายชั้นโอโซนในบรรยากาศชั้นบน", "การระคายเคืองระบบทางเดินหายใจและทัศนวิสัยลดลง", "การทำให้ดินมีสภาพเป็นเบส"],
-            ans: 2
+            q: "10. (ระดับยาก) ข้อใดระบุคู่ของ 'มอนอเมอร์' และ 'ปฏิกิริยาพอลิเมอไรเซชัน' ของพอลิไวนิลคลอไรด์ (PVC) ได้ถูกต้อง?",
+            options: ["ไวนิลคลอไรด์ - แบบเติม", "ไวนิลคลอไรด์ - แบบควบแน่น", "เอทิลีน - แบบเติม", "สไตรีน - แบบควบแน่น"],
+            correct: 0,
+            ref: "PVC เกิดจากมอนอเมอร์ 'ไวนิลคลอไรด์' ผ่านปฏิกิริยาแบบเติม (Addition) เนื่องจากมีพันธะคู่ในโมเลกุลมอนอเมอร์"
         }
     ];
 
-    let currentIdx = 0;
-    let userAnswers = new Array(questions.length).fill(null);
+    const quizContainer = document.getElementById('quiz');
+    let score = 0;
 
-    function displayQuestion() {
-        const quizArea = document.getElementById('quiz-area');
-        quizArea.innerHTML = '';
-        
-        const qData = questions[currentIdx];
-        const qDiv = document.createElement('div');
-        qDiv.className = 'question active';
-        
-        const qText = document.createElement('div');
-        qText.className = 'question-text';
-        qText.innerText = qData.q;
-        qDiv.appendChild(qText);
-
-        const optionsUl = document.createElement('ul');
-        optionsUl.className = 'options';
-        
-        qData.options.forEach((opt, index) => {
-            const li = document.createElement('li');
-            li.className = 'option' + (userAnswers[currentIdx] === index ? ' selected' : '');
-            li.innerText = opt;
-            li.onclick = () => selectOption(index);
-            optionsUl.appendChild(li);
+    function buildQuiz() {
+        quizData.forEach((data, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            qDiv.innerHTML = `
+                <div class="question-text">${data.q}</div>
+                <div class="options" id="options-${index}">
+                    ${data.options.map((opt, i) => `
+                        <button onclick="checkAnswer(${index}, ${i})">${opt}</button>
+                    `).join('')}
+                </div>
+                <div class="explanation" id="exp-${index}">
+                    <strong>เฉลย:</strong> ${data.ref}
+                </div>
+            `;
+            quizContainer.appendChild(qDiv);
         });
+    }
+
+    function checkAnswer(qIdx, optIdx) {
+        const optionsDiv = document.getElementById(`options-${qIdx}`);
+        const buttons = optionsDiv.getElementsByTagName('button');
+        const expDiv = document.getElementById(`exp-${qIdx}`);
         
-        qDiv.appendChild(optionsUl);
-        quizArea.appendChild(qDiv);
+        // Disable all buttons in this question
+        for(let btn of buttons) { btn.disabled = true; }
 
-        document.getElementById('prev-btn').disabled = currentIdx === 0;
-        document.getElementById('next-btn').innerText = currentIdx === questions.length - 1 ? 'ส่งคำตอบ' : 'ถัดไป';
-    }
-
-    function selectOption(idx) {
-        userAnswers[currentIdx] = idx;
-        displayQuestion();
-    }
-
-    function changeQuestion(step) {
-        if (step === 1 && userAnswers[currentIdx] === null) {
-            alert('กรุณาเลือกคำตอบก่อนไปข้อถัดไป');
-            return;
+        if (optIdx === quizData[qIdx].correct) {
+            buttons[optIdx].classList.add('correct');
+            score++;
+        } else {
+            buttons[optIdx].classList.add('incorrect');
+            buttons[quizData[qIdx].correct].classList.add('correct');
         }
 
-        if (currentIdx === questions.length - 1 && step === 1) {
-            showResult();
-            return;
-        }
-
-        currentIdx += step;
-        displayQuestion();
+        expDiv.style.display = 'block';
+        updateSummary();
     }
 
-    function showResult() {
-        let score = 0;
-        questions.forEach((q, i) => {
-            if (userAnswers[i] === q.ans) score++;
-        });
-
-        document.getElementById('quiz-area').style.display = 'none';
-        document.querySelector('.controls').style.display = 'none';
-        const resultArea = document.getElementById('result-area');
-        resultArea.style.display = 'block';
-        document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+    function updateSummary() {
+        const summary = document.getElementById('result-summary');
+        summary.innerText = `คะแนนของคุณ: ${score} / ${quizData.length}`;
     }
 
-    displayQuestion();
+    buildQuiz();
 </script>
 
 </body>

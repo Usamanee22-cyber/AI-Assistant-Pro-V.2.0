@@ -3,147 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบทดสอบ A-Level วิทยาศาสตร์กายภาพ (เคมี)</title>
+    <title>AIPA-S-Audit Financial Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
-        .quiz-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; }
-        .question { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #eee; }
-        .question-text { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; }
-        .options { display: grid; gap: 10px; }
-        button { padding: 10px 15px; border: 1px solid #ddd; border-radius: 5px; background: white; cursor: pointer; text-align: left; transition: 0.3s; }
-        button:hover { background-color: #e9ecef; }
-        .correct { background-color: #d4edda !important; border-color: #c3e6cb !important; color: #155724; font-weight: bold; }
-        .incorrect { background-color: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; }
-        .explanation { display: none; margin-top: 10px; padding: 10px; background-color: #e2f3ff; border-left: 5px solid #2196F3; font-size: 0.9em; }
-        #result-summary { text-align: center; font-size: 1.2em; font-weight: bold; margin-top: 20px; color: #2c3e50; }
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: transform 0.3s;
+        }
+
+        .card:hover { transform: translateY(-5px); }
+
+        /* ฝั่งสถาบัน: ม่วง-ทอง */
+        .institute-card {
+            background: linear-gradient(135deg, #4b0082, #6a0dad);
+            color: #ffd700;
+            border: 2px solid #ffd700;
+        }
+
+        /* ฝั่งสมาคม: ทอง-น้ำเงิน */
+        .association-card {
+            background: linear-gradient(135deg, #ffd700, #ffcc00);
+            color: #003399;
+            border: 2px solid #003399;
+        }
+
+        h2 { text-align: center; margin-bottom: 25px; text-transform: uppercase; }
+
+        .input-group { margin-bottom: 20px; }
+
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px dashed;
+        }
+
+        .result-label { font-size: 14px; opacity: 0.9; }
+        .result-value { font-size: 28px; font-weight: 700; display: block; margin-top: 5px; }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <h1>แบบทดสอบ A-Level วิทยาศาสตร์กายภาพ (เคมี)</h1>
-    <p style="text-align: center;">แนวข้อสอบ: สารอาหาร, พอลิเมอร์, สารทำความสะอาด และปฏิกิริยาเคมี</p>
-    
-    <div id="quiz">
+    <h1 style="color: #333; margin-bottom: 30px;">ระบบประมาณการงบประมาณ AIPA-S-Audit</h1>
+
+    <div class="container">
+        <div class="card institute-card">
+            <h2>สถาบัน สสนช.</h2>
+            <div class="input-group">
+                <label>จำนวนนิสิตผู้สมัคร (คน)</label>
+                <input type="number" id="studentCount" placeholder="ระบุจำนวนเด็กปี 1" oninput="calculateAll()">
+            </div>
+            
+            <div class="result-box">
+                <span class="result-label">รายได้สุทธิส่วนบุคคล (หลังหักภาษีและงบ 15ล.)</span>
+                <span class="result-value" id="netProfit">0.00</span>
+                <p style="font-size: 12px; margin-top: 10px;">*หักส่วนแบ่งสมาคม 35%, ภาษี 35%, และงบดำเนินงาน 15,000,000 บาท</p>
+            </div>
         </div>
-    
-    <div id="result-summary"></div>
-</div>
 
-<script>
-    const quizData = [
-        {
-            q: "1. การทดสอบสารอาหารข้อใดให้ผล 'ถูกต้อง' เกี่ยวกับสารอาหารประเภทโปรตีน?",
-            options: ["สารละลายเบเนดิกต์ - เปลี่ยนจากสีฟ้าเป็นตะกอนสีแดงอิฐ", "สารละลายไอโอดีน - เปลี่ยนจากสีน้ำตาลแกมเหลืองเป็นสีน้ำเงินเข้ม", "สารละลายคอปเปอร์(II)ซัลเฟตในสารละลายเบส - เปลี่ยนเป็นสีม่วง", "การถูบนกระดาษขาว - กระดาษโปร่งแสง"],
-            correct: 2,
-            ref: "การทดสอบโปรตีนใช้ปฏิกิริยาไบยูเรต (คอปเปอร์(II)ซัลเฟตในเบส) ซึ่งจะเปลี่ยนเป็นสีม่วง ส่วนเบเนดิกต์ใช้ทดสอบน้ำตาลรีดิวซ์ และไอโอดีนใช้ทดสอบแป้ง"
-        },
-        {
-            q: "2. ข้อใดจัดเป็น 'พอลิเมอร์ธรรมชาติ' ทั้งหมด?",
-            options: ["แป้ง, เซลลูโลส, ยางพารา", "โปรตีน, พลาสติก, ไนลอน", "ยางสังเคราะห์, ไขมัน, แป้ง", "พีวีซี, ใยไหม, ขนสัตว์"],
-            correct: 0,
-            ref: "แป้ง เซลลูโลส และยางพารา พบได้ในธรรมชาติ ส่วนพลาสติก ไนลอน และพีวีซี เป็นพอลิเมอร์สังเคราะห์"
-        },
-        {
-            q: "3. พลาสติกชนิดใดที่มีโครงสร้างแบบ 'ร่างแห' ซึ่งเมื่อได้รับความร้อนสูงจะไม่หลอมเหลวแต่จะแข็งตัวและแตกหัก?",
-            options: ["พอลิเอทิลีน (PE)", "พอลิโพรพิลีน (PP)", "เมลามีน", "พอลิไวนิลคลอไรด์ (PVC)"],
-            correct: 2,
-            ref: "เมลามีนเป็นพลาสติกเทอร์โมเซต (Thermosetting) มีโครงสร้างแบบร่างแห แข็งแรง ทนความร้อนได้สูงกว่าแบบอื่นและไม่หลอมเหลวซ้ำ"
-        },
-        {
-            q: "4. สารทำความสะอาดชนิดใดที่สามารถใช้งานได้ดีแม้ใน 'น้ำกระด้าง' (น้ำที่มี Mg2+ หรือ Ca2+ สูง)?",
-            options: ["สบู่", "ผงซักฟอก", "น้ำส้มสายชู", "แอลกอฮอล์"],
-            correct: 1,
-            ref: "ผงซักฟอกถูกออกแบบมาให้ไม่ทำปฏิกิริยากับไอออนในน้ำกระด้างจนเกิดไคลสบู่ เหมือนที่เกิดกับสบู่"
-        },
-        {
-            q: "5. จากสมการ: 2SO2 + O2 → 2SO3 หากก๊าซนี้รวมตัวกับน้ำในอากาศ จะส่งผลให้เกิดปรากฏการณ์ใด?",
-            options: ["ปรากฏการณ์เรือนกระจก", "ฝนกรด", "การลดลงของโอโซน", "หมอกควันสีน้ำตาล"],
-            correct: 1,
-            ref: "SO3 เมื่อรวมกับน้ำจะกลายเป็นกรดซัลฟิวริก (H2SO4) ซึ่งเป็นสาเหตุหลักของฝนกรด"
-        },
-        {
-            q: "6. (ระดับปานกลาง) ข้อใดอธิบายการเกิด 'ยางวัลคาไนซ์' ได้ถูกต้อง?",
-            options: ["การเติมซัลเฟอร์เพื่อสร้างพันธะเชื่อมขวางระหว่างสายโซ่พอลิเมอร์", "การทำให้ยางร้อนจัดเพื่อให้อ่อนตัว", "การผสมยางกับพลาสติกเพื่อให้ยืดหยุ่นขึ้น", "การเติมกรดฟอร์มิกเพื่อให้ยางจับตัวเป็นก้อน"],
-            correct: 0,
-            ref: "กระบวนการวัลคาไนเซชันคือการเติมกำมะถัน (ซัลเฟอร์) เพื่อสร้างสะพานเชื่อมระหว่างสายโซ่ยาง ทำให้ยางคงรูปและยืดหยุ่นดีขึ้น"
-        },
-        {
-            q: "7. (ระดับปานกลาง) ปฏิกิริยาการเผาไหม้เชื้อเพลิงฟอสซิลในรถยนต์ที่ 'ไม่สมบูรณ์' จะส่งก๊าซพิษชนิดใดออกมามากที่สุด?",
-            options: ["CO2", "CO", "CH4", "SO2"],
-            correct: 1,
-            ref: "การเผาไหม้ไม่สมบูรณ์เนื่องจากออกซิเจนไม่เพียงพอ จะทำให้เกิดก๊าซคาร์บอนมอนอกไซด์ (CO) ซึ่งเป็นก๊าซพิษไม่มีสีไม่มีกลิ่น"
-        },
-        {
-            q: "8. (ระดับยาก) สาร A เมื่อทดสอบด้วยสารละลายเบเนดิกต์ให้ตะกอนสีแดงอิฐ และเมื่อนำไปต้มกับกรดจะพบว่าไม่เปลี่ยนสีกับไอโอดีน สาร A คืออะไร?",
-            options: ["แป้ง", "เซลลูโลส", "น้ำตาลกลูโคส", "น้ำตาลทราย (ซูโครส)"],
-            correct: 2,
-            ref: "กลูโคสเป็นน้ำตาลโมเลกุลเดี่ยวที่เป็นน้ำตาลรีดิวซ์ ให้ผลบวกกับเบเนดิกต์ทันที ส่วนแป้งให้ผลกับไอโอดีน และน้ำตาลทรายต้องต้มกับกรดก่อนถึงจะให้ผลกับเบเนดิกต์"
-        },
-        {
-            q: "9. (ระดับยาก) การนำพลาสติกประเภทพอลิเอทิลีนเทเรฟทาเลต (PET) มาหลอมเหลวและขึ้นรูปใหม่ จัดเป็นกระบวนการใดและเป็นพลาสติกประเภทใด?",
-            options: ["Reuse, พลาสติกเทอร์โมเซต", "Recycle, พลาสติกเทอร์โมเซต", "Recycle, พลาสติกเทอร์โมพลาสติก", "Reduce, พลาสติกเทอร์โมพลาสติก"],
-            correct: 2,
-            ref: "PET เป็นเทอร์โมพลาสติก (โซ่ตรง/กิ่ง) ที่หลอมซ้ำได้ กระบวนการเปลี่ยนรูปขยะให้เป็นผลิตภัณฑ์ใหม่เรียกว่า Recycle"
-        },
-        {
-            q: "10. (ระดับยาก) ข้อใดระบุคู่ของ 'มอนอเมอร์' และ 'ปฏิกิริยาพอลิเมอไรเซชัน' ของพอลิไวนิลคลอไรด์ (PVC) ได้ถูกต้อง?",
-            options: ["ไวนิลคลอไรด์ - แบบเติม", "ไวนิลคลอไรด์ - แบบควบแน่น", "เอทิลีน - แบบเติม", "สไตรีน - แบบควบแน่น"],
-            correct: 0,
-            ref: "PVC เกิดจากมอนอเมอร์ 'ไวนิลคลอไรด์' ผ่านปฏิกิริยาแบบเติม (Addition) เนื่องจากมีพันธะคู่ในโมเลกุลมอนอเมอร์"
-        }
-    ];
+        <div class="card association-card">
+            <h2>สมาคม ทปอ.</h2>
+            <div class="result-box" style="background: rgba(0, 51, 153, 0.05);">
+                <span class="result-label">ส่วนแบ่งรายได้สมาคม (ก่อนภาษี)</span>
+                <span class="result-value" id="assocRaw">0.00</span>
+            </div>
+            <div class="result-box" style="background: rgba(0, 51, 153, 0.1);">
+                <span class="result-label">รายได้สุทธิสมาคม (หลังหักภาษี 35%)</span>
+                <span class="result-value" id="assocNet">0.00</span>
+            </div>
+        </div>
+    </div>
 
-    const quizContainer = document.getElementById('quiz');
-    let score = 0;
+    <script>
+        function calculateAll() {
+            const count = document.getElementById('studentCount').value || 0;
+            const fee = 100;
+            const totalRevenue = count * fee;
 
-    function buildQuiz() {
-        quizData.forEach((data, index) => {
-            const qDiv = document.createElement('div');
-            qDiv.className = 'question';
-            qDiv.innerHTML = `
-                <div class="question-text">${data.q}</div>
-                <div class="options" id="options-${index}">
-                    ${data.options.map((opt, i) => `
-                        <button onclick="checkAnswer(${index}, ${i})">${opt}</button>
-                    `).join('')}
-                </div>
-                <div class="explanation" id="exp-${index}">
-                    <strong>เฉลย:</strong> ${data.ref}
-                </div>
-            `;
-            quizContainer.appendChild(qDiv);
-        });
-    }
+            // 1. คำนวณส่วนของสมาคม (35% ของยอดรวม)
+            const assocShareRaw = totalRevenue * 0.35;
+            const assocShareNet = assocShareRaw * (1 - 0.35); // หักภาษี 35%
 
-    function checkAnswer(qIdx, optIdx) {
-        const optionsDiv = document.getElementById(`options-${qIdx}`);
-        const buttons = optionsDiv.getElementsByTagName('button');
-        const expDiv = document.getElementById(`exp-${qIdx}`);
-        
-        // Disable all buttons in this question
-        for(let btn of buttons) { btn.disabled = true; }
+            // 2. คำนวณส่วนของสถาบัน (สูตรบอส: [(รวม-35%)-35%]-15ล้าน)
+            const remainingAfterAssoc = totalRevenue - assocShareRaw; // คือ 65% แรก
+            const afterTax = remainingAfterAssoc * (1 - 0.35); // หักภาษี 35% ของส่วนที่เหลือ
+            const netInstitute = afterTax - 15000000; // หักงบ 10ล + 5ล
 
-        if (optIdx === quizData[qIdx].correct) {
-            buttons[optIdx].classList.add('correct');
-            score++;
-        } else {
-            buttons[optIdx].classList.add('incorrect');
-            buttons[quizData[qIdx].correct].classList.add('correct');
-        }
-
-        expDiv.style.display = 'block';
-        updateSummary();
-    }
-
-    function updateSummary() {
-        const summary = document.getElementById('result-summary');
-        summary.innerText = `คะแนนของคุณ: ${score} / ${quizData.length}`;
-    }
-
-    buildQuiz();
-</script>
+            // แสดงผล
+            document.getElementById('assocRaw').innerText = assocShareRaw.toLocaleString(undefined, {minimumFractionDigits: 2});
+            document.getElementById('assocNet').innerText = assocShareNet.toLocaleString(undefined, {minimumFractionDigits: 2});
+            
+            const netProfitElement = document.getElementById('netProfit');
+            netProfitElement.innerText = netInstitute.toLocaleString(undefined, {minimumFractionDigits: 2});
+            
+            // ถ้าติดลบให้แสดงสีแดง
+            netProfitElement.style.color = netInstitute < 0 ? "#ff4d4d" : "#ffd700";
+        </div>
+    </script>
 
 </body>
 </html>

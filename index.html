@@ -57,10 +57,13 @@
             width: 100%;
             padding: 12px;
             border-radius: 10px;
-            border: none;
+            border: 2px solid transparent;
             font-size: 18px;
             box-sizing: border-box;
+            outline: none;
         }
+        
+        input:focus { border-color: #ffd700; }
 
         .result-box {
             margin-top: 25px;
@@ -80,7 +83,7 @@
 </head>
 <body>
 
-    <h1 style="color: #333; margin-bottom: 30px;">ระบบประมาณการงบประมาณ AIPA-S-Audit</h1>
+    <h1 style="color: #333; margin-bottom: 30px;">💰 ระบบประมาณการงบประมาณ AIPA-S-Audit</h1>
 
     <div class="container">
         <div class="card institute-card">
@@ -91,20 +94,22 @@
             </div>
             
             <div class="result-box">
-                <span class="result-label">รายได้สุทธิส่วนบุคคล (หลังหักภาษีและงบ 15ล.)</span>
+                <span class="result-label">กำไรสุทธิหลังหักภาษีและงบ 15 ล้าน</span>
                 <span class="result-value" id="netProfit">0.00</span>
-                <p style="font-size: 12px; margin-top: 10px;">*หักส่วนแบ่งสมาคม 35%, ภาษี 35%, และงบดำเนินงาน 15,000,000 บาท</p>
+                <p style="font-size: 11px; margin-top: 10px; line-height: 1.5;">
+                    * สูตร: [(รายได้ - ส่วนแบ่งสมาคม 35%) - ภาษี 35%] - 15,000,000 บาท
+                </p>
             </div>
         </div>
 
         <div class="card association-card">
             <h2>สมาคม ทปอ.</h2>
             <div class="result-box" style="background: rgba(0, 51, 153, 0.05);">
-                <span class="result-label">ส่วนแบ่งรายได้สมาคม (ก่อนภาษี)</span>
+                <span class="result-label">ส่วนแบ่งรายได้สมาคม (35%)</span>
                 <span class="result-value" id="assocRaw">0.00</span>
             </div>
             <div class="result-box" style="background: rgba(0, 51, 153, 0.1);">
-                <span class="result-label">รายได้สุทธิสมาคม (หลังหักภาษี 2% โดยประมาณ)</span>
+                <span class="result-label">รายได้สุทธิสมาคม (หลังหักภาษีสมาคม 2%)</span>
                 <span class="result-value" id="assocNet">0.00</span>
             </div>
         </div>
@@ -112,29 +117,29 @@
 
     <script>
         function calculateAll() {
-            const count = document.getElementById('studentCount').value || 0;
+            const count = parseFloat(document.getElementById('studentCount').value) || 0;
             const fee = 100;
             const totalRevenue = count * fee;
 
-            // 1. คำนวณส่วนของสมาคม (2% ของยอดรวม)
-            const assocShareRaw = totalRevenue * 0.2;
-            const assocShareNet = assocShareRaw * (1 - 0.2); // หักภาษี 35%
+            // 1. คำนวณส่วนของสมาคม (ส่วนแบ่ง 35%)
+            const assocShareRaw = totalRevenue * 0.35; 
+            const assocShareNet = assocShareRaw * (1 - 0.02); // หักภาษีสมาคม 2% จ่ะบอส
 
-            // 2. คำนวณส่วนของสถาบัน (สูตรบอส: [(รวม-35%)-35%]-15ล้าน)
-            const remainingAfterAssoc = totalRevenue - assocShareRaw; // คือ 65% แรก
-            const afterTax = remainingAfterAssoc * (1 - 0.35); // หักภาษี 35% ของส่วนที่เหลือ
-            const netInstitute = afterTax - 15000000; // หักงบ 10ล + 5ล
+            // 2. คำนวณส่วนของสถาบัน
+            const remainingAfterAssoc = totalRevenue - assocShareRaw; // เหลือ 65%
+            const afterTax = remainingAfterAssoc * (1 - 0.35); // หักภาษีสถาบัน 35%
+            const netInstitute = afterTax - 15000000; // หักงบสนับสนุน 10ล + 5ล
 
-            // แสดงผล
+            // แสดงผลลัพธ์
             document.getElementById('assocRaw').innerText = assocShareRaw.toLocaleString(undefined, {minimumFractionDigits: 2});
             document.getElementById('assocNet').innerText = assocShareNet.toLocaleString(undefined, {minimumFractionDigits: 2});
             
             const netProfitElement = document.getElementById('netProfit');
             netProfitElement.innerText = netInstitute.toLocaleString(undefined, {minimumFractionDigits: 2});
             
-            // ถ้าติดลบให้แสดงสีแดง
+            // ปรับสีถ้าติดลบ
             netProfitElement.style.color = netInstitute < 0 ? "#ff4d4d" : "#ffd700";
-        </div>
+        } // <--- จุดที่หายไปคือปีกกาปิดอันนี้จ่ะบอส!
     </script>
 
 </body>

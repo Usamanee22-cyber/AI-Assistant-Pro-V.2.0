@@ -97,7 +97,7 @@
                 <span class="result-label">กำไรสุทธิหลังหักภาษีและงบ 15 ล้าน</span>
                 <span class="result-value" id="netProfit">0.00</span>
                 <p style="font-size: 11px; margin-top: 10px; line-height: 1.5;">
-                    * สูตร: [(รายได้ - ส่วนแบ่งสมาคม 35%) - ภาษี 35%] - 15,000,000 บาท
+                    * สูตร: [(รายได้ - ส่วนแบ่งสมาคม 35%) - ภาษี 35%]  
                 </p>
             </div>
         </div>
@@ -128,7 +128,7 @@
             // 2. คำนวณส่วนของสถาบัน
             const remainingAfterAssoc = totalRevenue - assocShareRaw; // เหลือ 65%
             const afterTax = remainingAfterAssoc * (1 - 0.35); // หักภาษีสถาบัน 35%
-            const netInstitute = afterTax - 15000000; // หักงบสนับสนุน 10ล + 5ล
+            const netInstitute = afterTax - 0; // หักงบสนับสนุน 
 
             // แสดงผลลัพธ์
             document.getElementById('assocRaw').innerText = assocShareRaw.toLocaleString(undefined, {minimumFractionDigits: 2});

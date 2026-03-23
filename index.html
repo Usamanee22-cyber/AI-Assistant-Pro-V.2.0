@@ -104,7 +104,7 @@
                 <span class="result-value" id="assocRaw">0.00</span>
             </div>
             <div class="result-box" style="background: rgba(0, 51, 153, 0.1);">
-                <span class="result-label">รายได้สุทธิสมาคม (หลังหักภาษี 35%)</span>
+                <span class="result-label">รายได้สุทธิสมาคม (หลังหักภาษี 2% โดยประมาณ)</span>
                 <span class="result-value" id="assocNet">0.00</span>
             </div>
         </div>
@@ -116,9 +116,9 @@
             const fee = 100;
             const totalRevenue = count * fee;
 
-            // 1. คำนวณส่วนของสมาคม (35% ของยอดรวม)
-            const assocShareRaw = totalRevenue * 0.35;
-            const assocShareNet = assocShareRaw * (1 - 0.35); // หักภาษี 35%
+            // 1. คำนวณส่วนของสมาคม (2% ของยอดรวม)
+            const assocShareRaw = totalRevenue * 0.2;
+            const assocShareNet = assocShareRaw * (1 - 0.2); // หักภาษี 35%
 
             // 2. คำนวณส่วนของสถาบัน (สูตรบอส: [(รวม-35%)-35%]-15ล้าน)
             const remainingAfterAssoc = totalRevenue - assocShareRaw; // คือ 65% แรก
